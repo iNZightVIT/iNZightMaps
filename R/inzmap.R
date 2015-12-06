@@ -35,7 +35,7 @@ plot.inzmap <- function(obj, gen) {
     if (get.newmap) {
         ## DL new map
         map <- something()
-    }        
+    }
         
     if (length(obj$x) == 0)
         return()
