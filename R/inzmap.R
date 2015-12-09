@@ -22,45 +22,42 @@ plot.inzmap <- function(obj, gen) {
 	mcex <- gen$mcex
 	col.args <- gen$col.args
 
-	###setting
-	if ("global.objects" %in% ls(envir = .GlobalEnv))
+	#create a global object
+	if (!"global.objects" %in% ls(envir = .GlobalEnv))
 	{
-		xlim <- current.viewport()$xscale
-		ylim <- current.viewport()$yscale
-		win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
-		win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
-		SCALE  <-  2
-		size = global.objects$map$size
-		valid.maptypes = c("roadmap", "mobile", "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid")
-		type <- if ("maptype" %in% names(opts$plot.features)) opts$plot.features$maptype else "roadmap"
-
-		if (!type %in% valid.maptypes) 
-		{
-		type <- "roadmap"
-		#warning("Maptype was not valid, using roadmap")
-		}
-	
-		get.newmap <- needNewMap(bbox = c(xlim,ylim),size = size,SCALE = SCALE,type = type,window = c(win.width,win.height))
-		print(paste('get.newmap:',get.newmap))
-		if(get.newmap) 
-		{
-			getNewMap(xlim = xlim, ylim = ylim, SCALE = SCALE, type = type,zoom = Get.map.size()$zoom)
-			##updating
-			global.objects$map.detail$window = c(win.width,win.height)
-			global.objects$map.detail$bbox = c(xlim,ylim)
-			global.objects$map.detail$size = global.objects$map$size
-			global.objects$map.detail$scale= global.objects$map$SCALE
-			global.objects$map.detail$type = type
-			assign("global.objects", global.objects, envir = .GlobalEnv)
-
-		}
-
-	} 
-	else 
-	{
-		assign("global.objects", list(map = NULL), envir = .GlobalEnv)
-		
+		assign("global.objects", list(), envir = .GlobalEnv)	
 	}
+	###setting
+	xlim <- current.viewport()$xscale
+	ylim <- current.viewport()$yscale
+	win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
+	win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
+	SCALE  <-  2
+	size = global.objects$map$size
+	valid.maptypes = c("roadmap", "mobile", "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid")
+	type <- if ("maptype" %in% names(opts$plot.features)) opts$plot.features$maptype else "roadmap"
+
+	if (!type %in% valid.maptypes) 
+	{
+		type <- "roadmap"
+		warning("Maptype was not valid, using roadmap")
+	}
+
+	get.newmap <- needNewMap(bbox = c(xlim,ylim),size = size,SCALE = SCALE,type = type,window = c(win.width,win.height))
+	print(paste('get.newmap:',get.newmap))
+	if(get.newmap) 
+	{
+		getNewMap(xlim = xlim, ylim = ylim, SCALE = SCALE, type = type,zoom = Get.map.size()$zoom)
+		##updating
+		global.objects$map.detail$window = c(win.width,win.height)
+		global.objects$map.detail$bbox = c(xlim,ylim)
+		global.objects$map.detail$size = global.objects$map$size
+		global.objects$map.detail$scale= global.objects$map$SCALE
+		global.objects$map.detail$type = type
+		assign("global.objects", global.objects, envir = .GlobalEnv)
+
+	}
+
 
 	
 	###drawing~~~~

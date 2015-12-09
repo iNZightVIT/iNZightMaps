@@ -173,7 +173,7 @@ Get.map.size = function(){
 		lonR.new = lonR.odd
 		ratio = win.size[1]/win.size[2]
 
-		lat.length.new = lon.length.odd / ratio #* 1.38
+		lat.length.new = lon.length.odd / ratio
 		latR.new = c(latR.odd[1] - (lat.length.new - lat.length.odd)/2,latR.odd[2] + (lat.length.new - lat.length.odd)/2)
 	}
 	else
@@ -181,20 +181,16 @@ Get.map.size = function(){
 		latR.new = latR.odd
 		ratio = win.size[1]/win.size[2]
 
-		lon.length.new = lat.length.odd * ratio #* 1.38
+		lon.length.new = lat.length.odd * ratio
 		lonR.new = c(lonR.odd[1] - (lon.length.new - lon.length.odd)/2,lonR.odd[2] + (lon.length.new - lon.length.odd)/2)
 
-	}	
-
-    win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
-    win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
-    
+	}    
 	####sicne the 'rgoogle' package cannot have a size > 640 hence the transformation is needed
 	###here we need to set the pre-map resolution for the map that we request first inorder to calculate the zoom(otherwise the zoom will remains the same)
-    if (win.width > win.height)
-        size.1 <- round(c(640, 640 * win.height / win.width))
+    if (win.size[1] > win.size[2])
+        size.1 <- round(c(640, 640 * win.size[2] / win.size[1]))
     else
-        size.1 <- round(c(640 * win.width / win.height, 640))
+        size.1 <- round(c(640 * win.size[1] / win.size[2], 640))
 
 	####stuff from 'Getmap' and 'Getmap.bbox' from 'rgooglemaps' package
 	###overall, it does the transformation, by give a lititude and longitude and transform to the map resolution
@@ -209,14 +205,14 @@ Get.map.size = function(){
 	size[1] <- 2 * max(c(ceiling(abs(ll.Rcoords$X)), ceiling(abs(ur.Rcoords$X)))) + 1
 	size[2] <- 2 * max(c(ceiling(abs(ll.Rcoords$Y)), ceiling(abs(ur.Rcoords$Y)))) + 1
 
-
-	if(size[1] > size[2])
+	###transform the size ratio to be the same as window.size's ratio
+	if(win.size[1] > win.size[2])
 	{	
-		size[2] = round(640*(size[2]/size[1]),0)
+		size[2] = round(640*(win.size[2]/win.size[1]),0)
 		size[1] = 640
 	}else
-	{
-		size[1] = round(640*(size[1]/size[2]),0)
+	{	
+		size[1] = round(640*(win.size[1]/win.size[2]),0)
 		size[2] = 640	
 	}
 		
