@@ -61,7 +61,7 @@ plot.inzmap <- function(obj, gen) {
 
 	
 	###drawing~~~~
-	grid.raster(global.objects$map$myTile,0.5,0.5)
+	grid.raster(global.objects$map$myTile,0.5,0.5,1,1)
 	
 	####define the limit
 	tmp = in.maps.range()

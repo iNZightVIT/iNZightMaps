@@ -152,8 +152,7 @@ maps.actual.latlon = function(latR,lonR){
 ####as long as we transformed a sphere-like coordinate into x-y-like coordinate, hence the transformation is not linear
 ####hence I can not capture the real-transform ratio(formula) from latitude/longitude into the resolution coordinate
 ####the good news is, the transformation ratio seems quite close to 1.38, hence I multiple 1.38 for latitude and longitude before transform them	
-
-Get.map.size= function(){
+Get.map.size = function(){
 	win.size= c(
 				convertWidth(current.viewport()$width, "mm", TRUE), 
 				convertHeight(current.viewport()$height, "mm", TRUE)
@@ -195,8 +194,8 @@ Get.map.size= function(){
 
 	####stuff from 'Getmap' and 'Getmap.bbox' from 'rgooglemaps' package
 	###overall, it does the transformation, by give a lititude and longitude and transform to the map resolution
-	lat.center = mean(latR.new)
-	lon.center = mean(lonR.new)
+	lat.center = mean(latR.odd)
+	lon.center = mean(lonR.odd)
 	zoom <- min(MaxZoom(latR.new, lonR.new, size.1))
 	ll <- LatLon2XY(latR.new[1], lonR.new[1], zoom)
 	ur <- LatLon2XY(latR.new[2], lonR.new[2], zoom)
@@ -205,24 +204,22 @@ Get.map.size= function(){
 	ur.Rcoords <- Tile2R(ur, cr)
 	size[1] <- 2 * max(c(ceiling(abs(ll.Rcoords$X)), ceiling(abs(ur.Rcoords$X)))) + 1
 	size[2] <- 2 * max(c(ceiling(abs(ll.Rcoords$Y)), ceiling(abs(ur.Rcoords$Y)))) + 1
-	size = c(max(size),max(size))
+
 	###transform the size ratio to be the same as window.size's ratio
 	if(win.size[1] > win.size[2])
-	{
-		size[1] = round(size[2]*(win.size[1]/win.size[2]),0)
-		size[2] = size[2]	
+	{	
+		size[2] = round(640*(win.size[2]/win.size[1]),0)
+		size[1] = 640
 	}else
-	{
-		size[2] = round(size[1]*(win.size[2]/win.size[1]),0)
-		size[1] = size[1]
+	{	
+		size[1] = round(640*(win.size[1]/win.size[2]),0)
+		size[2] = 640	
 	}
-	
-	size.final = size
-	if(size[1] > 640) {size.final = round(c(640,640 * win.size[2]/win.size[1]))}
-	if(size[2] > 640) {size.final = round(c(640 * win.size[1]/win.size[2],640))}
 		
+	
+	print(list(zoom = zoom, size = size))
 	###hence the we will get the map with this zoom and size
-	list(zoom = zoom, size = size.final)
+	list(zoom = zoom, size = size)
 
 }
 
