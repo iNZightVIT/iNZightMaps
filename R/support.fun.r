@@ -11,7 +11,8 @@ function(data,map)
 getNewMap <- function(xlim, ylim, SCALE, type,zoom) {	
 
 	map <- GetMap(center = c(mean(ylim),mean(xlim)), size = Get.map.size()$size,zoom = zoom,maptype = type,SCALE =SCALE)
-	assign("global.objects", list(map = map), envir = .GlobalEnv)
+	global.objects$maps$map= map
+	assign("global.objects", global.objects, envir = .GlobalEnv)
 }
 
 
@@ -21,23 +22,30 @@ getNewMap <- function(xlim, ylim, SCALE, type,zoom) {
 needNewMap <- function(bbox,window,size,SCALE,type)
 {
 	need = FALSE	
-	map.odd = global.objects$map
+	map.odd = global.objects$maps$map
+	##check for the map object
 	if(any(map.odd == NULL))
+	{
+		print('no map object!!!')
 		need = TRUE
-	else{
-		##checking for latitude/longitude range of the map
-		if( is.null(global.objects$map.detail$bbox) ||  is.null(global.objects$map.detail$size) || 
-			is.null(global.objects$map.detail$scale) || is.null(global.objects$map.detail$type) || is.null(global.objects$map.detail$window))
+	}
+	else
+	{
+		##check if any null
+		if( is.null(global.objects$maps$map.detail$bbox) ||  is.null(global.objects$maps$map.detail$size) || 
+			is.null(global.objects$maps$map.detail$scale) || is.null(global.objects$maps$map.detail$type) || 
+			is.null(global.objects$maps$map.detail$window))
 		{
 			print('something is null~~~~')	
 			need = TRUE
 		}else
 		{
-			a = global.objects$map.detail$bbox
+			##individual checking
+			a = global.objects$maps$map.detail$bbox
 			b = bbox
 			if(any(abs(a - b) > 0.5) )
 			{
-				global.objects$map.detail$bbox = bbox
+				global.objects$maps$map.detail$bbox = bbox
 				print('BBOX changed!')
 				need[1] = TRUE					
 			}else
@@ -45,9 +53,9 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 				need[1] = FALSE
 			}
 		
-			if(any(global.objects$map.detail$size != size))
+			if(any(global.objects$maps$map.detail$size != size))
 			{
-				global.objects$map.detail$size = size
+				global.objects$maps$map.detail$size = size
 				print('size changed!')
 				need[2] = TRUE
 				
@@ -55,9 +63,9 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 			{
 				need[2] = FALSE
 			}
-			if(global.objects$map.detail$scale != SCALE)
+			if(global.objects$maps$map.detail$scale != SCALE)
 			{
-				global.objects$map.detail$scale = SCALE
+				global.objects$maps$map.detail$scale = SCALE
 				print('scale changed!')
 				need[3] = TRUE
 				
@@ -66,20 +74,20 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 				need[3] = FALSE
 			}
 			
-			if(type != global.objects$map.detail$type)
+			if(type != global.objects$maps$map.detail$type)
 			{
 				print('type changed!')
-				global.objects$map.detail$type = type
+				global.objects$maps$map.detail$type = type
 				need[4] = TRUE
 			}else
 			{
 				need[4] = FALSE
 			}
 			
-			if(any(global.objects$map.detail$window != window))
+			if(any(global.objects$maps$map.detail$window != window))
 			{
 				print('window changed!')
-				global.objects$map.detail$window = window
+				global.objects$maps$map.detail$window = window
 				need[5] = TRUE
 			}else
 			{
@@ -94,66 +102,21 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 in.maps.range = 
 function(extra = 0)
 {
-        latlon.range = cbind(global.objects$map$BBOX$ll,global.objects$map$BBOX$ur)
-        range.odd = LatLon2XY.centered(global.objects$map,lat = latlon.range[c(1,3)],lon = latlon.range[c(2,4)],
-					zoom = global.objects$map$zoom)
+        latlon.range = cbind(global.objects$maps$map$BBOX$ll,global.objects$maps$map$BBOX$ur)
+        range.odd = LatLon2XY.centered(global.objects$maps$map,lat = latlon.range[c(1,3)],lon = latlon.range[c(2,4)],
+					zoom = global.objects$maps$map$zoom)
         range.newX = range.odd$newX + extra * range.odd$newX
         range.newY = range.odd$newY + extra * range.odd$newY
         c(range.newX,range.newY)
 }
 
 
-
-####haven't finished yet, do not use~~
-maps.actual.latlon = function(latR,lonR){
-	lat.center <- mean(latR)
-	lon.center <- mean(lonR)
-	size = c(640,640)
-	zoom <- min(MaxZoom(latR, lonR, size))
-	print(zoom)
-	cr <- LatLon2XY(lat.center, lon.center, zoom)
-	ll <- LatLon2XY(latR[1], lonR[1], zoom)
-	ur <- LatLon2XY(latR[2], lonR[2], zoom)
-	cr <- LatLon2XY(lat.center, lon.center, zoom)
-	ll.Rcoords <- Tile2R(ll, cr)
-	ur.Rcoords <- Tile2R(ur, cr)
-	size[1] <- 2 * max(c(ceiling(abs(ll.Rcoords$X)), ceiling(abs(ur.Rcoords$X)))) + 
-	1
-	size[2] <- 2 * max(c(ceiling(abs(ll.Rcoords$Y)), ceiling(abs(ur.Rcoords$Y)))) + 
-	1
-	#size[1] = 630
-	size[2] = 778
-	MyMap <- list(lat.center = lat.center, lon.center = lon.center, 
-	zoom = zoom, SCALE = 2)
-
-	BBOX <- list(ll = XY2LatLon(MyMap, -size[1]/2 + 0.5, 
-	-size[2]/2 - 0.5), ur = XY2LatLon(MyMap, size[1]/2 + 
-	0.5, size[2]/2 - 0.5))
-	latR = range(data.1$Latitude)
-	lonR = range(data.1$Longitude)
-	ll <- LatLon2XY(latR[1], lonR[1], zoom)
-	ur <- LatLon2XY(latR[2], lonR[2], zoom)
-	cr <- LatLon2XY(lat.center, lon.center, zoom)
-	ll.Rcoords <- Tile2R(ll, cr)
-	ur.Rcoords <- Tile2R(ur, cr)
-	size[1] <- 2 * max(c(ceiling(abs(ll.Rcoords$X)), ceiling(abs(ur.Rcoords$X)))) + 1
-	size[2] <- 2 * max(c(ceiling(abs(ll.Rcoords$Y)), ceiling(abs(ur.Rcoords$Y)))) + 1
-	zoom <- min(MaxZoom(latR, lonR, size))
-	a = GetMap(center = c(lat.center, lon.center),zoom = zoom,size = size)
-	
-	
-	
-	BBOX}
-
-
-
 ###return the size of map that we request the map from google
-###issue::
-####as long as we transformed a sphere-like coordinate into x-y-like coordinate, hence the transformation is not linear
-####hence I can not capture the real-transform ratio(formula) from latitude/longitude into the resolution coordinate
-####the good news is, the transformation ratio seems quite close to 1.38, hence I multiple 1.38 for latitude and longitude before transform them	
-
-Get.map.size= function(){
+###get the range of latitude/longitude, then transform it into resolution unit, 
+###then make it into the same ratio as the window's
+###also make sure the size lie on the interval of [0,640]
+Get.map.size= function()
+{
 	win.size= c(
 				convertWidth(current.viewport()$width, "mm", TRUE), 
 				convertHeight(current.viewport()$height, "mm", TRUE)
@@ -161,50 +124,30 @@ Get.map.size= function(){
 
 	latR.odd = range(data.1$Latitude)
 	lonR.odd = range(data.1$Longitude)
-
-	lat.length.odd = latR.odd[2] - latR.odd[1]
-	lon.length.odd = lonR.odd[2] - lonR.odd[1]
-	size = 0
 	
-	####transformation of the latitude and longitude, make sure the ratio are the same as the plot window size
-	####for example, if x > y, then we keep x remain the same, and then transform y to make sure that r = x/y = x.window/y.window
-	####then get the new coordinates limit for y
-	if (win.size[2] > win.size[1])
+	###give an origin size that helps to compute the zoom
+	if(win.size[1] > win.size[2])
 	{
-		lonR.new = lonR.odd
-		ratio = win.size[1]/win.size[2]
-
-		lat.length.new = lon.length.odd / ratio
-		latR.new = c(latR.odd[1] - (lat.length.new - lat.length.odd)/2,latR.odd[2] + (lat.length.new - lat.length.odd)/2)
+	size.1 = round(c(640 ,640 * win.size[2] / win.size[1]))
+	}else
+	{
+	size.1 = round(c(640 * win.size[1] / win.size[2], 640))
 	}
-	else
-	{
-		latR.new = latR.odd
-		ratio = win.size[1]/win.size[2]
-
-		lon.length.new = lat.length.odd * ratio
-		lonR.new = c(lonR.odd[1] - (lon.length.new - lon.length.odd)/2,lonR.odd[2] + (lon.length.new - lon.length.odd)/2)
-
-	}    
-	####sicne the 'rgoogle' package cannot have a size > 640 hence the transformation is needed
-	###here we need to set the pre-map resolution for the map that we request first inorder to calculate the zoom(otherwise the zoom will remains the same)
-    if (win.size[1] > win.size[2])
-        size.1 <- round(c(640, 640 * win.size[2] / win.size[1]))
-    else
-        size.1 <- round(c(640 * win.size[1] / win.size[2], 640))
 
 	####stuff from 'Getmap' and 'Getmap.bbox' from 'rgooglemaps' package
-	###overall, it does the transformation, by give a lititude and longitude and transform to the map resolution
-	lat.center = mean(latR.new)
-	lon.center = mean(lonR.new)
-	zoom <- min(MaxZoom(latR.new, lonR.new, size.1))
-	ll <- LatLon2XY(latR.new[1], lonR.new[1], zoom)
-	ur <- LatLon2XY(latR.new[2], lonR.new[2], zoom)
+	###Overall it transform the latitude/longitude into the size of resolution
+	lat.center = mean(latR.odd)
+	lon.center = mean(lonR.odd)
+	zoom <- min(MaxZoom(latR.odd, lonR.odd, size.1))
+	ll <- LatLon2XY(latR.odd[1], lonR.odd[1], zoom)
+	ur <- LatLon2XY(latR.odd[2], lonR.odd[2], zoom)
 	cr <- LatLon2XY(lat.center, lon.center, zoom)
 	ll.Rcoords <- Tile2R(ll, cr)
 	ur.Rcoords <- Tile2R(ur, cr)
-	size[1] <- 2 * max(c(ceiling(abs(ll.Rcoords$X)), ceiling(abs(ur.Rcoords$X)))) + 1
-	size[2] <- 2 * max(c(ceiling(abs(ll.Rcoords$Y)), ceiling(abs(ur.Rcoords$Y)))) + 1
+	size = 0
+	size[1] <- 2 * max(c(ceiling(abs(ll.Rcoords$X)), ceiling(abs(ur.Rcoords$X))))
+	size[2] <- 2 * max(c(ceiling(abs(ll.Rcoords$Y)), ceiling(abs(ur.Rcoords$Y))))
+	###first get a square with the maximum length
 	size = c(max(size),max(size))
 	###transform the size ratio to be the same as window.size's ratio
 	if(win.size[1] > win.size[2])
@@ -217,12 +160,16 @@ Get.map.size= function(){
 		size[1] = size[1]
 	}
 	
+	##rearrange the ratio if any > 640
 	size.final = size
 	if(size[1] > 640) {size.final = round(c(640,640 * win.size[2]/win.size[1]))}
 	if(size[2] > 640) {size.final = round(c(640 * win.size[1]/win.size[2],640))}
-		
+	
+	ZoomSize = list(zoom = zoom, size = size.final)
+	#print(ZoomSize)
+	print(win.size)
+	ZoomSize
 	###hence the we will get the map with this zoom and size
-	list(zoom = zoom, size = size.final)
 
 }
 

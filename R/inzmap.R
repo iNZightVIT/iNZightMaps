@@ -33,7 +33,7 @@ plot.inzmap <- function(obj, gen) {
 	win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
 	win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
 	SCALE  <-  2
-	size = global.objects$map$size
+	size = global.objects$maps$map$size
 	valid.maptypes = c("roadmap", "mobile", "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid")
 	type <- if ("maptype" %in% names(opts$plot.features)) opts$plot.features$maptype else "roadmap"
 
@@ -49,19 +49,17 @@ plot.inzmap <- function(obj, gen) {
 	{
 		getNewMap(xlim = xlim, ylim = ylim, SCALE = SCALE, type = type,zoom = Get.map.size()$zoom)
 		##updating
-		global.objects$map.detail$window = c(win.width,win.height)
-		global.objects$map.detail$bbox = c(xlim,ylim)
-		global.objects$map.detail$size = global.objects$map$size
-		global.objects$map.detail$scale= global.objects$map$SCALE
-		global.objects$map.detail$type = type
+		global.objects$maps$map.detail$window = c(win.width,win.height)
+		global.objects$maps$map.detail$bbox = c(xlim,ylim)
+		global.objects$maps$map.detail$size = global.objects$maps$map$size
+		global.objects$maps$map.detail$scale= global.objects$maps$map$SCALE
+		global.objects$maps$map.detail$type = type
 		assign("global.objects", global.objects, envir = .GlobalEnv)
 
 	}
 
-
-	
 	###drawing~~~~
-	grid.raster(global.objects$map$myTile,0.5,0.5)
+	grid.raster(global.objects$maps$map$myTile,0.5,0.5,0.99,0.99)
 	
 	####define the limit
 	tmp = in.maps.range()
@@ -69,7 +67,7 @@ plot.inzmap <- function(obj, gen) {
 	yl = tmp[3:4]
 
 	##setting the viewport
-	vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
+	vp = viewport(0.5,0.5,0.99,0.99,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
 	pushViewport(vp)
 	
 	##transform the points
