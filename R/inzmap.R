@@ -59,7 +59,7 @@ plot.inzmap <- function(obj, gen) {
 	}
 
 	###drawing~~~~
-	grid.raster(global.objects$maps$map$myTile,0.5,0.5,0.99,0.99)
+	grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)
 	
 	####define the limit
 	tmp = in.maps.range()
@@ -67,12 +67,12 @@ plot.inzmap <- function(obj, gen) {
 	yl = tmp[3:4]
 
 	##setting the viewport
-	vp = viewport(0.5,0.5,0.99,0.99,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
+	vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
 	pushViewport(vp)
 	
 	##transform the points
 	dd = cbind(obj$y,obj$x)
-	point = latlon.xy(dd,map = global.objects$map)
+	point = latlon.xy(dd,map = global.objects$maps$map)
 
 	
 	
