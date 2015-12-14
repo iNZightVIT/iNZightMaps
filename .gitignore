@@ -8,3 +8,4 @@ Examples
 notes
 dev
 .Rbuildignore
+*~

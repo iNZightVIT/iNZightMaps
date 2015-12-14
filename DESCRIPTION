@@ -1,14 +1,17 @@
 Package: iNZightMaps
 Type: Package
 Title: iNZightMaps
-Version: 0.1-900
-Authors@R: c(person("Eric", "Lim", role = c("aut", "cre"),
-           email = "jlim062@aucklanduni.ac.nz"))
+Version: 0.2-900
+Authors@R: c(person("Eric", "Lim", role = c("aut"),
+                    email = "jlim062@aucklanduni.ac.nz"),
+             person("Jason", "Wen", role = c("cre", "aut"),
+	            email = "jwen246@aucklanduni.ac.nz"),
+             person("Tom", "Elliott", role = "aut",
+	            email = "tom.elliott@auckland.ac.nz"))
 Depends:
-    R(>= 3.1.1)
+    R (>= 3.0)
 Imports:
-    ggplot2,
-    ggmap
+    RgoogleMaps, iNZightPlots, grid
 Suggests:
     iNZight
 Description: Simple plotting functions for geographical data.

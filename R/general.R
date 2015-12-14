@@ -1,4 +1,12 @@
 ####wrap function for LatLon2XY
+##' desc
+##'
+##' det
+##' @title title
+##' @param data 
+##' @param map 
+##' @return something
+##' @author tell029
 latlon.xy = 
 function(data,map)
 {
@@ -8,6 +16,17 @@ function(data,map)
 
 
 ####gat a newmap and assign to global env
+##' desc
+##'
+##' det
+##' @title title
+##' @param xlim 
+##' @param ylim 
+##' @param SCALE 
+##' @param type 
+##' @param zoom 
+##' @return something
+##' @author tell029
 getNewMap <- function(xlim, ylim, SCALE, type,zoom) {	
 
 	map <- GetMap(center = c(mean(ylim),mean(xlim)), size = Get.map.size(xlim,ylim)$size,zoom = zoom,maptype = type,SCALE =SCALE)
@@ -19,6 +38,17 @@ getNewMap <- function(xlim, ylim, SCALE, type,zoom) {
 
 ####return TRUE if we something changed or firt plotting
 ####FALSE if nothing is changed 
+##' desc
+##'
+##' det
+##' @title title
+##' @param bbox 
+##' @param window 
+##' @param size 
+##' @param SCALE 
+##' @param type 
+##' @return something
+##' @author tell029
 needNewMap <- function(bbox,window,size,SCALE,type)
 {
 	need = FALSE
@@ -26,7 +56,7 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 	##check for the map object
 	if(any(map.odd == NULL))
 	{
-		print('no map object!!!')
+		#print('no map object!!!')
 		need = TRUE
 	}
 	else
@@ -36,7 +66,7 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 			is.null(global.objects$maps$map.detail$scale) || is.null(global.objects$maps$map.detail$type) || 
 			is.null(global.objects$maps$map.detail$window))
 		{
-			print('something is null~~~~')	
+			#print('something is null~~~~')	
 			need = TRUE
 		}else
 		{
@@ -46,7 +76,7 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 			if(any(abs(a - b) > 0.5) )
 			{
 				global.objects$maps$map.detail$bbox = bbox
-				print('BBOX changed!')
+				#print('BBOX changed!')
 				need[1] = TRUE					
 			}else
 			{
@@ -56,7 +86,7 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 			if(any(global.objects$maps$map.detail$size != size))
 			{
 				global.objects$maps$map.detail$size = size
-				print('size changed!')
+				#print('size changed!')
 				need[2] = TRUE
 				
 			}else
@@ -66,7 +96,7 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 			if(global.objects$maps$map.detail$scale != SCALE)
 			{
 				global.objects$maps$map.detail$scale = SCALE
-				print('scale changed!')
+				#print('scale changed!')
 				need[3] = TRUE
 				
 			}else
@@ -76,7 +106,7 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 			
 			if(type != global.objects$maps$map.detail$type)
 			{
-				print('type changed!')
+				#print('type changed!')
 				global.objects$maps$map.detail$type = type
 				need[4] = TRUE
 			}else
@@ -86,7 +116,7 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 			
 			if(any(global.objects$maps$map.detail$window != window))
 			{
-				print('window changed!')
+				#print('window changed!')
 				global.objects$maps$map.detail$window = window
 				need[5] = TRUE
 			}else
@@ -103,6 +133,15 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 ###get the range of latitude/longitude, then transform it into resolution unit, 
 ###then make it into the same ratio as the window's
 ###also make sure the size lie on the interval of [0,640]
+##' desc
+##'
+##' det
+##' @title title
+##' @param latR.odd 
+##' @param lonR.odd 
+##' @param SCALE 
+##' @return something
+##' @author tell029
 Get.map.size = function(latR.odd,lonR.odd,SCALE)
 {
 	if(missing(latR.odd) || missing(lonR.odd))
@@ -172,6 +211,12 @@ Get.map.size = function(latR.odd,lonR.odd,SCALE)
 }
 
 ##return the range of window and also the scale of the map
+##' desc
+##'
+##' det
+##' @title title
+##' @return something
+##' @author tell029
 map.xylim = function()
 {	
 	ZoomSize = Get.map.size()

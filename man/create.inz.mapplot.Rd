@@ -2,9 +2,9 @@
 % Please edit documentation in R/inzmap.R
 \name{create.inz.mapplot}
 \alias{create.inz.mapplot}
-\title{Create a map object to plot}
+\title{title}
 \usage{
-create.inz.mapplot(obj)
+\method{create}{inz.mapplot}(obj)
 }
 \arguments{
 \item{obj}{an object from within iNZightPlot}
