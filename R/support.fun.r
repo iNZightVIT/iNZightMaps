@@ -10,7 +10,7 @@ function(data,map)
 ####gat a newmap and assign to global env
 getNewMap <- function(xlim, ylim, SCALE, type,zoom) {	
 
-	map <- GetMap(center = c(mean(ylim),mean(xlim)), size = Get.map.size()$size,zoom = zoom,maptype = type,SCALE =SCALE)
+	map <- GetMap(center = c(mean(ylim),mean(xlim)), size = Get.map.size(xlim,ylim)$size,zoom = zoom,maptype = type,SCALE =SCALE)
 	global.objects$maps$map= map
 	assign("global.objects", global.objects, envir = .GlobalEnv)
 }
@@ -21,7 +21,7 @@ getNewMap <- function(xlim, ylim, SCALE, type,zoom) {
 ####FALSE if nothing is changed 
 needNewMap <- function(bbox,window,size,SCALE,type)
 {
-	need = FALSE	
+	need = FALSE
 	map.odd = global.objects$maps$map
 	##check for the map object
 	if(any(map.odd == NULL))
@@ -98,33 +98,31 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 	}
 }
 
-#####return the limit in plot scale because the plot scale != latitude/longitude
-in.maps.range = 
-function(extra = 0)
-{
-        latlon.range = cbind(global.objects$maps$map$BBOX$ll,global.objects$maps$map$BBOX$ur)
-        range.odd = LatLon2XY.centered(global.objects$maps$map,lat = latlon.range[c(1,3)],lon = latlon.range[c(2,4)],
-					zoom = global.objects$maps$map$zoom)
-        range.newX = range.odd$newX + extra * range.odd$newX
-        range.newY = range.odd$newY + extra * range.odd$newY
-        c(range.newX,range.newY)
-}
-
 
 ###return the size of map that we request the map from google
 ###get the range of latitude/longitude, then transform it into resolution unit, 
 ###then make it into the same ratio as the window's
 ###also make sure the size lie on the interval of [0,640]
-Get.map.size= function()
+Get.map.size = function(latR.odd,lonR.odd,SCALE)
 {
+	if(missing(latR.odd) || missing(lonR.odd))
+	{
+		latR.odd = current.viewport()$xscale
+		lonR.odd = current.viewport()$yscale
+	}
+	if(missing(SCALE))
+	{
+		SCALE = global.objects$maps$map.detail$scale
+	}
 	win.size= c(
 				convertWidth(current.viewport()$width, "mm", TRUE), 
 				convertHeight(current.viewport()$height, "mm", TRUE)
 				)
 
-	latR.odd = range(data.1$Latitude)
-	lonR.odd = range(data.1$Longitude)
-	
+
+	latR.odd = current.viewport()$yscale  
+	lonR.odd = current.viewport()$xscale
+
 	###give an origin size that helps to compute the zoom
 	if(win.size[1] > win.size[2])
 	{
@@ -165,11 +163,25 @@ Get.map.size= function()
 	if(size[1] > 640) {size.final = round(c(640,640 * win.size[2]/win.size[1]))}
 	if(size[2] > 640) {size.final = round(c(640 * win.size[1]/win.size[2],640))}
 	
+
 	ZoomSize = list(zoom = zoom, size = size.final)
 	#print(ZoomSize)
-	print(win.size)
 	ZoomSize
 	###hence the we will get the map with this zoom and size
 
 }
 
+##return the range of window and also the scale of the map
+map.xylim = function()
+{	
+	ZoomSize = Get.map.size()
+	scale = global.objects$maps$map$SCALE * 2
+	size = global.objects$maps$map$size
+	offset = 1
+	window.xlim = c(-size[1] + offset, size[1] - offset)/(scale)
+	window.ylim = c(-size[2] + offset, size[2] - offset)/(scale)
+	window.lim = c(window.xlim,window.ylim)
+	global.objects$maps$map.detail$xylim = window.lim
+	assign("global.objects", global.objects, envir = .GlobalEnv)
+	list(window.lim = window.lim)
+}

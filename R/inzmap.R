@@ -30,6 +30,8 @@ plot.inzmap <- function(obj, gen) {
 	###setting
 	xlim <- current.viewport()$xscale
 	ylim <- current.viewport()$yscale
+	#xlim = range(data.1$Longitude)
+	#ylim = range(data.1$Latitude)
 	win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
 	win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
 	SCALE  <-  2
@@ -47,7 +49,9 @@ plot.inzmap <- function(obj, gen) {
 	print(paste('get.newmap:',get.newmap))
 	if(get.newmap) 
 	{
-		getNewMap(xlim = xlim, ylim = ylim, SCALE = SCALE, type = type,zoom = Get.map.size()$zoom)
+		print(xlim)
+		print(ylim)
+		getNewMap(xlim = xlim, ylim = ylim, SCALE = SCALE, type = type,zoom = Get.map.size(xlim,ylim)$zoom)
 		##updating
 		global.objects$maps$map.detail$window = c(win.width,win.height)
 		global.objects$maps$map.detail$bbox = c(xlim,ylim)
@@ -62,7 +66,7 @@ plot.inzmap <- function(obj, gen) {
 	grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)
 	
 	####define the limit
-	tmp = in.maps.range()
+	tmp = map.xylim()$window.lim
 	xl =tmp[1:2]
 	yl = tmp[3:4]
 
