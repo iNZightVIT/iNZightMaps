@@ -48,19 +48,23 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data)), ...) {
 ##' @author Tom Elliott
 ##' @export
 plot.inzightmap <- function(x, ...) {
-    args <- list(...)
-    args$x <- expression(.longitude)
-    args$y <- expression(.latitude)
-    args$data <- x
-    args$plottype <- "map"
+    mc <- match.call()
+    
+    mc$data <- mc$x
+    mc$x <- expression(.longitude)
+    mc$y <- expression(.latitude)
+    mc$plottype <- "map"
 
     ## set the plot labels:
-    if (is.null(args$main))
-        args$main <- paste("Map of", attr(x, "name"))
-    if (is.null(args$xlab))
-        args$xlab <- ""
-    if (is.null(args$ylab))
-        args$ylab <- ""
+    if (is.null(mc$main))
+        mc$main <- paste("Map of", attr(x, "name"))
+    if (is.null(mc$xlab))
+        mc$xlab <- ""
+    if (is.null(mc$ylab))
+        mc$ylab <- ""
 
-    do.call(iNZightPlot, args)
+    mc[1] <- expression(iNZightPlot)
+    
+    eval(mc)
+    
 }
