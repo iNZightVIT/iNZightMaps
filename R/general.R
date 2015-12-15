@@ -210,12 +210,11 @@ Get.map.size = function(latR.odd,lonR.odd,SCALE)
 
 }
 
-##return the range of window and also the scale of the map
-##' desc
+##' return the limit of x-axis and y-axis of the plot.
 ##'
-##' det
-##' @title title
-##' @return something
+##' the map.xylim function does not contain any arguments, and it returns the limit of x-axis and y-axis after the plot called.
+##' @title get the limit of x-axis and y-axis
+##' @return return a list that contain the limit of x-axis and y-axis 
 ##' @author tell029
 map.xylim = function()
 {	
