@@ -1,6 +1,6 @@
 ##' Transform the latitude and longitude into xy
 ##'
-##' det
+##' wrap function for LatLon2XY from 'RgoogleMaps' package
 ##' @title latlon.xy
 ##' @param data  the data set that use for plotting, the first cloumn needs to be Longitude and the second column needs to be Latitude.
 ##' @param map   a map object from RgoogleMaps package.
