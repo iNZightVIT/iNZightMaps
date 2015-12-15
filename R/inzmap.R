@@ -8,6 +8,20 @@
 create.inz.mapplot <- function(obj) {
     out <- NextMethod()
 
+    features <- obj$opts$plot.features
+
+    ## sort out opacity
+    if (!is.null(features$opacity)) {
+        opacity.var <- obj$df[[features$opacity]]
+        
+        ## transform it
+        ## out$opacity <- opacity.var.transformed
+        
+    }
+
+    ## check the map type
+    
+
     out$draw.axes <- FALSE
     out$global.object <- list("map" = NULL)
     
