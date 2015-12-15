@@ -7,26 +7,20 @@
 ##' @export
 create.inz.mapplot <- function(obj) {
     out <- NextMethod()
-
     features <- obj$opts$plot.features
-
     ## sort out opacity
     if (!is.null(features$opacity)) {
         opacity.var <- obj$df[[features$opacity]]
-        
-        ## transform it
-        ## out$opacity <- opacity.var.transformed
+        ratio = 0.7
+        opacity.var.transformed = (abs(opacity.var/min(opacity.var))*ratio+ (1 - ratio))
+        out$opacity <- opacity.var.transformed
         
     }
 
-    ## check the map type
-    
-
+  
     out$draw.axes <- FALSE
-    out$global.object <- list("map" = NULL)
-    
+
     class(out) <- c("inzmap", class(out))
-    
     out
 }
 
@@ -44,11 +38,16 @@ create.inz.mapplot <- function(obj) {
 ##' @import RgoogleMaps
 ##' @export
 plot.inzmap <- function(obj, gen) {	
-    print('something')
-    print('ssomething')
     opts <- gen$opts
     mcex <- gen$mcex
     col.args <- gen$col.args
+    if(is.null(obj$opacity))
+    {
+      opacity = 1
+    }else
+      {
+    opacity = obj$opacity
+      }
     debug <- if (is.null(opts$debug)) FALSE else opts$debug
     
     ## create a global object
@@ -119,10 +118,9 @@ plot.inzmap <- function(obj, gen) {
 	gp =
             gpar(col = ptCols,
                  cex = obj$propsize,
-                 lwd = opts$lwd.pt, alpha = opts$alpha,
+                 lwd = opts$lwd.pt, alpha = opts$alpha * opacity,
                  fill = obj$fill.pt),
                 name = "SCATTERPOINTS")
-    
     invisible(NULL)
 }
 
