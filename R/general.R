@@ -1,12 +1,12 @@
-####wrap function for LatLon2XY
-##' desc
+##' Transform the latitude and longitude into xy
 ##'
 ##' det
-##' @title123123123title
-##' @param data 
-##' @param map 
-##' @return something
-##' @author tell029
+##' @title latlon.xy
+##' @param data  the data set that use for plotting, the first cloumn needs to be Longitude and the second column needs to be Latitude.
+##' @param map   a map object from RgoogleMaps package.
+##' @return a list that contain the tramsformed x and y.
+##' @author Jason Wen
+##' @export
 latlon.xy = 
 function(data,map)
 {
@@ -15,21 +15,21 @@ function(data,map)
 }
 
 
-####gat a newmap and assign to global env
-##' desc
+####gat a new map object and assign to global env
+##' Get a new map and save it into Global Env
 ##'
 ##' det
-##' @title title
-##' @param xlim 
-##' @param ylim 
-##' @param SCALE 
-##' @param type 
-##' @param zoom 
-##' @return something
-##' @author tell029
+##' @title Get an new map object
+##' @param xlim the range of latitude
+##' @param ylim the range of longitude
+##' @param SCALE variable from GetMap, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map 
+##' @param variable from GetMap, type defines the type of map to construct. There are several possible maptype values, including satellite, terrain, hybrid, and mobile.
+##' @param zoom variable from GetMap, Google maps zoom level.
+##' @return a map object
+##' @author Jason Wen
 getNewMap <- function(xlim, ylim, SCALE, type,zoom) {	
 
-	map <- GetMap(center = c(mean(ylim),mean(xlim)), size = Get.map.size(xlim,ylim)$size,zoom = zoom,maptype = type,SCALE =SCALE)
+	map <- GetMap(center = c(mean(xlim),mean(ylim)), size = Get.map.size(xlim,ylim)$size,zoom = zoom,maptype = type,SCALE =SCALE)
 	global.objects$maps$map= map
 	assign("global.objects", global.objects, envir = .GlobalEnv)
 }
@@ -38,17 +38,17 @@ getNewMap <- function(xlim, ylim, SCALE, type,zoom) {
 
 ####return TRUE if we something changed or firt plotting
 ####FALSE if nothing is changed 
-##' desc
+##' Do we need a new map or not
 ##'
-##' det
-##' @title title
-##' @param bbox 
-##' @param window 
-##' @param size 
-##' @param SCALE 
-##' @param type 
-##' @return something
-##' @author tell029
+##' A function for checking wheather we need to download a new map from google or not, it checks the input with the global inzight objects, if something if not matched, then return TRUE, otherwise FALSE.
+##' @title Need New Map
+##' @param bbox a numeric vector of length 4, the range of the pervious latitude and longitude
+##' @param window a numeric vector of length 2, the size of the pervious window
+##' @param size a numeric vector of length 2, the size of the pervious map 
+##' @param SCALE a numeric vector of length 1, the scale of the pervious map 
+##' @param a character vector of length 1, type the type of the pervious map 
+##' @return Logical value TRUE/FALSE TRUE = something are not matched, FALSE = the pervious map is ok for re-use.
+##' @author Jason Wen
 needNewMap <- function(bbox,window,size,SCALE,type)
 {
 	need = FALSE
@@ -133,15 +133,15 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 ###get the range of latitude/longitude, then transform it into resolution unit, 
 ###then make it into the same ratio as the window's
 ###also make sure the size lie on the interval of [0,640]
-##' desc
+##' compute the size and the zoom level that needs for request a new map.
 ##'
-##' det
-##' @title title
-##' @param latR.odd 
-##' @param lonR.odd 
-##' @param SCALE 
-##' @return something
-##' @author tell029
+##' since the size of the map should not greater than 640, the size and the zoom needs to be transform before pass to the getNewMap function. 
+##' @title Get the size of the map in pixels
+##' @param latR.odd a numeric vector of length 2, the range of Latitude
+##' @param lonR.odd a numeric vector of length 2, the range of Longitude
+##' @param SCALE variable from GetMap, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map 
+##' @return a list that contain the size of the map(in pixels), and the zoom level
+##' @author Jason Wen
 Get.map.size = function(latR.odd,lonR.odd,SCALE)
 {
 	if(missing(latR.odd) || missing(lonR.odd))
@@ -159,8 +159,8 @@ Get.map.size = function(latR.odd,lonR.odd,SCALE)
 				)
 
 
-	latR.odd = current.viewport()$yscale  
-	lonR.odd = current.viewport()$xscale
+	latR.odd = current.viewport()$xscale  
+	lonR.odd = current.viewport()$yscale
 
 	###give an origin size that helps to compute the zoom
 	if(win.size[1] > win.size[2])

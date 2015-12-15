@@ -23,7 +23,7 @@ create.inz.mapplot <- function(obj) {
 ##'
 ##' det
 ##' @title Plot an iNZight Map 
-##' @param obj 
+##' @param obj wfewfewf
 ##' @param gen 
 ##' @return NULL
 ##' @author Jason Wen
@@ -90,7 +90,7 @@ plot.inzmap <- function(obj, gen) {
     pushViewport(vp)
     
     ## transform the points
-    dd = cbind(obj$y,obj$x)
+    dd = cbind(obj$x,obj$y)
     point = latlon.xy(dd,map = global.objects$maps$map)
 
     ## other scatter plot things
