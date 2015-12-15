@@ -4,7 +4,7 @@
 \alias{create.inz.mapplot}
 \title{title}
 \usage{
-create.inz.mapplot(obj)
+\method{create}{inz.mapplot}(obj)
 }
 \arguments{
 \item{obj}{an object from within iNZightPlot}

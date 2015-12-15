@@ -9,5 +9,3 @@ notes
 dev
 .Rbuildignore
 *~
-
-_scripts/*
