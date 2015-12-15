@@ -2,25 +2,25 @@
 % Please edit documentation in R/general.R
 \name{latlon.xy}
 \alias{latlon.xy}
-\title{title}
+\title{latlon.xy}
 \usage{
 latlon.xy(data, map)
 }
 \arguments{
-\item{data}{}
+\item{data}{the data set that use for plotting, the first cloumn needs to be Longitude and the second column needs to be Latitude.}
 
-\item{map}{}
+\item{map}{a map object from RgoogleMaps package.}
 }
 \value{
-something
+a list that contain the tramsformed x and y.
 }
 \description{
-desc
+Transform the latitude and longitude into xy
 }
 \details{
-det
+wrap function for \link{LatLon2XY} from 'RgoogleMaps' package
 }
 \author{
-tell029
+Jason Wen
 }
 

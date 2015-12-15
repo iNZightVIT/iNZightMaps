@@ -15,10 +15,10 @@
 iNZightPlot object
 }
 \description{
-.. content for \description{} (no empty lines) ..
+plot iNZight Map Object
 }
 \details{
-.. content for \details{} ..
+None.
 }
 \author{
 Tom Elliott

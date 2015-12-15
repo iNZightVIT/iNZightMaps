@@ -2,18 +2,18 @@
 % Please edit documentation in R/general.R
 \name{map.xylim}
 \alias{map.xylim}
-\title{title}
+\title{get the limit of x-axis and y-axis}
 \usage{
 map.xylim()
 }
 \value{
-something
+return a list that contain the limit of x-axis and y-axis
 }
 \description{
-desc
+return the limit of x-axis and y-axis of the plot.
 }
 \details{
-det
+the map.xylim function does not contain any arguments, and it returns the limit of x-axis and y-axis after the plot called.
 }
 \author{
 tell029

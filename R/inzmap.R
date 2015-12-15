@@ -19,21 +19,22 @@ create.inz.mapplot <- function(obj) {
 
 
 
-##' desc
+##' draw a map by passing an iNZightPlot object
 ##'
-##' det
+##' the function will also returns a global object which called global.objects
 ##' @title Plot an iNZight Map 
-##' @param obj wfewfewf
-##' @param gen 
+##' @param obj object passed from iNZightPlot
+##' @param gen other options passed from iNZightPlot
 ##' @return NULL
-##' @author Jason Wen
+##' @author Jason Wen 
 ##' @import RgoogleMaps
 ##' @export
 plot.inzmap <- function(obj, gen) {	
+    print('something')
+    print('ssomething')
     opts <- gen$opts
     mcex <- gen$mcex
     col.args <- gen$col.args
-
     debug <- if (is.null(opts$debug)) FALSE else opts$debug
     
     ## create a global object

@@ -19,10 +19,10 @@ iNZightMap(lat, lon, data, name = deparse(substitute(data)), ...)
 data frame object with class \code{inzightmap}
 }
 \description{
-Description here
+Create an iNZight Map Object and pass to the plot
 }
 \details{
-Details here
+None.
 }
 \author{
 tell029

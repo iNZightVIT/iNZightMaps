@@ -1,6 +1,6 @@
-##' Description here
+##' Create an iNZight Map Object and pass to the plot
 ##'
-##' Details here
+##' None.
 ##' @title Create an iNZight Map Object
 ##' @param lat a formula specifying the name oe the latitude variable in \code{data}
 ##' @param lon a formula specifying the name oe the longitude variable in \code{data}
@@ -38,9 +38,9 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data)), ...) {
     data
 }
 
-##' .. content for \description{} (no empty lines) ..
+##' plot iNZight Map Object
 ##'
-##' .. content for \details{} ..
+##' None.
 ##' @title Plot iNZight Map Object
 ##' @param x an object of class \code{inzightmap}
 ##' @param ... extra arguments sent to \code{iNZightPlot}

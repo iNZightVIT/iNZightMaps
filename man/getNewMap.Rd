@@ -2,31 +2,31 @@
 % Please edit documentation in R/general.R
 \name{getNewMap}
 \alias{getNewMap}
-\title{title}
+\title{Get an new map object}
 \usage{
 getNewMap(xlim, ylim, SCALE, type, zoom)
 }
 \arguments{
-\item{xlim}{}
+\item{xlim}{the range of latitude}
 
-\item{ylim}{}
+\item{ylim}{the range of longitude}
 
-\item{SCALE}{}
+\item{SCALE}{variable from \link{GetMap}, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map}
 
-\item{type}{}
+\item{zoom}{variable from \link{GetMap}, Google maps zoom level.}
 
-\item{zoom}{}
+\item{variable}{from \link{GetMap}, type defines the type of map to construct. There are several possible maptype values, including satellite, terrain, hybrid, and mobile.}
 }
 \value{
-something
+a map object
 }
 \description{
-desc
+Get a new map and save it into Global Env
 }
 \details{
-det
+a wrap function of \link{GetMap} from package 'RgoogleMaps'
 }
 \author{
-tell029
+Jason Wen
 }
 

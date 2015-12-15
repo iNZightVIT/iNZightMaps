@@ -2,27 +2,27 @@
 % Please edit documentation in R/general.R
 \name{Get.map.size}
 \alias{Get.map.size}
-\title{title}
+\title{Get the size of the map in pixels}
 \usage{
 Get.map.size(latR.odd, lonR.odd, SCALE)
 }
 \arguments{
-\item{latR.odd}{}
+\item{latR.odd}{a numeric vector of length 2, the range of Latitude}
 
-\item{lonR.odd}{}
+\item{lonR.odd}{a numeric vector of length 2, the range of Longitude}
 
-\item{SCALE}{}
+\item{SCALE}{variable from GetMap, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map}
 }
 \value{
-something
+a list that contain the size of the map(in pixels), and the zoom level
 }
 \description{
-desc
+compute the size and the zoom level that needs for request a new map.
 }
 \details{
-det
+since the size of the map should not greater than 640, the size and the zoom needs to be transform before pass to the getNewMap function.
 }
 \author{
-tell029
+Jason Wen
 }
 

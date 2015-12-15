@@ -2,31 +2,31 @@
 % Please edit documentation in R/general.R
 \name{needNewMap}
 \alias{needNewMap}
-\title{title}
+\title{Need New Map}
 \usage{
 needNewMap(bbox, window, size, SCALE, type)
 }
 \arguments{
-\item{bbox}{}
+\item{bbox}{a numeric vector of length 4, the range of the pervious latitude and longitude}
 
-\item{window}{}
+\item{window}{a numeric vector of length 2, the size of the pervious window}
 
-\item{size}{}
+\item{SCALE}{a numeric vector of length 1, the scale of the pervious map}
 
-\item{SCALE}{}
+\item{sized}{a numeric vector of length 2, the size of the pervious map}
 
-\item{type}{}
+\item{a}{character vector of length 1, type the type of the pervious map}
 }
 \value{
-something
+Logical value TRUE/FALSE TRUE = something are not matched, FALSE = the pervious map is ok for re-use.
 }
 \description{
-desc
+Do we need a new map or not
 }
 \details{
-det
+A function for checking wheather we need to download a new map from google or not, it checks the input with the global inzight objects, if something if not matched, then return TRUE, otherwise FALSE.
 }
 \author{
-tell029
+Jason Wen
 }
 

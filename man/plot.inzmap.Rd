@@ -7,15 +7,15 @@
 \method{plot}{inzmap}(obj, gen)
 }
 \arguments{
-\item{obj}{}
+\item{obj}{object passed from iNZightPlot}
 
-\item{gen}{}
+\item{gen}{other options passed from iNZightPlot}
 }
 \description{
-desc
+draw a map by passing an iNZightPlot object
 }
 \details{
-det
+the function will also returns a global object which called global.objects
 }
 \author{
 Jason Wen

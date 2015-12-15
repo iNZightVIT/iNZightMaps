@@ -1,9 +1,9 @@
 ##' Transform the latitude and longitude into xy
 ##'
-##' wrap function for LatLon2XY from 'RgoogleMaps' package
+##' wrap function for \link{LatLon2XY} from 'RgoogleMaps' package
 ##' @title latlon.xy
-##' @param data  the data set that use for plotting, the first cloumn needs to be Longitude and the second column needs to be Latitude.
-##' @param map   a map object from RgoogleMaps package.
+##' @param data the data set that use for plotting, the first cloumn needs to be Longitude and the second column needs to be Latitude.
+##' @param map a map object from RgoogleMaps package.
 ##' @return a list that contain the tramsformed x and y.
 ##' @author Jason Wen
 ##' @export
@@ -15,20 +15,20 @@ function(data,map)
 }
 
 
-####gat a new map object and assign to global env
+####gat a new map object and assign to global environment
 ##' Get a new map and save it into Global Env
 ##'
-##' det
+##' a wrap function of \link{GetMap} from package 'RgoogleMaps'
 ##' @title Get an new map object
 ##' @param xlim the range of latitude
 ##' @param ylim the range of longitude
-##' @param SCALE variable from GetMap, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map 
-##' @param variable from GetMap, type defines the type of map to construct. There are several possible maptype values, including satellite, terrain, hybrid, and mobile.
-##' @param zoom variable from GetMap, Google maps zoom level.
+##' @param SCALE variable from \link{GetMap}, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map 
+##' @param variable from \link{GetMap}, type defines the type of map to construct. There are several possible maptype values, including satellite, terrain, hybrid, and mobile.
+##' @param zoom variable from \link{GetMap}, Google maps zoom level.
 ##' @return a map object
 ##' @author Jason Wen
-getNewMap <- function(xlim, ylim, SCALE, type,zoom) {	
-
+getNewMap <- function(xlim, ylim, SCALE, type,zoom)
+{	
 	map <- GetMap(center = c(mean(xlim),mean(ylim)), size = Get.map.size(xlim,ylim)$size,zoom = zoom,maptype = type,SCALE =SCALE)
 	global.objects$maps$map= map
 	assign("global.objects", global.objects, envir = .GlobalEnv)
@@ -44,7 +44,7 @@ getNewMap <- function(xlim, ylim, SCALE, type,zoom) {
 ##' @title Need New Map
 ##' @param bbox a numeric vector of length 4, the range of the pervious latitude and longitude
 ##' @param window a numeric vector of length 2, the size of the pervious window
-##' @param size a numeric vector of length 2, the size of the pervious map 
+##' @param sized a numeric vector of length 2, the size of the pervious map 
 ##' @param SCALE a numeric vector of length 1, the scale of the pervious map 
 ##' @param a character vector of length 1, type the type of the pervious map 
 ##' @return Logical value TRUE/FALSE TRUE = something are not matched, FALSE = the pervious map is ok for re-use.
