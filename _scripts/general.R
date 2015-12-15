@@ -20,8 +20,8 @@ function(data,map)
 ##'
 ##' a wrap function of \link{GetMap} from package 'RgoogleMaps'
 ##' @title Get an new map object
-##' @param xlim the range of longitude
-##' @param ylim the range of latitude
+##' @param xlim the range of latitude
+##' @param ylim the range of longitude
 ##' @param SCALE variable from \link{GetMap}, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map 
 ##' @param variable from \link{GetMap}, type defines the type of map to construct. There are several possible maptype values, including satellite, terrain, hybrid, and mobile.
 ##' @param zoom variable from \link{GetMap}, Google maps zoom level.
@@ -146,8 +146,8 @@ Get.map.size = function(latR.odd,lonR.odd,SCALE)
 {
 	if(missing(latR.odd) || missing(lonR.odd))
 	{
-		latR.odd = current.viewport()$yscale
-		lonR.odd = current.viewport()$xscale
+		latR.odd = current.viewport()$xscale
+		lonR.odd = current.viewport()$yscale
 	}
 	if(missing(SCALE))
 	{
@@ -159,8 +159,8 @@ Get.map.size = function(latR.odd,lonR.odd,SCALE)
 				)
 
 
-	latR.odd = current.viewport()$yscale  
-	lonR.odd = current.viewport()$xscale
+	latR.odd = current.viewport()$xscale  
+	lonR.odd = current.viewport()$yscale
 
 	###give an origin size that helps to compute the zoom
 	if(win.size[1] > win.size[2])

@@ -8,20 +8,6 @@
 create.inz.mapplot <- function(obj) {
     out <- NextMethod()
 
-    features <- obj$opts$plot.features
-
-    ## sort out opacity
-    if (!is.null(features$opacity)) {
-        opacity.var <- obj$df[[features$opacity]]
-        
-        ## transform it
-        ## out$opacity <- opacity.var.transformed
-        
-    }
-
-    ## check the map type
-    
-
     out$draw.axes <- FALSE
     out$global.object <- list("map" = NULL)
     
@@ -44,8 +30,6 @@ create.inz.mapplot <- function(obj) {
 ##' @import RgoogleMaps
 ##' @export
 plot.inzmap <- function(obj, gen) {	
-    print('something')
-    print('ssomething')
     opts <- gen$opts
     mcex <- gen$mcex
     col.args <- gen$col.args
@@ -81,7 +65,7 @@ plot.inzmap <- function(obj, gen) {
 	{
             if (debug) message(xlim)
             if (debug) message(ylim)
-            getNewMap(xlim = ylim, ylim = xlim, SCALE = SCALE, type = type,zoom = Get.map.size(ylim,xlim)$zoom)
+            getNewMap(xlim = xlim, ylim = ylim, SCALE = SCALE, type = type,zoom = Get.map.size(xlim,ylim)$zoom)
             ## updating
             global.objects$maps$map.detail$window = c(win.width,win.height)
             global.objects$maps$map.detail$bbox = c(xlim,ylim)
@@ -105,7 +89,7 @@ plot.inzmap <- function(obj, gen) {
     pushViewport(vp)
     
     ## transform the points
-    dd = cbind(obj$y,obj$x)
+    dd = cbind(obj$x,obj$y)
     point = latlon.xy(dd,map = global.objects$maps$map)
 
     ## other scatter plot things
