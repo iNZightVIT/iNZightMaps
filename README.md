@@ -23,3 +23,13 @@ data(nzquakes)
 quakes.obj <- iNZightMap(lat = ~Latitude, lon = ~Longitude, data = nzquakes)
 plot(quakes.obj, sizeby = Magnitude, colby = Felt)
 ```
+
+
+## More Advanced Stuff
+
+To get a satellite image and scale opacity by `Depth`:
+
+```{r}
+plot(quakes.obj, sizeby = Magnitude, colby = Felt, extra.vars = "Depth",
+     plot.features = list(maptype = "satellite", opacity = "Depth"))
+```
