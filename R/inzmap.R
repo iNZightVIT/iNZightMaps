@@ -18,6 +18,9 @@ create.inz.mapplot <- function(obj)
 	if(null.type || invalid.type)
 	{
 		map.type <- "roadmap"	
+		if (!"global.objects" %in% ls(envir = .GlobalEnv))
+      assign("global.objects", list(), envir = .GlobalEnv)	
+		
 		global.objects$maps$map.detail$type = map.type
 		assign("global.objects", global.objects, envir = .GlobalEnv)
 		###warning message
@@ -76,11 +79,7 @@ plot.inzmap <- function(obj, gen) {
 
 	debug <- if (is.null(opts$debug)) FALSE else opts$debug
 
-	## create a global object
-	if (!"global.objects" %in% ls(envir = .GlobalEnv))
-	{
-		assign("global.objects", list(), envir = .GlobalEnv)	
-	}
+
 	## setting
 	xlim <- current.viewport()$xscale
 	ylim <- current.viewport()$yscale
@@ -136,9 +135,9 @@ plot.inzmap <- function(obj, gen) {
 		gp =
 			gpar(col = ptCols,
 				cex = obj$propsize,
-			lwd = opts$lwd.pt, alpha = opts$alpha * opacity,
-			fill = obj$fill.pt),
-			name = "SCATTERPOINTS")
+			  lwd = opts$lwd.pt, alpha = opts$alpha * opacity,
+			  fill = obj$fill.pt),
+			  name = "SCATTERPOINTS")
 	invisible(NULL)
 }
 
