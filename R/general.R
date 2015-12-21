@@ -103,7 +103,7 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 			{
 				need[3] = FALSE
 			}
-			print(type)
+			#print(type)
 			if(type != global.objects$maps$map.detail$type)
 			{
 				#print('type changed!')

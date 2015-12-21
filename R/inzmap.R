@@ -8,33 +8,15 @@
 create.inz.mapplot <- function(obj)
 {
 	out <- NextMethod()  
-	###checking the map type is valid or not
 	map.type = obj$opts$plot.features$maptype
-	valid.maptypes = c("roadmap", "mobile", "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid")
+
+        ## Create the global object if it isn't already
+        if (!"global.objects" %in% ls(envir = .GlobalEnv))
+            assign("global.objects", list(), envir = .GlobalEnv)
 	
-	null.type = is.null(map.type)
-	invalid.type = ifelse(null.type,TRUE,!map.type %in% valid.maptypes)
-	
-	if(null.type || invalid.type)
-	{
-		map.type <- "roadmap"	
-		if (!"global.objects" %in% ls(envir = .GlobalEnv))
-      assign("global.objects", list(), envir = .GlobalEnv)	
-		
-		global.objects$maps$map.detail$type = map.type
-		assign("global.objects", global.objects, envir = .GlobalEnv)
-		###warning message
-		if(null.type){
-			warning("maptype does not define, using roadmap")}else{
-		if(invalid.type)
-			warning("maptype was not valid, using roadmap")
-			}
-			
-		
-	}
-	
-	out$map.type = map.type
+	out$map.type <- map.type
 	features <- obj$opts$plot.features
+        
 	## sort out opacity
 	if (!is.null(features$opacity)) 
 	{
@@ -100,12 +82,11 @@ plot.inzmap <- function(obj, gen) {
 		if (debug) message(ylim)
 		getNewMap(xlim = ylim, ylim = xlim, SCALE = SCALE, type = type,zoom = Get.map.size(ylim,xlim)$zoom)
 		## updating
-		global.objects$maps$map.detail$window = c(win.width,win.height)
-		global.objects$maps$map.detail$bbox = c(xlim,ylim)
-		global.objects$maps$map.detail$size = global.objects$maps$map$size
-		global.objects$maps$map.detail$scale= global.objects$maps$map$SCALE
-		global.objects$maps$map.detail$type = type
-		assign("global.objects", global.objects, envir = .GlobalEnv)
+		global.objects$maps$map.detail$window <<- c(win.width,win.height)
+		global.objects$maps$map.detail$bbox <<- c(xlim,ylim)
+		global.objects$maps$map.detail$size <<- global.objects$maps$map$size
+		global.objects$maps$map.detail$scale <<- global.objects$maps$map$SCALE
+		global.objects$maps$map.detail$type <<- type
 	}
 
 	## drawing~~~~

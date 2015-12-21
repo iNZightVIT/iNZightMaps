@@ -2,18 +2,30 @@
 % Please edit documentation in R/mapobject.R
 \name{iNZightMap}
 \alias{iNZightMap}
+\alias{plot.inzightmap}
 \title{Create an iNZight Map Object}
 \usage{
-iNZightMap(lat, lon, data, name = deparse(substitute(data)), ...)
+iNZightMap(lat, lon, data, name = deparse(substitute(data)))
+
+\method{plot}{inzightmap}(x, opacity, type = c("roadmap", "mobile",
+  "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid"), ...)
 }
 \arguments{
-\item{lat}{a formula specifying the name oe the latitude variable in \code{data}}
+\item{lat}{a formula specifying the name of the latitude variable in \code{data}}
 
-\item{lon}{a formula specifying the name oe the longitude variable in \code{data}}
+\item{lon}{a formula specifying the name of the longitude variable in \code{data}}
 
 \item{data}{a data frame}
 
-\item{...}{exta arguments, not used}
+\item{name}{the name of the data set}
+
+\item{x}{an \code{inzightmap} object}
+
+\item{opacity}{character or expression of the variable name to code point opacity by}
+
+\item{type}{the type of map to download from Google}
+
+\item{...}{additional arguments passed to \code{iNZightPlot}}
 }
 \value{
 data frame object with class \code{inzightmap}
@@ -22,9 +34,20 @@ data frame object with class \code{inzightmap}
 Create an iNZight Map Object and pass to the plot
 }
 \details{
-None.
+The plot will download a map that contains all of the points. The size is limited by
+the fixed zoom levels provided by Google's Static Maps API.
+}
+\section{Methods (by generic)}{
+\itemize{
+\item \code{plot}: Plot an \code{inzightmap} object
+}}
+\examples{
+data(nzquakes)
+mapobj <- iNZightMap(lat = ~Latitude, lon = ~Longitude, data = nzquakes)
+plot(mapobj, opacity = ~Depth, colby = Felt, sizeby = Magnitude, type = "terrain")
+
 }
 \author{
-tell029
+Tom Elliott
 }
 

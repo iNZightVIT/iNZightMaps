@@ -1,15 +1,23 @@
 ##' Create an iNZight Map Object and pass to the plot
 ##'
-##' None.
+##' The plot will download a map that contains all of the points. The size is limited by
+##' the fixed zoom levels provided by Google's Static Maps API.
+##' 
 ##' @title Create an iNZight Map Object
-##' @param lat a formula specifying the name oe the latitude variable in \code{data}
-##' @param lon a formula specifying the name oe the longitude variable in \code{data}
+##' @param lat a formula specifying the name of the latitude variable in \code{data}
+##' @param lon a formula specifying the name of the longitude variable in \code{data}
 ##' @param data a data frame
-##' @param ... exta arguments, not used
+##' @param name the name of the data set
 ##' @return data frame object with class \code{inzightmap}
-##' @author tell029
+##' @author Tom Elliott
+##'
+##' @examples
+##' data(nzquakes)
+##' mapobj <- iNZightMap(lat = ~Latitude, lon = ~Longitude, data = nzquakes)
+##' plot(mapobj, opacity = ~Depth, colby = Felt, sizeby = Magnitude, type = "terrain")
+##' 
 ##' @export
-iNZightMap <- function(lat, lon, data, name = deparse(substitute(data)), ...) {
+iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
     if (missing(data))
         stop("iNZightMaps required you to use a data.frame.")
 
@@ -38,16 +46,17 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data)), ...) {
     data
 }
 
-##' plot iNZight Map Object
-##'
-##' None.
-##' @title Plot iNZight Map Object
-##' @param x an object of class \code{inzightmap}
-##' @param ... extra arguments sent to \code{iNZightPlot}
-##' @return iNZightPlot object
-##' @author Tom Elliott
-##' @export
-plot.inzightmap <- function(x, ...) {
+##' @param x an \code{inzightmap} object
+##' @param opacity character or expression of the variable name to code point opacity by
+##' @param type the type of map to download from Google
+##' @param ... additional arguments passed to \code{iNZightPlot}
+##' @describeIn iNZightMap Plot an \code{inzightmap} object
+plot.inzightmap <- function(x,
+                            opacity,
+                            type =
+                                c("roadmap", "mobile", "satellite", "terrain", "hybrid",
+                                  "mapmaker-roadmap", "mapmaker-hybrid"),
+                            ...) {
     mc <- match.call()
     
     mc$data <- mc$x
@@ -55,6 +64,15 @@ plot.inzightmap <- function(x, ...) {
     mc$y <- expression(.latitude)
     mc$plottype <- "map"
 
+    mc$plot.features <- list(maptype = match.arg(type))
+    if (!missing(opacity)) {
+        if (inherits(opacity, "formula")) {
+            opacity <- as.character(opacity)[2]
+        }
+        mc$plot.features$opacity <- opacity
+        mc$extra.vars <- opacity
+    }
+    
     ## set the plot labels:
     if (is.null(mc$main))
         mc$main <- paste("Map of", attr(x, "name"))
@@ -66,5 +84,4 @@ plot.inzightmap <- function(x, ...) {
     mc[1] <- expression(iNZightPlot)
     
     eval(mc)
-    
 }
