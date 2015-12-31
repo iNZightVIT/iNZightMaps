@@ -1,18 +1,13 @@
 library(grid)
-library(raster)
-setwd('C:/Users/jason/Documents/GitHub/iNZightMaps/data')
-source('C:/Users/jason/Desktop/shade.fun.r')
-system.time(shade.map('sha/TASUB2016_HD_Clipped.shp'))
-
-library(shapefiles)
-a = read.shp('au/map.shp')
-data = convert.to.simple(a)
-data.xy = data[,2:3]
-data.plot = split(data.xy, as.factor(data[,1]))
-xlim = range(data.xy[,1])
-ylim = range(data.xy[,2])
-plot(0,0,type = 'n', xlim =xlim,ylim = ylim)
-mapply(polygon,data.plot)
+library(maptools)
+setwd('C:/Users/yeamin/Downloads/iNZightMaps-dev-integrateplots/data/world')
+data = read.csv('C:/Users/yeamin/Downloads/iNZightMaps-dev-integrateplots/data/Gapminder-2008.csv',skip = 1)
+source('C:/Users/yeamin/Downloads/iNZightMaps-dev-integrateplots/R/shade.fun.r')
+system.time(shade.map('TM_WORLD_BORDERS-0.3.shp',colby = 'Populationgrowth',data = data))
 
 
-polygon(data.xy)
+
+shp.name = 'TM_WORLD_BORDERS-0.3.shp'
+shade.map(shp.name,colby = 'Populationgrowth',data = data, method = 'n')
+
+
