@@ -2,7 +2,7 @@
 ##'
 ##' The plot will download a map that contains all of the points. The size is limited by
 ##' the fixed zoom levels provided by Google's Static Maps API.
-##' 
+##'
 ##' @title Create an iNZight Map Object
 ##' @param lat a formula specifying the name of the latitude variable in \code{data}
 ##' @param lon a formula specifying the name of the longitude variable in \code{data}
@@ -15,7 +15,7 @@
 ##' data(nzquakes)
 ##' mapobj <- iNZightMap(lat = ~Latitude, lon = ~Longitude, data = nzquakes)
 ##' plot(mapobj, opacity = ~Depth, colby = Felt, sizeby = Magnitude, type = "terrain")
-##' 
+##'
 ##' @export
 iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
     if (missing(data) || is.null(data))
@@ -53,6 +53,7 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
 ##' @param type the type of map to download from Google
 ##' @param ... additional arguments passed to \code{iNZightPlot}
 ##' @describeIn iNZightMap Plot an \code{inzightmap} object
+##' @export
 plot.inzightmap <- function(x,
                             opacity,
                             type =
@@ -63,7 +64,11 @@ plot.inzightmap <- function(x,
                             ...) {
     mc <- match.call()
 
+<<<<<<< HEAD
     mc$data <- mc$x 
+=======
+    mc$data <- mc$x
+>>>>>>> origin/dev-integrateplots
     mc$x <- expression(.longitude)
     mc$y <- expression(.latitude)
     mc$plottype <- "map"
@@ -87,7 +92,11 @@ plot.inzightmap <- function(x,
         mc$ylab <- ""
 
     mc[1] <- expression(iNZightPlot)
+<<<<<<< HEAD
     b <<- mc
+=======
+
+>>>>>>> origin/dev-integrateplots
     eval(mc)
 }
 
