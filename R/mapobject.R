@@ -51,6 +51,7 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
 ##' @param type the type of map to download from Google
 ##' @param ... additional arguments passed to \code{iNZightPlot}
 ##' @describeIn iNZightMap Plot an \code{inzightmap} object
+##' @export
 plot.inzightmap <- function(x,
                             opacity,
                             type =
