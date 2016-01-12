@@ -8,4 +8,5 @@ Examples
 notes
 dev
 .Rbuildignore
+*.pdf
 *~
