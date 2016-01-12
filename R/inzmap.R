@@ -7,11 +7,8 @@
 ##' @export
 create.inz.mapplot <- function(obj)
 {
-<<<<<<< HEAD
     out <- NextMethod()  
-    aa <<- out
-    map.type = obj$opts$plot.features$maptype
-    bb <<- obj
+    map.type <- obj$opts$plot.features$maptype
 
     ## Create the global object if it isn't already
     if (!"global.objects" %in% ls(envir = .GlobalEnv))
@@ -19,56 +16,58 @@ create.inz.mapplot <- function(obj)
 
     out$map.type <- map.type
     features <- obj$opts$plot.features
-        
-    ## sort out opacity
-    if (!is.null(features$opacity)) 
-    {
-        opacity.var <- obj$df[[features$opacity]]
-        ratio = 0.7
-        abs.opacity.var = abs(opacity.var)
-        opacity.var.transformed = abs.opacity.var/max(abs.opacity.var) * ratio+ (1 - ratio)
-        out$opacity <- opacity.var.transformed
-        if(any(out$opacity < 1 ))
-            out$pch = rep(19,length(out$pch))
-    }
-    out$draw.axes <- FALSE
-    class(out) <- c("inzmap", class(out))
-    out
-=======
-	map.type = obj$opts$plot.features$maptype
-	features <- obj$opts$plot.features
+
+	map.type <- obj$opts$plot.features$maptype
 	opts <- obj$opts
-
-	if (map.type == "shape") {
+    
+    ob <<- obj
+	if (map.type == "shape") 
+    {
 		## Geographical shape file shaded by variable 'x'
-    df <- obj$df
+        df <<- obj$df
+        
+        
+        
+        ###information extraction
+        shp = obj$opts$plot.features$shp.name
+        subset.by = obj$opts$plot.features$colby
+        shape = readShapePoly(shp)
+        region = obj$opts$plot.features$region
+        transform = obj$opts$plot.features$transform
+        data = obj$opts$plot.features$data
+        display = obj$opts$plot.features$display
+        na.fill = obj$opts$plot.features$na.fill
+        offset = obj$opts$plot.features$offset
+        col = obj$opts$plot.features$col
+        
+        ##getting the bbox
+        bbox = shape@bbox
+        xlim = bbox[1,]
+        ylim = bbox[2,]
 
-		## Steps:
-		# 1. obtain the shape file; compute x/y-lim
+		#compute the shade object by putting the information in
+        shade.obj = shape.extract(shp = shape,colby = subset.by, region = region,
+                                    transform = transform,data = data,display = display,
+                                    na.fill = na.fill,offset = offset,col = col)
+        
+        #extract the color and polygon
+        region.color = shade.obj$color
+        region.polygon = shade.obj$polygon        
 
-		# 2. compute colours
-
-		# 3. n.missing = number of countries with missing values
+        #missing data
 		v <- colnames(df)
 		missing <- is.na(df$x)
-    n.missing <- sum(missing)
-    df <- df[!missing, ]
+        n.missing <- sum(missing)
+        df <- df[!missing, ]
+        
 
-		out <- list(x = xlim, y = ylim, colby = computed_colours,
-			          n.missing = n.missing, xlim = xlim, ylim = ylim)
+		out <- list(x = xlim, y = region, colby = region.color,
+			          n.missing = n.missing, xlim = xlim, ylim = ylim,polygon = region.polygon)
 
 		class(out) <- c("inzshapemap", "inzmap", "inzscatter")
-	} else {
-		## Geographical "scatter plot"
-		out <- NextMethod()
-		out$map.type <- map.type
-
-	        ## Create the global object if it isn't already
-	        if (!"global.objects" %in% ls(envir = .GlobalEnv))
-	            assign("global.objects", list(), envir = .GlobalEnv)
-
-
-
+	} 
+    else {
+		
 		## sort out opacity
 		if (!is.null(features$opacity))
 		{
@@ -85,7 +84,6 @@ create.inz.mapplot <- function(obj)
 	}
 
 	out
->>>>>>> origin/dev-integrateplots
 }
 
 
@@ -100,9 +98,40 @@ create.inz.mapplot <- function(obj)
 ##' @author Jason Wen
 ##' @import maptools
 ##' @export
-plot.inzshapemap <- function(obj, gen) {
-	# do stuff
+plot.inzshapemap <- function(obj, gen) 
+{
+    polygon = obj$polygon
+    colby = obj$colby
+    shade.id = rownames(polygon)
+    
+    print('here')
+    ##limit
+    xlim = obj$xlim
+    ylim = obj$ylim    
+    win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
+    win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
+    ##compute the ratio
+    ratio.map = (diff(xlim)/diff(ylim))
+    ratio.win = win.width/win.height
 
+    if(ratio.map < ratio.win)
+    {
+        h = unit(1,'npc')
+        w = unit(ratio.map/ratio.win, 'npc')
+    }else{
+        w = unit(1,'npc')
+        h = unit(ratio.win/ratio.map, 'npc')		
+    }
+
+
+    vp = viewport(0.5,0.5,width = w, height = h,name = 'VP:PLOTlayout', xscale = xlim,yscale = ylim)
+    pushViewport(vp)
+
+    grid.polygon(polygon[,1],polygon[,2],default.units = "native", id = shade.id,
+                        gp = 
+                            gpar(col = 'black',
+                            fill  = colby))
+    
 }
 
 
@@ -116,7 +145,6 @@ plot.inzshapemap <- function(obj, gen) {
 ##' @author Jason Wen
 ##' @import RgoogleMaps
 ##' @export
-<<<<<<< HEAD
 plot.inzmap <- function(obj, gen) {	
     opts <- gen$opts
     mcex <- gen$mcex
@@ -143,147 +171,54 @@ plot.inzmap <- function(obj, gen) {
     SCALE  <-  2
     size = global.objects$maps$map$size
     type = obj$map.type
-    if(plot.shp == FALSE)
+    
+    get.newmap <- needNewMap(bbox = c(xlim,ylim),size = size,SCALE = SCALE,type = type,window = c(win.width,win.height))
+        if (debug)
+    message(paste('get.newmap:',get.newmap))
+
+    if (get.newmap) 
     {
-            get.newmap <- needNewMap(bbox = c(xlim,ylim),size = size,SCALE = SCALE,type = type,window = c(win.width,win.height))
-                if (debug)
-            message(paste('get.newmap:',get.newmap))
-
-        if (get.newmap) 
-        {
-            if (debug) message(xlim)
-            if (debug) message(ylim)
-            getNewMap(xlim = ylim, ylim = xlim, SCALE = SCALE, type = type,zoom = Get.map.size(ylim,xlim)$zoom)
-            ## updating
-            global.objects$maps$map.detail$window <<- c(win.width,win.height)
-            global.objects$maps$map.detail$bbox <<- c(xlim,ylim)
-            global.objects$maps$map.detail$size <<- global.objects$maps$map$size
-            global.objects$maps$map.detail$scale <<- global.objects$maps$map$SCALE
-            global.objects$maps$map.detail$type <<- type
-        }
-
-        ## drawing~~~~
-        grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)
-
-        ## define the limit
-        tmp = map.xylim()$window.lim
-        xl =tmp[1:2]
-        yl = tmp[3:4]
-
-        ## setting the viewport
-        vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
-        pushViewport(vp)
-
-        ## transform the points
-        dd = cbind(obj$y,obj$x)
-        point = latlon.xy(dd,map = global.objects$maps$map)
-
-        ## other scatter plot things
-        if (length(obj$x) == 0)
-            return()
-
-        ptCols <- iNZightPlots:::colourPoints(obj$colby, col.args, opts)
-        NotInView <- obj$x < min(xlim) | obj$x > max(xlim) | obj$y < min(ylim) | obj$y > max(ylim)
-        obj$pch[NotInView] <- NA
-        grid.points(point[[1]], point[[2]], pch = obj$pch,
-            gp =
-                gpar(col = ptCols,
-                    cex = obj$propsize,
-                  lwd = opts$lwd.pt, alpha = opts$alpha * opacity,
-                  fill = obj$fill.pt),
-                  name = "SCATTERPOINTS")
-        invisible(NULL)
-    }else
-    {
-        opt <<- opts$plot.features
-        shp = opts$plot.features$shp.name
-        with.data = opts$plot.features$with.data
-        region = opts$plot.features$region
-        colby = opts$plot.features$colby
-        transform = opts$plot.features$transform
-        display = opts$plot.features$display
-        na.fill = opts$plot.features$na.fill
-        offset = opts$plot.features$offset
-        col = opts$plot.features$col
-        shade.map(shp = shp,data = with.data,region = region,
-                    colby = colby,transform = transform,display = display,
-                    na.fill = na.fill,offset = offset ,col = col)
+        if (debug) message(xlim)
+        if (debug) message(ylim)
+        getNewMap(xlim = ylim, ylim = xlim, SCALE = SCALE, type = type,zoom = Get.map.size(ylim,xlim)$zoom)
+        ## updating
+        global.objects$maps$map.detail$window <<- c(win.width,win.height)
+        global.objects$maps$map.detail$bbox <<- c(xlim,ylim)
+        global.objects$maps$map.detail$size <<- global.objects$maps$map$size
+        global.objects$maps$map.detail$scale <<- global.objects$maps$map$SCALE
+        global.objects$maps$map.detail$type <<- type
     }
 
-=======
-plot.inzmap <- function(obj, gen) {
-	opts <- gen$opts
-	mcex <- gen$mcex
-	col.args <- gen$col.args
-	if(is.null(obj$opacity))
-	{
-		opacity = 1
+    ## drawing~~~~
+    grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)
 
-	}else
-	{
-		opacity = obj$opacity
-	}
+    ## define the limit
+    tmp = map.xylim()$window.lim
+    xl =tmp[1:2]
+    yl = tmp[3:4]
 
-	debug <- if (is.null(opts$debug)) FALSE else opts$debug
+    ## setting the viewport
+    vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
+    pushViewport(vp)
 
+    ## transform the points
+    dd = cbind(obj$y,obj$x)
+    point = latlon.xy(dd,map = global.objects$maps$map)
 
-	## setting
-	xlim <- current.viewport()$xscale
-	ylim <- current.viewport()$yscale
+    ## other scatter plot things
+    if (length(obj$x) == 0)
+        return()
 
-	win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
-	win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
-	SCALE  <-  2
-	size = global.objects$maps$map$size
-	type = obj$map.type
+    ptCols <- iNZightPlots:::colourPoints(obj$colby, col.args, opts)
+    NotInView <- obj$x < min(xlim) | obj$x > max(xlim) | obj$y < min(ylim) | obj$y > max(ylim)
+    obj$pch[NotInView] <- NA
+    grid.points(point[[1]], point[[2]], pch = obj$pch,
+        gp =
+            gpar(col = ptCols,
+                cex = obj$propsize,
+              lwd = opts$lwd.pt, alpha = opts$alpha * opacity,
+              fill = obj$fill.pt),
+              name = "SCATTERPOINTS")
+    invisible(NULL)
 
-	get.newmap <- needNewMap(bbox = c(xlim,ylim),size = size,SCALE = SCALE,type = type,window = c(win.width,win.height))
-	if (debug)
-		message(paste('get.newmap:',get.newmap))
-
-	if (get.newmap)
-	{
-		if (debug) message(xlim)
-		if (debug) message(ylim)
-		getNewMap(xlim = ylim, ylim = xlim, SCALE = SCALE, type = type,zoom = Get.map.size(ylim,xlim)$zoom)
-		## updating
-		global.objects$maps$map.detail$window <<- c(win.width,win.height)
-		global.objects$maps$map.detail$bbox <<- c(xlim,ylim)
-		global.objects$maps$map.detail$size <<- global.objects$maps$map$size
-		global.objects$maps$map.detail$scale <<- global.objects$maps$map$SCALE
-		global.objects$maps$map.detail$type <<- type
-	}
-
-	## drawing~~~~
-	grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)
-
-	## define the limit
-	tmp = map.xylim()$window.lim
-	xl =tmp[1:2]
-	yl = tmp[3:4]
-
-	## setting the viewport
-	vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
-	pushViewport(vp)
-
-	## transform the points
-	dd = cbind(obj$y,obj$x)
-	point = latlon.xy(dd,map = global.objects$maps$map)
-
-	## other scatter plot things
-	if (length(obj$x) == 0)
-		return()
-
-	ptCols <- iNZightPlots:::colourPoints(obj$colby, col.args, opts)
-	NotInView <- obj$x < min(xlim) | obj$x > max(xlim) | obj$y < min(ylim) | obj$y > max(ylim)
-	obj$pch[NotInView] <- NA
-	grid.points(point[[1]], point[[2]], pch = obj$pch,
-		gp =
-			gpar(col = ptCols,
-				cex = obj$propsize,
-			  lwd = opts$lwd.pt, alpha = opts$alpha * opacity,
-			  fill = obj$fill.pt),
-			  name = "SCATTERPOINTS")
-	invisible(NULL)
->>>>>>> origin/dev-integrateplots
 }

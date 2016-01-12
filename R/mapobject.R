@@ -58,23 +58,20 @@ plot.inzightmap <- function(x,
                             opacity,
                             type =
                                 c("roadmap", "mobile", "satellite", "terrain", "hybrid",
-                                  "mapmaker-roadmap", "mapmaker-hybrid"),
-								  shp.name = NULL,colby.1 = '', transform = 'linear', plot.shp = FALSE, 
+                                  "mapmaker-roadmap", "mapmaker-hybrid",'shape'),
+								  shp.name = NULL,subset.by = 'Latitude', transform = 'linear',
 								  display = 'hue', na.fill = 'gray', offset = 0, col = 'red',with.data = NULL,
                             ...) {
     mc <- match.call()
 
-<<<<<<< HEAD
     mc$data <- mc$x 
-=======
     mc$data <- mc$x
->>>>>>> origin/dev-integrateplots
     mc$x <- expression(.longitude)
     mc$y <- expression(.latitude)
     mc$plottype <- "map"
     mc$plot.features <- list(maptype = match.arg(type),
-                            shp.name = shp.name, coby.1 = colby.1, transform = transform,
-                            plot.shp = plot.shp, display = display, na.fill = na.fill,with.data = with.data)
+                            shp.name = shp.name, subset.by = subset.by, transform = transform,
+                            display = display, na.fill = na.fill,with.data = with.data)
     if (!missing(opacity)) {
         if (inherits(opacity, "formula")) {
             opacity <- as.character(opacity)[2]
@@ -92,11 +89,8 @@ plot.inzightmap <- function(x,
         mc$ylab <- ""
 
     mc[1] <- expression(iNZightPlot)
-<<<<<<< HEAD
     b <<- mc
-=======
 
->>>>>>> origin/dev-integrateplots
     eval(mc)
 }
 

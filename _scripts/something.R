@@ -5,10 +5,15 @@ location = 'C:/Users/yeamin/Desktop/QuakesNZ2000.csv'
 
 library(iNZightMaps)
 location = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world/TM_WORLD_BORDERS-0.3.shp'
-shade.map(location,region = 'Country',colby = 'Exports',
-          transform = 'linear', display = 'heat',offset = 0,na.fill = 'gray',col = 'red')
 
-data("nzquakes")
-data = nzquakes
-obj = iNZightMap(~Latitude,~Longitude,data = data)
-plot.inzightmap(obj,plot.shp = TRUE,shp.name = location)
+
+
+names(ob$opts$plot.features)
+data.1 = read.csv('C:/Users/yeamin/Downloads/iNZightMaps-dev-integrateplots/data/Gapminder-2008.csv',skip = 1)
+obj = iNZightMap(~Region,~Country,data = data.1)
+plot.inzightmap(obj,shp.name = location,type = 'shape')
+
+
+
+
+ob$opts$plot.features$colby
