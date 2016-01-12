@@ -2,7 +2,7 @@
 ##'
 ##' The plot will download a map that contains all of the points. The size is limited by
 ##' the fixed zoom levels provided by Google's Static Maps API.
-##' 
+##'
 ##' @title Create an iNZight Map Object
 ##' @param lat a formula specifying the name of the latitude variable in \code{data}
 ##' @param lon a formula specifying the name of the longitude variable in \code{data}
@@ -15,14 +15,14 @@
 ##' data(nzquakes)
 ##' mapobj <- iNZightMap(lat = ~Latitude, lon = ~Longitude, data = nzquakes)
 ##' plot(mapobj, opacity = ~Depth, colby = Felt, sizeby = Magnitude, type = "terrain")
-##' 
+##'
 ##' @export
 iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
     if (missing(data))
         stop("iNZightMaps required you to use a data.frame.")
 
     attr(data, "name") <- name
-    
+
     ## Get latitude values
     if (inherits(lat, "formula")) {
         mf <- substitute(model.frame(lat, data = data))
@@ -38,7 +38,7 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
     } else {
         lon <- data.frame(lon)
     }
-    
+
     data$.latitude <- lat[[1]]
     data$.longitude <- lon[[1]]
 
@@ -58,7 +58,7 @@ plot.inzightmap <- function(x,
                                   "mapmaker-roadmap", "mapmaker-hybrid"),
                             ...) {
     mc <- match.call()
-    
+
     mc$data <- mc$x
     mc$x <- expression(.longitude)
     mc$y <- expression(.latitude)
@@ -72,7 +72,7 @@ plot.inzightmap <- function(x,
         mc$plot.features$opacity <- opacity
         mc$extra.vars <- opacity
     }
-    
+
     ## set the plot labels:
     if (is.null(mc$main))
         mc$main <- paste("Map of", attr(x, "name"))
@@ -82,6 +82,6 @@ plot.inzightmap <- function(x,
         mc$ylab <- ""
 
     mc[1] <- expression(iNZightPlot)
-    
+
     eval(mc)
 }
