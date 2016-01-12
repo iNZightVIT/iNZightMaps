@@ -18,11 +18,11 @@
 ##' 
 ##' @export
 iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
-    if (missing(data))
+    if (missing(data) || is.null(data))
         stop("iNZightMaps required you to use a data.frame.")
 
     attr(data, "name") <- name
-    
+
     ## Get latitude values
     if (inherits(lat, "formula")) {
         mf <- substitute(model.frame(lat, data = data))
@@ -38,13 +38,15 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
     } else {
         lon <- data.frame(lon)
     }
-    
+
     data$.latitude <- lat[[1]]
     data$.longitude <- lon[[1]]
 
     class(data) <- c("inzightmap", class(data))
     data
 }
+
+
 
 ##' @param x an \code{inzightmap} object
 ##' @param opacity character or expression of the variable name to code point opacity by
@@ -56,15 +58,18 @@ plot.inzightmap <- function(x,
                             type =
                                 c("roadmap", "mobile", "satellite", "terrain", "hybrid",
                                   "mapmaker-roadmap", "mapmaker-hybrid"),
+								  shp.name = NULL,colby.1 = '', transform = 'linear', plot.shp = FALSE, 
+								  display = 'hue', na.fill = 'gray', offset = 0, col = 'red',with.data = NULL,
                             ...) {
     mc <- match.call()
-    
-    mc$data <- mc$x
+
+    mc$data <- mc$x 
     mc$x <- expression(.longitude)
     mc$y <- expression(.latitude)
     mc$plottype <- "map"
-
-    mc$plot.features <- list(maptype = match.arg(type))
+    mc$plot.features <- list(maptype = match.arg(type),
+                            shp.name = shp.name, coby.1 = colby.1, transform = transform,
+                            plot.shp = plot.shp, display = display, na.fill = na.fill,with.data = with.data)
     if (!missing(opacity)) {
         if (inherits(opacity, "formula")) {
             opacity <- as.character(opacity)[2]
@@ -72,7 +77,7 @@ plot.inzightmap <- function(x,
         mc$plot.features$opacity <- opacity
         mc$extra.vars <- opacity
     }
-    
+
     ## set the plot labels:
     if (is.null(mc$main))
         mc$main <- paste("Map of", attr(x, "name"))
@@ -82,6 +87,7 @@ plot.inzightmap <- function(x,
         mc$ylab <- ""
 
     mc[1] <- expression(iNZightPlot)
-    
+    b <<- mc
     eval(mc)
 }
+
