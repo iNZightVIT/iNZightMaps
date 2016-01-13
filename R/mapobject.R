@@ -42,7 +42,7 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
     data$.latitude <- lat[[1]]
     data$.longitude <- lon[[1]]
 
-    class(data) <- c("inzightmap", class(data))
+    class(data) <- c("inzshapemap","inzightmap", class(data))
     data
 }
 
@@ -59,19 +59,17 @@ plot.inzightmap <- function(x,
                             type =
                                 c("roadmap", "mobile", "satellite", "terrain", "hybrid",
                                   "mapmaker-roadmap", "mapmaker-hybrid",'shape'),
-								  shp.name = NULL,subset.by = 'Latitude', transform = 'linear',
-								  display = 'hue', na.fill = 'gray', offset = 0, col = 'red',with.data = NULL,
+								  shp.name = NULL,subset.by = 'Populationtotal', transform = 'linear',
+								  display = 'hue', na.fill = 'gray', offset = 0, col = 'red',with.data = NULL,region = '',
                             ...) {
     mc <- match.call()
-
     mc$data <- mc$x 
-    mc$data <- mc$x
     mc$x <- expression(.longitude)
     mc$y <- expression(.latitude)
     mc$plottype <- "map"
     mc$plot.features <- list(maptype = match.arg(type),
                             shp.name = shp.name, subset.by = subset.by, transform = transform,
-                            display = display, na.fill = na.fill,with.data = with.data)
+                            display = display, na.fill = na.fill,with.data = with.data,region = region,offset = offset)
     if (!missing(opacity)) {
         if (inherits(opacity, "formula")) {
             opacity <- as.character(opacity)[2]

@@ -1,3 +1,49 @@
+shade.map = function(shp,data,region,colby = '',transform = 'linear',display = 'heat',na.fill = 'White',offset = 0 ,col = 'red')
+{
+    grid.newpage()
+    print('jump!')
+    shape = readShapePoly(shp)
+    bbox = shape@bbox
+    xlim = bbox[1,]
+    ylim = bbox[2,]
+    shade.obj = shape.extract(shp = shape,colby = colby, region = region,transform = transform,data = data,display = display,
+                                na.fill = na.fill,offset = offset,col = col)
+    shade.data = shade.obj$polygon
+    shade.id = rownames(shade.data)
+    col = shade.obj$color
+    ratio.map = (diff(xlim)/diff(ylim))
+
+
+    win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
+    win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
+    ratio.win = win.width/win.height
+
+    print(ratio.map)
+    print(ratio.win)
+    if(ratio.map < ratio.win)
+    {
+        h = unit(1,'npc')
+        w = unit(ratio.map/ratio.win, 'npc')
+    }else{
+        w = unit(1,'npc')
+        h = unit(ratio.win/ratio.map, 'npc')		
+    }
+
+
+    vp = viewport(0.5,0.5,width = w, height = h,name = 'VP:PLOTlayout', xscale = xlim,yscale = ylim)
+    pushViewport(vp)
+    #vp = viewport(unit(0.5,'npc'),unit(0.5,'npc'),name = 'VP:PLOTlayout', xscale = xlim,yscale = ylim,
+    #	width = unit(ratio,'snpc'), height = unit(1,'snpc'),default.units = 'npc',just = 'center')
+    #pushViewport(vp)
+    grid.polygon(shade.data[,1],shade.data[,2],default.units = "native", id = shade.id,
+                        gp = 
+                            gpar(col = 'black',
+                            fill  = col))
+                            
+    # plot(1:10,1:10)	
+}
+
+
 shape.extract = function(shp,colby,transform,display,data,na.fill,offset,col,region)
 {
     polygon.data = list()
@@ -18,7 +64,6 @@ shape.extract = function(shp,colby,transform,display,data,na.fill,offset,col,reg
         }
         
     }
-    print(paste('num of polygon:', j))
     poly.index = rep(1:j,index)
     latlon = do.call(rbind,polygon.data)
     rownames(latlon) = poly.index
@@ -26,38 +71,13 @@ shape.extract = function(shp,colby,transform,display,data,na.fill,offset,col,reg
             each = poly.rep,data = data,na.fill = na.fill,offset = offset,col = col,region = region)
     shape.obj = list(polygon = latlon, color = color)
     shape.obj
-	polygon.data = list()
-	j = 0
-	color = 0
-	poly.rep = 0
-	poly.out = length(shp@polygons)
-	index = 0
-	for(i in 1:poly.out)
-	{
-		poly.in = length(shp@polygons[[i]]@Polygons)
-		poly.rep[i] = poly.in
-		for(ii in 1:poly.in)
-		{
-			j = j + 1
-			polygon.data[j] = list(shp@polygons[[i]]@Polygons[[ii]]@coords)
-			index[j] = dim(polygon.data[[j]])[1]
-		}
-
-	}
-	print(paste('num of polygon:', j))
-	poly.index = rep(1:j,index)
-	latlon = do.call(rbind,polygon.data)
-	rownames(latlon) = poly.index
-	color = col.fun(shp,colby = colby, transform = transform,display = display,
-			each = poly.rep,data = data,na.fill = na.fill,offset = offset,col = col,region = region)
-	shape.obj = list(polygon = latlon, color = color)
-	shape.obj
-
+    
 
 }
 
 col.fun = function(shp,data,colby,transform,display,each,na.fill,offset,col,region)
 {
+
     ##if data is missing then just fill the area randomly ie, display = 'n'
     if(missing(data) || is.null(data))
     {		
@@ -108,8 +128,8 @@ col.fun = function(shp,data,colby,transform,display,each,na.fill,offset,col,regi
         orderd.data <<- percent.data[order]
         impossible.number = 0.091823021983
         
+        
         bio.color = c('bi.polar','cm.colors	')
-
         if(display %in% bio.color)
         {
             fill.float <<- ifelse(is.na(orderd.data) == TRUE, impossible.number,orderd.data)
@@ -117,9 +137,10 @@ col.fun = function(shp,data,colby,transform,display,each,na.fill,offset,col,regi
         {
             fill.float <<- ifelse(is.na(orderd.data) == TRUE, impossible.number,orderd.data * (1 - offset) + (offset))
         }
+        
+        abc <<- orderd.data
     }
     ###the color can not be offset if it is bio-color
-
 
     ###display transform
     if(display == 'hue')

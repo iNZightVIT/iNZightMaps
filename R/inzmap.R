@@ -24,32 +24,30 @@ create.inz.mapplot <- function(obj)
 	if (map.type == "shape") 
     {
 		## Geographical shape file shaded by variable 'x'
-        df <<- obj$df
+        df <- obj$df
         
         
         
         ###information extraction
         shp = obj$opts$plot.features$shp.name
-        subset.by = obj$opts$plot.features$colby
+        subset.by = obj$opts$plot.features$subset.by
         shape = readShapePoly(shp)
         region = obj$opts$plot.features$region
         transform = obj$opts$plot.features$transform
-        data = obj$opts$plot.features$data
+        data = obj$opts$plot.features$with.data
         display = obj$opts$plot.features$display
         na.fill = obj$opts$plot.features$na.fill
         offset = obj$opts$plot.features$offset
         col = obj$opts$plot.features$col
-        
+        aa <<- data
         ##getting the bbox
         bbox = shape@bbox
         xlim = bbox[1,]
         ylim = bbox[2,]
-
 		#compute the shade object by putting the information in
         shade.obj = shape.extract(shp = shape,colby = subset.by, region = region,
                                     transform = transform,data = data,display = display,
                                     na.fill = na.fill,offset = offset,col = col)
-        
         #extract the color and polygon
         region.color = shade.obj$color
         region.polygon = shade.obj$polygon        
@@ -82,7 +80,7 @@ create.inz.mapplot <- function(obj)
 		out$draw.axes <- FALSE
 		class(out) <- c("inzmap", class(out))
 	}
-
+    
 	out
 }
 
@@ -103,8 +101,6 @@ plot.inzshapemap <- function(obj, gen)
     polygon = obj$polygon
     colby = obj$colby
     shade.id = rownames(polygon)
-    
-    print('here')
     ##limit
     xlim = obj$xlim
     ylim = obj$ylim    
@@ -126,7 +122,6 @@ plot.inzshapemap <- function(obj, gen)
 
     vp = viewport(0.5,0.5,width = w, height = h,name = 'VP:PLOTlayout', xscale = xlim,yscale = ylim)
     pushViewport(vp)
-
     grid.polygon(polygon[,1],polygon[,2],default.units = "native", id = shade.id,
                         gp = 
                             gpar(col = 'black',

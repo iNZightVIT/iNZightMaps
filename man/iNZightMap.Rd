@@ -8,10 +8,10 @@
 iNZightMap(lat, lon, data, name = deparse(substitute(data)))
 
 \method{plot}{inzightmap}(x, opacity, type = c("roadmap", "mobile",
-  "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid"),
-  shp.name = NULL, colby.1 = "", transform = "linear", plot.shp = TRUE,
-  display = "hue", na.fill = "gray", offset = 0, col = "red",
-  with.data = NULL, ...)
+  "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid",
+  "shape"), shp.name = NULL, subset.by = "Populationtotal",
+  transform = "linear", display = "hue", na.fill = "gray", offset = 0,
+  col = "red", with.data = NULL, region = "", ...)
 }
 \arguments{
 \item{lat}{a formula specifying the name of the latitude variable in \code{data}}
