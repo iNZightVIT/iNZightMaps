@@ -17,19 +17,12 @@ obj = iNZightMap(~Region,~Country,data = data.1)
 plot.inzightmap(obj,shp.name = location,type = 'shape')
 
 
+shp = readShapePoly(location)
+ex.data = shape.extract(shp)
 
 
+x = data.1$Imports
+x.percent = data.trans(x)
 
-
-
-data.1 = read.csv('C:/Users/yeamin/Downloads/iNZightMaps-dev-integrateplots/data/Gapminder-2008.csv',skip = 1)
-plot.inzightmap(obj.1,shp.name = location,type = 'shape',with.data = data.1,region = 'Country',subset.by = 'Imports',transform = 'log',display = 'heat')
-
-
-names(ob$opts$plot.features)
-
-offset = 0
-fill.float <<- ifelse(is.na(orderd.data) == TRUE,1,orderd.data * (1 - offset) + (offset))
-
-
-ob$opts$plot.features$offset
+match.data = region.match(x.percent,shp[[5]],data.1$Country)
+col.fun(match.data,each = ex.data$each,display = 'heat',col = 'yellow')

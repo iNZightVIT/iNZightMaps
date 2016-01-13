@@ -44,7 +44,7 @@ shade.map = function(shp,data,region,colby = '',transform = 'linear',display = '
 }
 
 
-shape.extract = function(shp,colby,transform,display,data,na.fill,offset,col,region)
+shape.extract = function(shp)
 {
     polygon.data = list()
     j = 0
@@ -66,80 +66,86 @@ shape.extract = function(shp,colby,transform,display,data,na.fill,offset,col,reg
     }
     poly.index = rep(1:j,index)
     latlon = do.call(rbind,polygon.data)
-    rownames(latlon) = poly.index
+    #rownames(latlon) = poly.index
+    latlon.data = data.frame(latlon = latlon,id = poly.index)
+    list(latlon = latlon.data,each = poly.rep)
+}
+
+
+
+col.out = function(transform,display,data,na.fill,offset,col,region)
+{
     color = col.fun(shp,colby = colby, transform = transform,display = display,
             each = poly.rep,data = data,na.fill = na.fill,offset = offset,col = col,region = region)
     shape.obj = list(polygon = latlon, color = color)
     shape.obj
-    
-
 }
 
-col.fun = function(shp,data,colby,transform,display,each,na.fill,offset,col,region)
+
+data.trans = function(x,transform = 'linear')
 {
-
-    ##if data is missing then just fill the area randomly ie, display = 'n'
-    if(missing(data) || is.null(data))
-    {		
-        fill.float = each
-        impossible.number = 0.091823021983
-        ###fore the transform if data is missing
-        display = 'n'
-        #warning('the data is missing! use the default display transform')
-    }
-    else{
-        ##transform transform
-        #orderd.data <<- percent.data[order]
-
-        a = data[,colby]
-        b = a - min(a,na.rm = TRUE)
-        if(transform =='linear')
-        {	
-            b = b
-        }
-        if(transform =='log')
+    a = x
+    b = a - min(a,na.rm = TRUE)
+    switch(transform,
+    
+        linear = 
         {
-            b = log(b + 1)
-        }
-        if(transform == 'sqrt')
+            b = b
+        },
+        
+        log = 
+        {
+        b = log(b + 1)
+        },
+        
+        sqrt = 
         {
             b = sqrt(b)
-        }
-        if(transform == 'exp')
+        },
+        
+        exp = 
         {
             b = exp(b)
-        }
-        if(transform == 'power')
+        },
+        
+        power = 
         {
             b = b^2
-        }
-        if(transform == 'normal')
+        },
+        
+        normal = 
         {
             x = (a - mean(a,na.rm = TRUE))/sd(a,na.rm = TRUE)
             b = dnorm(x,0,1)
             b = b - min(b,na.rm = TRUE)
-        }
-        if(transform == 'unknow~')
-        {
-            
-        }
-        percent.data = b/diff(range(b,na.rm = TRUE))
-        order = match(shp[[5]],data[,region])
-        orderd.data <<- percent.data[order]
-        impossible.number = 0.091823021983
+        },
         
-        
-        bio.color = c('bi.polar','cm.colors	')
-        if(display %in% bio.color)
-        {
-            fill.float <<- ifelse(is.na(orderd.data) == TRUE, impossible.number,orderd.data)
-        }else
-        {
-            fill.float <<- ifelse(is.na(orderd.data) == TRUE, impossible.number,orderd.data * (1 - offset) + (offset))
-        }
-        
-        abc <<- orderd.data
+    )
+    percent.data = b/diff(range(b,na.rm = TRUE))
+    percent.data
+}
+
+region.match = function(unmatch.data,shp.region,data.region)
+{
+    order = match(shp.region,data.region)
+    orderd.data = unmatch.data[order]
+    orderd.data
+}
+
+
+col.fun = function(match.data,each,
+                    display = 'hue',na.fill = 'gray',offset = 0,col = 'red')
+{
+    impossible.number = 0.091823021983
+    bio.color = c('bi.polar','cm.colors	')
+    if(display %in% bio.color)
+    {
+        fill.float <<- ifelse(is.na(match.data) == TRUE, impossible.number,match.data)
+    }else
+    {
+        fill.float <<- ifelse(is.na(match.data) == TRUE, impossible.number,match.data * (1 - offset) + (offset))
     }
+    
     ###the color can not be offset if it is bio-color
 
     ###display transform
@@ -148,90 +154,106 @@ col.fun = function(shp,data,colby,transform,display,each,na.fill,offset,col,regi
         char.col.trans = col2rgb(col)/255
         fill.col =rgb(char.col.trans[1],char.col.trans[2],char.col.trans[3],fill.float)
     }
-    if(display == 'hcl')
-    {	
-        fill.col = hcl(as.numeric(fill.float)*100,l = 85)
-    }
-    if(display == 'ff')
-    {
-        ab = expand.grid(a = as.numeric(fill.float)*360,b = 100)
-        Lab = cbind(L =50, ab)
-        srgb = convertColor(Lab, from = "Lab", to = "sRGB")
-        fill.col = rgb(srgb[, 1], srgb[, 2], srgb[, 3])
-    }
-    if(display == 'heat')
-    {
-        over.col = heat.colors(length(each) * 100)
-        orderd.col = over.col[length(over.col):1]
-        id = round(fill.float * length(each) * 100)
-        fill.col = orderd.col[id]
-    }
-    if(display == 'rainbow')
-    {
-        over.col = rainbow(length(each) * 100)
-        orderd.col = over.col
-        id = round(fill.float * length(each) * 100)
-        fill.col = orderd.col[id]
-    }
-    if(display == 'terrain.colors')
-    {
-        over.col = terrain.colors(length(each) * 100)
-        orderd.col = over.col
-        id = round(fill.float * length(each) * 100)
-        fill.col = orderd.col[id]	
-    }
-    if(display == 'topo.colors')
-    {
-        over.col = topo.colors(length(each) * 100)
-        orderd.col = over.col
-        id = round(fill.float * length(each) * 100)
-        fill.col = orderd.col[id]
-    }
-    if(display == 'cm.colors')
-    {
-        over.col = cm.colors(length(each) * 100)
-        orderd.col = over.col
-        id = round(fill.float * length(each) * 100)
-        fill.col = orderd.col[id]				
-    }
-    if(display == 'bi.polar')
-    {
-        col.center = mean(fill.float)
-        fill = ''
-        re.scale= 1 / max(abs(fill.float - col.center))
-        alpha = ifelse(fill.float >= col.center,
-                        (fill.float- col.center) * re.scale,
-                        (col.center - fill.float) * re.scale
-                       )
-        fill.col = ifelse(fill.float >= col.center,
-                         rgb(1,0,0,alpha = alpha),
-                         rgb(0,0,1,alpha = alpha)
-                      )
-    }
-    if(display == 'gray')
-    {
-        fill.col = gray(round(1 - as.numeric(fill.float),5))
-    }
-
-    ###fill the color randomly notinclude the missing area
-    if(display == 'r')
-    {
-        r = ifelse(is.na(order) == TRUE, impossible.number,runif(order))
-        g = ifelse(is.na(order) == TRUE, impossible.number,runif(order))
-        b = ifelse(is.na(order) == TRUE, impossible.number,runif(order))
-        fill.col = rgb(r,g,b)	
-    }
-    ###fill the color randomly does include the missing area
-    if(display == 'n')
-    {
-        r = runif(length(shp@polygons))
-        g = runif(length(shp@polygons))
-        b = runif(length(shp@polygons))
-        na.fill = rgb(r,g,b)
-        fill.col = rgb(r,g,b)	
-    }
-
-
+    
+    switch(display,
+    
+        hcl = 
+        {
+            fill.col = hcl(as.numeric(fill.float)*100,l = 85)
+        },
+        
+        hue = 
+        {
+            char.col.trans = col2rgb(col)/255
+            fill.col =rgb(char.col.trans[1],char.col.trans[2],char.col.trans[3],fill.float)
+        },
+        
+        ff = 
+        {
+            ab = expand.grid(a = as.numeric(fill.float)*360,b = 100)
+            Lab = cbind(L =50, ab)
+            srgb = convertColor(Lab, from = "Lab", to = "sRGB")
+            fill.col = rgb(srgb[, 1], srgb[, 2], srgb[, 3])          
+        },
+        
+        heat = 
+        {
+            over.col = heat.colors(length(each) * 100)
+            orderd.col = over.col[length(over.col):1]
+            id = round(fill.float * length(each) * 100)
+            fill.col = orderd.col[id]
+        },
+        
+        rainbow = 
+        {
+            over.col = rainbow(length(each) * 100)
+            orderd.col = over.col
+            id = round(fill.float * length(each) * 100)
+            fill.col = orderd.col[id]            
+        },
+        
+        terrain.colors = 
+        {
+            over.col = terrain.colors(length(each) * 100)
+            orderd.col = over.col
+            id = round(fill.float * length(each) * 100)
+            fill.col = orderd.col[id]	            
+        },
+        
+        topo.colors = 
+        {
+            over.col = topo.colors(length(each) * 100)
+            orderd.col = over.col
+            id = round(fill.float * length(each) * 100)
+            fill.col = orderd.col[id]
+        },
+        
+        cm.colors = 
+        {
+            over.col = cm.colors(length(each) * 100)
+            orderd.col = over.col
+            id = round(fill.float * length(each) * 100)
+            fill.col = orderd.col[id]
+        },
+        
+        bi.polar = 
+        {
+            col.center = mean(fill.float)
+            fill = ''
+            re.scale= 1 / max(abs(fill.float - col.center))
+            alpha = ifelse(fill.float >= col.center,
+                            (fill.float- col.center) * re.scale,
+                            (col.center - fill.float) * re.scale
+                           )
+            fill.col = ifelse(fill.float >= col.center,
+                             rgb(1,0,0,alpha = alpha),
+                             rgb(0,0,1,alpha = alpha)
+                          )
+        },
+        
+        gray =  
+        {
+            fill.col = gray(round(1 - as.numeric(fill.float),5))
+        },
+        
+        r = 
+        {
+            r = ifelse(is.na(order) == TRUE, impossible.number,runif(order))
+            g = ifelse(is.na(order) == TRUE, impossible.number,runif(order))
+            b = ifelse(is.na(order) == TRUE, impossible.number,runif(order))
+            fill.col = rgb(r,g,b)	
+        },
+        
+        n = 
+        {
+            r = runif(length(shp@polygons))
+            g = runif(length(shp@polygons))
+            b = runif(length(shp@polygons))
+            na.fill = rgb(r,g,b)
+            fill.col = rgb(r,g,b)	
+        }
+        
+    )
     color.each = ifelse(fill.float== impossible.number, na.fill, fill.col)
     color.out = rep(color.each,each)	
     color.out

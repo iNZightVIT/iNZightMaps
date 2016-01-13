@@ -88,4 +88,3 @@ plot.inzightmap <- function(x,
 
     eval(mc)
 }
-
