@@ -17,71 +17,75 @@ create.inz.mapplot <- function(obj)
     out$map.type <- map.type
     features <- obj$opts$plot.features
 
-	map.type <- obj$opts$plot.features$maptype
-	opts <- obj$opts
+    map.type <- obj$opts$plot.features$maptype
+    opts <- obj$opts
     
-    ob <<- obj
-	if (map.type == "shape") 
-    {
-		## Geographical shape file shaded by variable 'x'
+    if (map.type == "shape") {
+        ## Geographical shape file shaded by variable 'x'
         df <- obj$df
-        
-        
-        
-        ###information extraction
-        shp = obj$opts$plot.features$shp.name
-        subset.by = obj$opts$plot.features$subset.by
-        shape = readShapePoly(shp)
-        region = obj$opts$plot.features$region
-        transform = obj$opts$plot.features$transform
-        data = obj$opts$plot.features$with.data
-        display = obj$opts$plot.features$display
-        na.fill = obj$opts$plot.features$na.fill
-        offset = obj$opts$plot.features$offset
-        col = obj$opts$plot.features$col
-        aa <<- data
-        ##getting the bbox
-        bbox = shape@bbox
-        xlim = bbox[1,]
-        ylim = bbox[2,]
-		#compute the shade object by putting the information in
-        shade.obj = shape.extract(shp = shape,colby = subset.by, region = region,
-                                    transform = transform,data = data,display = display,
-                                    na.fill = na.fill,offset = offset,col = col)
-        #extract the color and polygon
-        region.color = shade.obj$color
-        region.polygon = shade.obj$polygon        
 
-        #missing data
-		v <- colnames(df)
-		missing <- is.na(df$x)
+        shape <- opts$plot.features$shape.obj
+        
+        ## ## information extraction
+        ## shp = obj$opts$plot.features$shp.name
+        ## subset.by = obj$opts$plot.features$subset.by
+        
+        ## shape = readShapePoly(shp)
+        ## region = obj$opts$plot.features$region
+        ## transform = obj$opts$plot.features$transform
+        ## data = obj$opts$plot.features$with.data
+        ## display = obj$opts$plot.features$display
+        ## na.fill = obj$opts$plot.features$na.fill
+        ## offset = obj$opts$plot.features$offset
+        ## col = obj$opts$plot.features$col
+        
+        ## getting the bbox
+        ## bbox = shape@bbox
+        xlim = range(shape[, 1]) #bbox[1,]
+        ylim = range(shape[, 2]) #bbox[2,]
+        
+        ## ##compute the shade object by putting the information in
+        ## shade.obj =
+        ##     shape.extract(shp = shape, colby = subset.by, region = region,
+        ##                   transform = transform, data = data, display = display,
+        ##                   na.fill = na.fill,offset = offset,col = col)
+        
+        ## ##extract the color and polygon
+        ## region.color = shade.obj$color
+        ## region.polygon = shade.obj$polygon   
+        
+
+        ## missing data
+        v <- colnames(df)
+        missing <- is.na(df$x)
         n.missing <- sum(missing)
         df <- df[!missing, ]
         
+        
+        out <- list(x = xlim, y = ylim, colby = opts$plot.features$temp.col,
+                    n.missing = n.missing, xlim = xlim, ylim = ylim, shape = opts$plot.features$shape.obj)
+       
+        class(out) <- c("inzshapemap", "inzmap", "inzscatter")
+    } else {
+        ## otherwise it's a "scatter" plot ...
+        
+        ## sort out opacity
+        if (!is.null(features$opacity))
+            {
+                opacity.var <- obj$df[[features$opacity]]
+                ratio = 0.7
+                abs.opacity.var = abs(opacity.var)
+                opacity.var.transformed = abs.opacity.var/max(abs.opacity.var) * ratio+ (1 - ratio)
+                out$opacity <- opacity.var.transformed
+                if(any(out$opacity < 1 ))
+                    out$pch = rep(19,length(out$pch))
+            }
+        
+        class(out) <- c("inzmap", class(out))
+    }
 
-		out <- list(x = xlim, y = region, colby = region.color,
-			          n.missing = n.missing, xlim = xlim, ylim = ylim,polygon = region.polygon)
-
-		class(out) <- c("inzshapemap", "inzmap", "inzscatter")
-	} 
-    else {
-		
-		## sort out opacity
-		if (!is.null(features$opacity))
-		{
-			opacity.var <- obj$df[[features$opacity]]
-			ratio = 0.7
-			abs.opacity.var = abs(opacity.var)
-			opacity.var.transformed = abs.opacity.var/max(abs.opacity.var) * ratio+ (1 - ratio)
-			out$opacity <- opacity.var.transformed
-			if(any(out$opacity < 1 ))
-				out$pch = rep(19,length(out$pch))
-		}
-		out$draw.axes <- FALSE
-		class(out) <- c("inzmap", class(out))
-	}
-    
-	out
+    out$draw.axes <- FALSE
+    out
 }
 
 
@@ -98,9 +102,11 @@ create.inz.mapplot <- function(obj)
 ##' @export
 plot.inzshapemap <- function(obj, gen) 
 {
-    polygon = obj$polygon
-    colby = obj$colby
-    shade.id = rownames(polygon)
+    shape = obj$shape
+    cols = obj$colby
+    
+    shade.id = shape$id
+
     ##limit
     xlim = obj$xlim
     ylim = obj$ylim    
@@ -119,13 +125,12 @@ plot.inzshapemap <- function(obj, gen)
         h = unit(ratio.win/ratio.map, 'npc')		
     }
 
-
     vp = viewport(0.5,0.5,width = w, height = h,name = 'VP:PLOTlayout', xscale = xlim,yscale = ylim)
     pushViewport(vp)
-    grid.polygon(polygon[,1],polygon[,2],default.units = "native", id = shade.id,
+    grid.polygon(shape[,1], shape[,2], default.units = "native", id = shade.id,
                         gp = 
                             gpar(col = 'black',
-                            fill  = colby))
+                                 fill  = cols))
     
 }
 
