@@ -1,49 +1,3 @@
-shade.map = function(shp,data,region,colby = '',transform = 'linear',display = 'heat',na.fill = 'White',offset = 0 ,col = 'red')
-{
-    grid.newpage()
-    print('jump!')
-    shape = readShapePoly(shp)
-    bbox = shape@bbox
-    xlim = bbox[1,]
-    ylim = bbox[2,]
-    shade.obj = shape.extract(shp = shape,colby = colby, region = region,transform = transform,data = data,display = display,
-                                na.fill = na.fill,offset = offset,col = col)
-    shade.data = shade.obj$polygon
-    shade.id = rownames(shade.data)
-    col = shade.obj$color
-    ratio.map = (diff(xlim)/diff(ylim))
-
-
-    win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
-    win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
-    ratio.win = win.width/win.height
-
-    print(ratio.map)
-    print(ratio.win)
-    if(ratio.map < ratio.win)
-    {
-        h = unit(1,'npc')
-        w = unit(ratio.map/ratio.win, 'npc')
-    }else{
-        w = unit(1,'npc')
-        h = unit(ratio.win/ratio.map, 'npc')		
-    }
-
-
-    vp = viewport(0.5,0.5,width = w, height = h,name = 'VP:PLOTlayout', xscale = xlim,yscale = ylim)
-    pushViewport(vp)
-    #vp = viewport(unit(0.5,'npc'),unit(0.5,'npc'),name = 'VP:PLOTlayout', xscale = xlim,yscale = ylim,
-    #	width = unit(ratio,'snpc'), height = unit(1,'snpc'),default.units = 'npc',just = 'center')
-    #pushViewport(vp)
-    grid.polygon(shade.data[,1],shade.data[,2],default.units = "native", id = shade.id,
-                        gp = 
-                            gpar(col = 'black',
-                            fill  = col))
-                            
-    # plot(1:10,1:10)	
-}
-
-
 shape.extract = function(shp)
 {
     polygon.data = list()
@@ -66,18 +20,15 @@ shape.extract = function(shp)
     }
     poly.index = rep(1:j,index)
     latlon = do.call(rbind,polygon.data)
-    #rownames(latlon) = poly.index
     latlon.data = data.frame(latlon = latlon,id = poly.index)
     list(latlon = latlon.data,each = poly.rep)
 }
 
 
 
-col.out = function(transform,display,data,na.fill,offset,col,region)
+shape.object = function(color,latlon)
 {
-    color = col.fun(shp,colby = colby, transform = transform,display = display,
-            each = poly.rep,data = data,na.fill = na.fill,offset = offset,col = col,region = region)
-    shape.obj = list(polygon = latlon, color = color)
+    shape.obj = list(latlon = latlon, color = color)
     shape.obj
 }
 
@@ -87,39 +38,17 @@ data.trans = function(x,transform = 'linear')
     a = x
     b = a - min(a,na.rm = TRUE)
     switch(transform,
-    
-        linear = 
-        {
-            b = b
-        },
-        
-        log = 
-        {
-        b = log(b + 1)
-        },
-        
-        sqrt = 
-        {
-            b = sqrt(b)
-        },
-        
-        exp = 
-        {
-            b = exp(b)
-        },
-        
-        power = 
-        {
-            b = b^2
-        },
-        
+        linear = {b = b},
+        log = {b = log(b + 1)},
+        sqrt = {b = sqrt(b)},
+        exp = {b = exp(b)},
+        power = {b = b^2},
         normal = 
         {
             x = (a - mean(a,na.rm = TRUE))/sd(a,na.rm = TRUE)
             b = dnorm(x,0,1)
             b = b - min(b,na.rm = TRUE)
         },
-        
     )
     percent.data = b/diff(range(b,na.rm = TRUE))
     percent.data
@@ -129,6 +58,8 @@ region.match = function(unmatch.data,shp.region,data.region)
 {
     order = match(shp.region,data.region)
     orderd.data = unmatch.data[order]
+    na.data = shp.region[is.na(orderd.data)]
+    print(paste('unmatch region:',na.data))
     orderd.data
 }
 
@@ -157,23 +88,12 @@ col.fun = function(match.data,each,
     
     switch(display,
     
-        hcl = 
-        {
-            fill.col = hcl(as.numeric(fill.float)*100,l = 85)
-        },
+        hcl = {fill.col = hcl(as.numeric(fill.float)*100,l = 85)},
         
         hue = 
         {
             char.col.trans = col2rgb(col)/255
             fill.col =rgb(char.col.trans[1],char.col.trans[2],char.col.trans[3],fill.float)
-        },
-        
-        ff = 
-        {
-            ab = expand.grid(a = as.numeric(fill.float)*360,b = 100)
-            Lab = cbind(L =50, ab)
-            srgb = convertColor(Lab, from = "Lab", to = "sRGB")
-            fill.col = rgb(srgb[, 1], srgb[, 2], srgb[, 3])          
         },
         
         heat = 

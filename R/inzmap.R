@@ -6,25 +6,22 @@
 ##' @import grid maptools
 ##' @export
 create.inz.mapplot <- function(obj)
-{
-    out <- NextMethod()  
+{  
+    out = list()
     map.type <- obj$opts$plot.features$maptype
-
     ## Create the global object if it isn't already
     if (!"global.objects" %in% ls(envir = .GlobalEnv))
         assign("global.objects", list(), envir = .GlobalEnv)
-
     out$map.type <- map.type
     features <- obj$opts$plot.features
 
     map.type <- obj$opts$plot.features$maptype
     opts <- obj$opts
-    
     if (map.type == "shape") {
         ## Geographical shape file shaded by variable 'x'
         df <- obj$df
 
-        shape <- opts$plot.features$shape.obj
+        latlon <- opts$plot.features$shape.obj$latlon
         
         ## ## information extraction
         ## shp = obj$opts$plot.features$shp.name
@@ -41,8 +38,8 @@ create.inz.mapplot <- function(obj)
         
         ## getting the bbox
         ## bbox = shape@bbox
-        xlim = range(shape[, 1]) #bbox[1,]
-        ylim = range(shape[, 2]) #bbox[2,]
+        xlim = range(latlon[, 1]) #bbox[1,]
+        ylim = range(latlon[, 2]) #bbox[2,]
         
         ## ##compute the shade object by putting the information in
         ## shade.obj =
@@ -61,14 +58,13 @@ create.inz.mapplot <- function(obj)
         n.missing <- sum(missing)
         df <- df[!missing, ]
         
-        
-        out <- list(x = xlim, y = ylim, colby = opts$plot.features$temp.col,
-                    n.missing = n.missing, xlim = xlim, ylim = ylim, shape = opts$plot.features$shape.obj)
-       
+        out <- list(x = xlim, y = ylim, colby = opts$plot.features$shape.obj$color,
+                    n.missing = n.missing, xlim = xlim, ylim = ylim, latlon = opts$plot.features$shape.obj$latlon)
         class(out) <- c("inzshapemap", "inzmap", "inzscatter")
     } else {
         ## otherwise it's a "scatter" plot ...
-        
+        #out <- NextMethod()
+
         ## sort out opacity
         if (!is.null(features$opacity))
             {
@@ -102,11 +98,11 @@ create.inz.mapplot <- function(obj)
 ##' @export
 plot.inzshapemap <- function(obj, gen) 
 {
-    shape = obj$shape
+    latlon = obj$latlon
     cols = obj$colby
     
-    shade.id = shape$id
-
+    shade.id = obj$latlon$id
+    a <<- obj
     ##limit
     xlim = obj$xlim
     ylim = obj$ylim    
@@ -115,7 +111,6 @@ plot.inzshapemap <- function(obj, gen)
     ##compute the ratio
     ratio.map = (diff(xlim)/diff(ylim))
     ratio.win = win.width/win.height
-
     if(ratio.map < ratio.win)
     {
         h = unit(1,'npc')
@@ -124,10 +119,9 @@ plot.inzshapemap <- function(obj, gen)
         w = unit(1,'npc')
         h = unit(ratio.win/ratio.map, 'npc')		
     }
-
     vp = viewport(0.5,0.5,width = w, height = h,name = 'VP:PLOTlayout', xscale = xlim,yscale = ylim)
     pushViewport(vp)
-    grid.polygon(shape[,1], shape[,2], default.units = "native", id = shade.id,
+    grid.polygon(latlon[,1], latlon[,2], default.units = "native", id = shade.id,
                         gp = 
                             gpar(col = 'black',
                                  fill  = cols))

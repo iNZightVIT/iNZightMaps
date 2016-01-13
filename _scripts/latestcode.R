@@ -1,23 +1,22 @@
 ## source package
 ## data = Gapminder data
 ## location
-location <- ""
-
+location = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world/TM_WORLD_BORDERS-0.3.shp'
+data = data.1
 
 ## mess with the output of this function so it gives a dataframe: [x | y | id | country]
-shapeobj <- shape.extract(shp <- readShapePoly(location),
-                          "ChildrenPerWoman", "linear", "hue", data = data, na.fill = "pink",
-                                               offset = 0,col = "green4", region = "Country")
+shapeobj <- shape.extract(shp <- readShapePoly(location))
                           
-myshape <- data.frame(x = shapeobj$polygon[, 1],
-                      y = shapeobj$polygon[, 2],
-                      id = as.numeric(rownames(shapeobj$polygon)))
-
+                          
+myshape <- data.frame(x = shapeobj$latlon[, 1],
+                      y = shapeobj$latlon[, 2],
+                      id = as.numeric(rownames(shapeobj$latlon)))
+color = 'yellow'
 
 
 iNZightPlot(ChildrenPerWoman, Country, data = data, plottype = "map",
             plot.features =
-                list(maptype = "shape", shape.obj = myshape, temp.col = shapeobj$color))
+                list(maptype = "shape", shape.obj = myshape, temp.col = color))
 
 
 ## once shape.extract modified, soemthing like:

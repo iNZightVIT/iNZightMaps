@@ -17,26 +17,33 @@
 ##' plot(mapobj, opacity = ~Depth, colby = Felt, sizeby = Magnitude, type = "terrain")
 ##'
 ##' @export
-iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
+iNZightMap <- function(lat, lon, data, name = deparse(substitute(data)),shp.name) {
     if (missing(data) || is.null(data))
         stop("iNZightMaps required you to use a data.frame.")
 
     attr(data, "name") <- name
 
-    ## Get latitude values
-    if (inherits(lat, "formula")) {
-        mf <- substitute(model.frame(lat, data = data))
-        lat <- eval.parent(mf)
-    } else {
-        lat <- data.frame(lat)
-    }
+    if(!missing(shp))
+    {
+        shape = readShapePoly(shp.name)
+        shape.data = shape.extract(shape)$latlon
+    }else
+    {
+        ## Get latitude values
+        if (inherits(lat, "formula")) {
+            mf <- substitute(model.frame(lat, data = data))
+            lat <- eval.parent(mf)
+        } else {
+            lat <- data.frame(lat)
+        }
 
-    ## Get longitude values
-    if (inherits(lon, "formula")) {
-        mf <- substitute(model.frame(lon, data = data))
-        lon <- eval.parent(mf)
-    } else {
-        lon <- data.frame(lon)
+        ## Get longitude values
+        if (inherits(lon, "formula")) {
+            mf <- substitute(model.frame(lon, data = data))
+            lon <- eval.parent(mf)
+        } else {
+            lon <- data.frame(lon)
+        }
     }
 
     data$.latitude <- lat[[1]]
@@ -58,16 +65,16 @@ plot.inzightmap <- function(x,
                             opacity,
                             type =
                                 c("roadmap", "mobile", "satellite", "terrain", "hybrid",
-                                  "mapmaker-roadmap", "mapmaker-hybrid"),
+                                  "mapmaker-roadmap", "mapmaker-hybrid",'shape'),
                             ...) {
+
     mc <- match.call()
-    
     mc$data <- mc$x 
     mc$x <- expression(.longitude)
     mc$y <- expression(.latitude)
     mc$plottype <- "map"
     mc$plot.features <- list(maptype = match.arg(type))
-    
+
     if (!missing(opacity)) {
         if (inherits(opacity, "formula")) {
             opacity <- as.character(opacity)[2]
@@ -88,3 +95,4 @@ plot.inzightmap <- function(x,
 
     eval(mc)
 }
+
