@@ -12,10 +12,12 @@ shp <- readShapePoly(location)
 shapeobj <- shape.extract(shp)
 
 data.t = data.trans(data.1$Exports,transform = 'linear')
-data.o = region.match(data.t,shp[[5]],data.1$Country)
-color = col.fun(data.o,each = shapeobj$each,display = 'heat')
+data.o = order.match(data.t,shp[[5]],data.1$Country)
+color = col.fun(data.o,each = shapeobj$each,display = 'hue')
 shape.obj = shape.object(color,shapeobj$latlon)
 
-iNZightPlot(Exports, Country, data = data.1, plottype = 'map',
+system.time(iNZightPlot(Exports, Country, data = data.1, plottype = 'map',
             plot.features =
-              list(maptype = "shape", shape.obj = shape.obj))
+              list(maptype = "shape", shape.obj = shape.obj)))
+
+

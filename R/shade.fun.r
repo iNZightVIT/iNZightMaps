@@ -54,7 +54,7 @@ data.trans = function(x,transform = 'linear')
     percent.data
 }
 
-region.match = function(unmatch.data,shp.region,data.region)
+order.match = function(unmatch.data,shp.region,data.region)
 {
     order = match(shp.region,data.region)
     orderd.data = unmatch.data[order]
@@ -64,17 +64,17 @@ region.match = function(unmatch.data,shp.region,data.region)
 }
 
 
-col.fun = function(match.data,each,
+col.fun = function(percent.data,each,
                     display = 'hue',na.fill = 'gray',offset = 0,col = 'red')
 {
     impossible.number = 0.091823021983
     bio.color = c('bi.polar','cm.colors	')
     if(display %in% bio.color)
     {
-        fill.float <<- ifelse(is.na(match.data) == TRUE, impossible.number,match.data)
+        fill.float <<- ifelse(is.na(percent.data) == TRUE, impossible.number,percent.data)
     }else
     {
-        fill.float <<- ifelse(is.na(match.data) == TRUE, impossible.number,match.data * (1 - offset) + (offset))
+        fill.float <<- ifelse(is.na(percent.data) == TRUE, impossible.number,percent.data * (1 - offset) + (offset))
     }
     
     ###the color can not be offset if it is bio-color
@@ -178,9 +178,6 @@ col.fun = function(match.data,each,
     color.out = rep(color.each,each)	
     color.out
 }
-
-
-
 
 
 

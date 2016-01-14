@@ -19,47 +19,23 @@ create.inz.mapplot <- function(obj)
     opts <- obj$opts
     if (map.type == "shape") {
         ## Geographical shape file shaded by variable 'x'
+        
+        
         df <- obj$df
-
-        latlon <- opts$plot.features$shape.obj$latlon
-        
-        ## ## information extraction
-        ## shp = obj$opts$plot.features$shp.name
-        ## subset.by = obj$opts$plot.features$subset.by
-        
-        ## shape = readShapePoly(shp)
-        ## region = obj$opts$plot.features$region
-        ## transform = obj$opts$plot.features$transform
-        ## data = obj$opts$plot.features$with.data
-        ## display = obj$opts$plot.features$display
-        ## na.fill = obj$opts$plot.features$na.fill
-        ## offset = obj$opts$plot.features$offset
-        ## col = obj$opts$plot.features$col
-        
-        ## getting the bbox
-        ## bbox = shape@bbox
-        xlim = range(latlon[, 1]) #bbox[1,]
-        ylim = range(latlon[, 2]) #bbox[2,]
-        
-        ## ##compute the shade object by putting the information in
-        ## shade.obj =
-        ##     shape.extract(shp = shape, colby = subset.by, region = region,
-        ##                   transform = transform, data = data, display = display,
-        ##                   na.fill = na.fill,offset = offset,col = col)
-        
-        ## ##extract the color and polygon
-        ## region.color = shade.obj$color
-        ## region.polygon = shade.obj$polygon   
-        
-
         ## missing data
         v <- colnames(df)
         missing <- is.na(df$x)
         n.missing <- sum(missing)
         df <- df[!missing, ]
-        
-        out <- list(x = xlim, y = ylim, colby = opts$plot.features$shape.obj$color,
-                    n.missing = n.missing, xlim = xlim, ylim = ylim, latlon = opts$plot.features$shape.obj$latlon)
+
+        ## information extraction
+        latlon = opts$plot.features$shape.obj$latlon
+        xlim = range(latlon[, 1])
+        ylim = range(latlon[, 2])
+        colby = opts$plot.features$shape.obj$color
+
+        out <- list(x = xlim, y = ylim, colby = colby,
+                    n.missing = n.missing, xlim = xlim, ylim = ylim, latlon = latlon)
         class(out) <- c("inzshapemap", "inzmap", "inzscatter")
     } else {
         ## otherwise it's a "scatter" plot ...
