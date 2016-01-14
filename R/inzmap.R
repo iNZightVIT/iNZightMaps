@@ -7,17 +7,19 @@
 ##' @export
 create.inz.mapplot <- function(obj)
 {  
-    out = list()
     map.type <- obj$opts$plot.features$maptype
+    
     ## Create the global object if it isn't already
     if (!"global.objects" %in% ls(envir = .GlobalEnv))
         assign("global.objects", list(), envir = .GlobalEnv)
-    out$map.type <- map.type
+
     features <- obj$opts$plot.features
 
     map.type <- obj$opts$plot.features$maptype
     opts <- obj$opts
+    
     if (map.type == "shape") {
+        
         ## Geographical shape file shaded by variable 'x'
         
         
@@ -34,26 +36,30 @@ create.inz.mapplot <- function(obj)
         ylim = range(latlon[, 2])
         colby = opts$plot.features$shape.obj$color
 
-        out <- list(x = xlim, y = ylim, colby = colby,
+        out <- list(x = xlim, y = ylim, colby = colby, map.type = map.type,
                     n.missing = n.missing, xlim = xlim, ylim = ylim, latlon = latlon)
         class(out) <- c("inzshapemap", "inzmap", "inzscatter")
+        
     } else {
+        
         ## otherwise it's a "scatter" plot ...
-        #out <- NextMethod()
+        out <- NextMethod()
+        out$map.type <- map.type
 
         ## sort out opacity
-        if (!is.null(features$opacity))
-            {
-                opacity.var <- obj$df[[features$opacity]]
-                ratio = 0.7
-                abs.opacity.var = abs(opacity.var)
-                opacity.var.transformed = abs.opacity.var/max(abs.opacity.var) * ratio+ (1 - ratio)
-                out$opacity <- opacity.var.transformed
-                if(any(out$opacity < 1 ))
-                    out$pch = rep(19,length(out$pch))
-            }
+        if (!is.null(features$opacity)) {
+            opacity.var <- obj$df[[features$opacity]]
+            ratio = 0.7
+            abs.opacity.var = abs(opacity.var)
+            opacity.var.transformed = abs.opacity.var/max(abs.opacity.var) * ratio+ (1 - ratio)
+            out$opacity <- opacity.var.transformed
+            
+            if (any(out$opacity < 1 ))
+                out$pch = rep(19,length(out$pch))
+        }
         
         class(out) <- c("inzmap", class(out))
+        
     }
 
     out$draw.axes <- FALSE
@@ -161,6 +167,9 @@ plot.inzmap <- function(obj, gen) {
 
     ## drawing~~~~
     grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)
+
+    if (opts$plot.features$map.opacity < 1)
+        grid.rect(gp = gpar(col = "transparent", fill = "white", alpha = 1 - opts$plot.features$map.opacity))
 
     ## define the limit
     tmp = map.xylim()$window.lim

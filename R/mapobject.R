@@ -40,7 +40,7 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
     }
 
     ## remove missing lat/lon rows
-    isna <- is.na(lat
+#    isna <- is.na(lat
     
     data$.latitude <- lat[[1]]
     data$.longitude <- lon[[1]]
@@ -62,6 +62,7 @@ plot.inzightmap <- function(x,
                             type =
                                 c("roadmap", "mobile", "satellite", "terrain", "hybrid",
                                   "mapmaker-roadmap", "mapmaker-hybrid",'shape'),
+                            map.opacity = 1,
                             ...) {
 
     mc <- match.call()
@@ -69,7 +70,8 @@ plot.inzightmap <- function(x,
     mc$x <- expression(.longitude)
     mc$y <- expression(.latitude)
     mc$plottype <- "map"
-    mc$plot.features <- list(maptype = match.arg(type))
+    mc$plot.features <- list(maptype = match.arg(type), map.opacity = map.opacity)
+    mc$map.opacity <- NULL
 
     if (!missing(opacity)) {
         if (inherits(opacity, "formula")) {
