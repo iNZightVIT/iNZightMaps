@@ -32,8 +32,13 @@ create.inz.mapplot <- function(obj)
         latlon = opts$plot.features$shape.obj$obj$latlon
 		country = opts$plot.features$shape.obj$obj$country
 		each = opts$plot.features$shape.obj$obj$each
+		
+		######I used the xylim within transformed data, instead of from inz.plot.....
+		###should be re-write in the future
         xlim = range(latlon[, 1])
         ylim = range(latlon[, 2])
+		
+		
         colby = opts$plot.features$shape.obj$color
 
         out <- list(x = xlim, y = ylim, colby = colby,
@@ -42,7 +47,12 @@ create.inz.mapplot <- function(obj)
     } else {
         ## otherwise it's a "scatter" plot ...
         out <- NextMethod()
-
+		out$map.type = map.type
+		
+		######here I do the 'shift' data, it should be done 'before-this-function' call
+		###should be re-write in the future
+		out$x = lon.rescale(out$x)
+		
         ## sort out opacity
         if (!is.null(features$opacity))
             {
@@ -116,7 +126,7 @@ plot.inzshapemap <- function(obj, gen)
 ##' @import RgoogleMaps
 ##' @export
 plot.inzmap <- function(obj, gen) {	
-	obj$x = lon.rescale(obj$x)
+	
     opts <- gen$opts
     mcex <- gen$mcex
     col.args <- gen$col.args
@@ -133,7 +143,8 @@ plot.inzmap <- function(obj, gen) {
     debug <- if (is.null(opts$debug)) FALSE else opts$debug
 
 
-    ## setting
+	######I used the xylim within transformed data, instead of from inz.plot.....
+	###should be re-write in the future
     xlim <- range(obj$x)
     ylim <- range(obj$y)
 	
@@ -142,9 +153,9 @@ plot.inzmap <- function(obj, gen) {
     SCALE  <-  2
     size = global.objects$maps$map$size
     type = obj$map.type
-    
-    get.newmap <- needNewMap(bbox = c(xlim,ylim),size = size,SCALE = SCALE,type = type,window = c(win.width,win.height))
-        if (debug)
+    bb <<- obj
+    get.newmap <- needNewMap(bbox = c(xlim,ylim),size = size,SCALE = SCALE,type = type,
+							window = c(win.width,win.height))
     message(paste('get.newmap:',get.newmap))
 
     if (get.newmap) 

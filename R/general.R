@@ -61,7 +61,7 @@ lon.rescale = function(lon)
 ##' @param window a numeric vector of length 2, the size of the pervious window
 ##' @param sized a numeric vector of length 2, the size of the pervious map 
 ##' @param SCALE a numeric vector of length 1, the scale of the pervious map 
-##' @param a character vector of length 1, type the type of the pervious map 
+##' @param type a character vector of length 1, type the type of the pervious map 
 ##' @return Logical value TRUE/FALSE TRUE = something are not matched, FALSE = the pervious map is ok for re-use.
 ##' @author Jason Wen
 needNewMap <- function(bbox,window,size,SCALE,type)
@@ -81,17 +81,17 @@ needNewMap <- function(bbox,window,size,SCALE,type)
         is.null(global.objects$maps$map.detail$scale) || is.null(global.objects$maps$map.detail$type) || 
         is.null(global.objects$maps$map.detail$window))
         {
-            #print('something is null~~~~')	
+            print('something is null~~~~')	
             need = TRUE
         }else
         {
             ##individual checking
             a = global.objects$maps$map.detail$bbox
             b = bbox
-            if(any(abs(a - b) > 0.5) )
+            if(any(abs(a - b) > 0.1) )
             {
             global.objects$maps$map.detail$bbox = bbox
-            #print('BBOX changed!')
+            print('BBOX changed!')
             need[1] = TRUE					
             }else
             {
@@ -101,7 +101,7 @@ needNewMap <- function(bbox,window,size,SCALE,type)
             if(any(global.objects$maps$map.detail$size != size))
             {
                 global.objects$maps$map.detail$size = size
-                #print('size changed!')
+                print('size changed!')
                 need[2] = TRUE
 
             }else
@@ -111,7 +111,7 @@ needNewMap <- function(bbox,window,size,SCALE,type)
             if(global.objects$maps$map.detail$scale != SCALE)
             {
                 global.objects$maps$map.detail$scale = SCALE
-                #print('scale changed!')
+                print('scale changed!')
                 need[3] = TRUE
 
             }else
@@ -121,7 +121,7 @@ needNewMap <- function(bbox,window,size,SCALE,type)
                 #print(type)
             if(type != global.objects$maps$map.detail$type)
             {
-                #print('type changed!')
+                print('type changed!')
                 global.objects$maps$map.detail$type = type
                 need[4] = TRUE
             }else
@@ -131,13 +131,16 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 
             if(any(global.objects$maps$map.detail$window != window))
             {
-                #print('window changed!')
+                print('window changed!')
                 global.objects$maps$map.detail$window = window
                 need[5] = TRUE
-            }else
+            }
+			else
             {
                 need[5] = FALSE	
             }
+
+			
         }
         any(need)
     }
@@ -177,8 +180,6 @@ Get.map.size = function(latR.odd,lonR.odd,SCALE)
     latR.odd = current.viewport()$yscale  
     lonR.odd = current.viewport()$xscale
     
-	#lonR.odd = lon.rescale(lonR.odd)
-	print(lonR.odd)
 
 
     ###give an origin size that helps to compute the zoom
@@ -222,7 +223,6 @@ Get.map.size = function(latR.odd,lonR.odd,SCALE)
 
     ##rearrange the ratio if any > 640
     size.final = size
-	print(win.size[1]/win.size[2])
 
 	if(size[1] > size[2])
 	{
@@ -233,7 +233,6 @@ Get.map.size = function(latR.odd,lonR.odd,SCALE)
 	}
 	
     ZoomSize = list(zoom = zoom, size = size.final)
-	print(ZoomSize)
     ZoomSize
     ###hence the we will get the map with this zoom and size
 
