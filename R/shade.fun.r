@@ -3,13 +3,13 @@ shape.extract = function(shp)
     polygon.data = list()
     j = 0
     color = 0
-    poly.rep = 0
+    col.index = 0
     poly.out = length(shp@polygons)
     index = 0
     for(i in 1:poly.out)
     {
         poly.in = length(shp@polygons[[i]]@Polygons)
-        poly.rep[i] = poly.in
+        col.index[i] = poly.in
         for(ii in 1:poly.in)
         {
             j = j + 1
@@ -20,16 +20,11 @@ shape.extract = function(shp)
     }
     poly.index = rep(1:j,index)
     latlon = do.call(rbind,polygon.data)
-    latlon.data = data.frame(latlon = latlon,id = poly.index)
-    list(latlon = latlon.data,each = poly.rep)
-}
-
-
-
-shape.object = function(color,latlon)
-{
-    shape.obj = list(latlon = latlon, color = color)
-    shape.obj
+    latlon.data = data.frame(latlon = latlon)
+	colnames(latlon.data) = c('lon.x','lat.y')
+	country = shp[[5]]		
+    obj = list(latlon = latlon.data,each = index,country = country,col.index = col.index)
+	obj
 }
 
 
@@ -59,22 +54,22 @@ order.match = function(unmatch.data,shp.region,data.region)
     order = match(shp.region,data.region)
     orderd.data = unmatch.data[order]
     na.data = shp.region[is.na(orderd.data)]
-    print(paste('unmatch region:',na.data))
+    print(paste('number of unmatch region:',length(na.data)))
     orderd.data
 }
 
 
-col.fun = function(percent.data,each,
-                    display = 'hue',na.fill = 'gray',offset = 0,col = 'red')
+col.fun = function(percent.data,color.index,
+                    display = 'hue',na.fill = 'white',offset = 0,col = 'red')
 {
     impossible.number = 0.091823021983
     bio.color = c('bi.polar','cm.colors	')
     if(display %in% bio.color)
     {
-        fill.float <<- ifelse(is.na(percent.data) == TRUE, impossible.number,percent.data)
+        fill.float = ifelse(is.na(percent.data) == TRUE, impossible.number,percent.data)
     }else
     {
-        fill.float <<- ifelse(is.na(percent.data) == TRUE, impossible.number,percent.data * (1 - offset) + (offset))
+        fill.float = ifelse(is.na(percent.data) == TRUE, impossible.number,percent.data * (1 - offset) + (offset))
     }
     
     ###the color can not be offset if it is bio-color
@@ -98,41 +93,41 @@ col.fun = function(percent.data,each,
         
         heat = 
         {
-            over.col = heat.colors(length(each) * 100)
+            over.col = heat.colors(length(color.index) * 100)
             orderd.col = over.col[length(over.col):1]
-            id = round(fill.float * length(each) * 100)
+            id = round(fill.float * length(color.index) * 100)
             fill.col = orderd.col[id]
         },
         
         rainbow = 
         {
-            over.col = rainbow(length(each) * 100)
+            over.col = rainbow(length(color.index) * 100)
             orderd.col = over.col
-            id = round(fill.float * length(each) * 100)
+            id = round(fill.float * length(color.index) * 100)
             fill.col = orderd.col[id]            
         },
         
         terrain.colors = 
         {
-            over.col = terrain.colors(length(each) * 100)
+            over.col = terrain.colors(length(color.index) * 100)
             orderd.col = over.col
-            id = round(fill.float * length(each) * 100)
+            id = round(fill.float * length(color.index) * 100)
             fill.col = orderd.col[id]	            
         },
         
         topo.colors = 
         {
-            over.col = topo.colors(length(each) * 100)
+            over.col = topo.colors(length(color.index) * 100)
             orderd.col = over.col
-            id = round(fill.float * length(each) * 100)
+            id = round(fill.float * length(color.index) * 100)
             fill.col = orderd.col[id]
         },
         
         cm.colors = 
         {
-            over.col = cm.colors(length(each) * 100)
+            over.col = cm.colors(length(color.index) * 100)
             orderd.col = over.col
-            id = round(fill.float * length(each) * 100)
+            id = round(fill.float * length(color.index) * 100)
             fill.col = orderd.col[id]
         },
         
@@ -175,10 +170,16 @@ col.fun = function(percent.data,each,
         
     )
     color.each = ifelse(fill.float== impossible.number, na.fill, fill.col)
-    color.out = rep(color.each,each)	
+    color.out = rep(color.each,color.index)	
     color.out
 }
 
+
+color.bind = function(color,obj)
+{
+    with.color = list(obj = obj, color = color)
+    with.color
+}
 
 
 function(){

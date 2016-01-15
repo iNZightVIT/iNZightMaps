@@ -17,6 +17,7 @@ create.inz.mapplot <- function(obj)
 
     map.type <- obj$opts$plot.features$maptype
     opts <- obj$opts
+    
     if (map.type == "shape") {
         ## Geographical shape file shaded by variable 'x'
         
@@ -27,19 +28,20 @@ create.inz.mapplot <- function(obj)
         missing <- is.na(df$x)
         n.missing <- sum(missing)
         df <- df[!missing, ]
-
         ## information extraction
-        latlon = opts$plot.features$shape.obj$latlon
+        latlon = opts$plot.features$shape.obj$obj$latlon
+		country = opts$plot.features$shape.obj$obj$country
+		each = opts$plot.features$shape.obj$obj$each
         xlim = range(latlon[, 1])
         ylim = range(latlon[, 2])
         colby = opts$plot.features$shape.obj$color
 
         out <- list(x = xlim, y = ylim, colby = colby,
-                    n.missing = n.missing, xlim = xlim, ylim = ylim, latlon = latlon)
+                    n.missing = n.missing, xlim = xlim, ylim = ylim, latlon = latlon,country = country,each = each)
         class(out) <- c("inzshapemap", "inzmap", "inzscatter")
     } else {
         ## otherwise it's a "scatter" plot ...
-        #out <- NextMethod()
+        out <- NextMethod()
 
         ## sort out opacity
         if (!is.null(features$opacity))
@@ -55,7 +57,6 @@ create.inz.mapplot <- function(obj)
         
         class(out) <- c("inzmap", class(out))
     }
-
     out$draw.axes <- FALSE
     out
 }
@@ -74,11 +75,10 @@ create.inz.mapplot <- function(obj)
 ##' @export
 plot.inzshapemap <- function(obj, gen) 
 {
+
     latlon = obj$latlon
     cols = obj$colby
-    
-    shade.id = obj$latlon$id
-    a <<- obj
+    shade.each =obj$each
     ##limit
     xlim = obj$xlim
     ylim = obj$ylim    
@@ -97,7 +97,7 @@ plot.inzshapemap <- function(obj, gen)
     }
     vp = viewport(0.5,0.5,width = w, height = h,name = 'VP:PLOTlayout', xscale = xlim,yscale = ylim)
     pushViewport(vp)
-    grid.polygon(latlon[,1], latlon[,2], default.units = "native", id = shade.id,
+    grid.polygon(latlon[,1], latlon[,2], default.units = "native", id.length = shade.each,
                         gp = 
                             gpar(col = 'black',
                                  fill  = cols))
@@ -116,6 +116,7 @@ plot.inzshapemap <- function(obj, gen)
 ##' @import RgoogleMaps
 ##' @export
 plot.inzmap <- function(obj, gen) {	
+	obj$x = lon.rescale(obj$x)
     opts <- gen$opts
     mcex <- gen$mcex
     col.args <- gen$col.args
@@ -133,9 +134,9 @@ plot.inzmap <- function(obj, gen) {
 
 
     ## setting
-    xlim <- current.viewport()$xscale
-    ylim <- current.viewport()$yscale
-
+    xlim <- range(obj$x)
+    ylim <- range(obj$y)
+	
     win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
     win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
     SCALE  <-  2
@@ -150,7 +151,7 @@ plot.inzmap <- function(obj, gen) {
     {
         if (debug) message(xlim)
         if (debug) message(ylim)
-        getNewMap(xlim = ylim, ylim = xlim, SCALE = SCALE, type = type,zoom = Get.map.size(ylim,xlim)$zoom)
+        getNewMap(lat.lim = ylim, lon.lim = xlim, SCALE = SCALE, type = type,zoom = Get.map.size(ylim,xlim)$zoom)
         ## updating
         global.objects$maps$map.detail$window <<- c(win.width,win.height)
         global.objects$maps$map.detail$bbox <<- c(xlim,ylim)

@@ -23,7 +23,7 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data)),shp.name
 
     attr(data, "name") <- name
 
-    if(!missing(shp))
+    if(!missing(shp.name))
     {
         shape = readShapePoly(shp.name)
         shape.data = shape.extract(shape)$latlon
@@ -45,7 +45,6 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data)),shp.name
             lon <- data.frame(lon)
         }
     }
-
     data$.latitude <- lat[[1]]
     data$.longitude <- lon[[1]]
 
@@ -65,7 +64,7 @@ plot.inzightmap <- function(x,
                             opacity,
                             type =
                                 c("roadmap", "mobile", "satellite", "terrain", "hybrid",
-                                  "mapmaker-roadmap", "mapmaker-hybrid",'shape'),
+                                  "mapmaker-roadmap", "mapmaker-hybrid"),
                             ...) {
 
     mc <- match.call()
@@ -82,7 +81,6 @@ plot.inzightmap <- function(x,
         mc$plot.features$opacity <- opacity
         mc$extra.vars <- opacity
     }
-
     ## set the plot labels:
     if (is.null(mc$main))
         mc$main <- paste("Map of", attr(x, "name"))
@@ -90,9 +88,7 @@ plot.inzightmap <- function(x,
         mc$xlab <- ""
     if (is.null(mc$ylab))
         mc$ylab <- ""
-
     mc[1] <- expression(iNZightPlot)
-
     eval(mc)
 }
 

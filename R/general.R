@@ -9,7 +9,8 @@
 ##' @export
 latlon.xy = 
 function(data,map)
-{
+{	
+	#data[,2] = lon.rescale(data[,2])
     zoom = map$zoom
     LatLon2XY.centered(map, data[,1], data[,2], zoom = zoom)
 }
@@ -20,20 +21,34 @@ function(data,map)
 ##'
 ##' a wrap function of \link{GetMap} from package 'RgoogleMaps'
 ##' @title Get an new map object
-##' @param xlim the range of longitude
-##' @param ylim the range of latitude
+##' @param lat.lim the range of longitude
+##' @param lon.lim the range of latitude
 ##' @param SCALE variable from \link{GetMap}, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map 
 ##' @param variable from \link{GetMap}, type defines the type of map to construct. There are several possible maptype values, including satellite, terrain, hybrid, and mobile.
 ##' @param zoom variable from \link{GetMap}, Google maps zoom level.
 ##' @return a map object
 ##' @author Jason Wen
-getNewMap <- function(xlim, ylim, SCALE, type,zoom)
+getNewMap <- function(lat.lim, lon.lim, SCALE, type,zoom)
 {	
-    map <- GetMap(center = c(mean(xlim),mean(ylim)), size = Get.map.size(xlim,ylim)$size,zoom = zoom,maptype = type,SCALE =SCALE)
+	lat.mean = mean(lat.lim)
+	lon.mean = ifelse(mean(lon.lim) > 180,179, mean(lon.lim))
+	center = c(lat.mean,lon.mean)
+    map <- GetMap(center = center, size = Get.map.size(lat.lim,lon.lim)$size,zoom = zoom,maptype = type,SCALE =SCALE)
+	#map <- GetMap(center = c(0,0), zoom = 1)
+
     global.objects$maps$map= map
     assign("global.objects", global.objects, envir = .GlobalEnv)
 }
 
+lon.rescale = function(lon)
+{
+	lon.range = range(lon)
+	if(lon.range[1] < 0 & lon.range[2] > 0)
+	{
+		lon = ifelse(lon < -135,lon + 360,lon)
+	}
+	lon
+}
 
 
 ####return TRUE if we something changed or firt plotting
@@ -161,6 +176,10 @@ Get.map.size = function(latR.odd,lonR.odd,SCALE)
 
     latR.odd = current.viewport()$yscale  
     lonR.odd = current.viewport()$xscale
+    
+	#lonR.odd = lon.rescale(lonR.odd)
+	print(lonR.odd)
+
 
     ###give an origin size that helps to compute the zoom
     if(win.size[1] > win.size[2])
@@ -170,15 +189,19 @@ Get.map.size = function(latR.odd,lonR.odd,SCALE)
     {
         size.1 = round(c(640 * win.size[1] / win.size[2], 640))
     }
+    
+	lat.range = range(latR.odd)
+	lon.range = range(latR.odd)
+	if(lon.range[1] < 0 & lon.range[2] > 0)
+	{
+		lon.range[1] = lon.range[1] + 360 
+	}
+	zoom <- min(MaxZoom(lat.range, lon.range, size.1))
 
-    ####stuff from 'Getmap' and 'Getmap.bbox' from 'rgooglemaps' package
-    ###Overall it transform the latitude/longitude into the size of resolution
-    lat.center = mean(latR.odd)
-    lon.center = mean(lonR.odd)
-    zoom <- min(MaxZoom(latR.odd, lonR.odd, size.1))
+	
     ll <- LatLon2XY(latR.odd[1], lonR.odd[1], zoom)
     ur <- LatLon2XY(latR.odd[2], lonR.odd[2], zoom)
-    cr <- LatLon2XY(lat.center, lon.center, zoom)
+    cr <- LatLon2XY(mean(latR.odd), mean(lonR.odd), zoom)
     ll.Rcoords <- Tile2R(ll, cr)
     ur.Rcoords <- Tile2R(ur, cr)
     size = 0
@@ -199,12 +222,18 @@ Get.map.size = function(latR.odd,lonR.odd,SCALE)
 
     ##rearrange the ratio if any > 640
     size.final = size
-    if(size[1] > 640) {size.final = round(c(640,640 * win.size[2]/win.size[1]))}
-    if(size[2] > 640) {size.final = round(c(640 * win.size[1]/win.size[2],640))}
+	print(win.size[1]/win.size[2])
 
-
+	if(size[1] > size[2])
+	{
+		size.final = round(c(640,640 * win.size[2]/win.size[1]))
+	}else
+	{
+		size.final = round(c(640 * win.size[1]/win.size[2],640))
+	}
+	
     ZoomSize = list(zoom = zoom, size = size.final)
-    #print(ZoomSize)
+	print(ZoomSize)
     ZoomSize
     ###hence the we will get the map with this zoom and size
 

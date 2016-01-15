@@ -3,21 +3,28 @@ library(grid)
 library(RColorBrewer)
 library(iNZightPlots)
 library(iNZightMaps)
-library(grid)
 
 data.1 = read.csv('C:/Users/yeamin/Desktop/Gapminder-2008.csv',skip = 1)
-location = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world/TM_WORLD_BORDERS-0.3.shp'
-
+location = 'C:/Users/yeamin/Desktop/world/ne_110m_admin_0_countries.shp'
+data("nzquakes")
 shp <- readShapePoly(location)
 shapeobj <- shape.extract(shp)
 
 data.t = data.trans(data.1$Exports,transform = 'linear')
-data.o = order.match(data.t,shp[[5]],data.1$Country)
-color = col.fun(data.o,each = shapeobj$each,display = 'hue')
-shape.obj = shape.object(color,shapeobj$latlon)
+data.o = order.match(data.t,shp[[4]],data.1$Country)
+color = col.fun(data.o,color.index = shapeobj$col.index,display = 'hue')
+shape.obj = color.bind(color,shapeobj)
+
 
 system.time(iNZightPlot(Exports, Country, data = data.1, plottype = 'map',
             plot.features =
               list(maptype = "shape", shape.obj = shape.obj)))
 
 
+obj = iNZightMap(~Latitude,~Longitude,data = nzquakes)
+plot.inzightmap(obj,opacity = 'Day',type = 'roadmap')
+
+data.2 = read.csv('C:/Users/yeamin/Desktop/GeoNet_CMT_solutions.csv')
+
+system.time(iNZightPlot(Longitude,Latitude,data = data.2,colby = rake,
+                        plottype = 'map',plot.features = list(maptype = 'roadmap')))
