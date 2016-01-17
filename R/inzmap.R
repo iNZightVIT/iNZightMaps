@@ -175,7 +175,7 @@ plot.inzmap <- function(obj, gen) {
     grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)
 
     ## define the limit
-    tmp = map.xylim()$window.lim
+    tmp = map.xylim(ylim,xlim,SCALE = SCALE)$window.lim
     xl =tmp[1:2]
     yl = tmp[3:4]
 
