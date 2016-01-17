@@ -6,13 +6,14 @@
 ##' @import grid maptools
 ##' @export
 create.inz.mapplot <- function(obj)
-{  
-    out = list()
+{
     map.type <- obj$opts$plot.features$maptype
+
     ## Create the global object if it isn't already
     if (!"global.objects" %in% ls(envir = .GlobalEnv))
         assign("global.objects", list(), envir = .GlobalEnv)
-    out$map.type <- map.type
+
+    #out$map.type <- map.type
     features <- obj$opts$plot.features
 
     map.type <- obj$opts$plot.features$maptype
@@ -20,42 +21,32 @@ create.inz.mapplot <- function(obj)
     
     if (map.type == "shape") {
         ## Geographical shape file shaded by variable 'x'
-        
-        
         df <- obj$df
+
+        shape <- opts$plot.features$shape.obj
+a <<- opts
+        xlim = range(shape$plot.features$shape.obj$obj$latlon$lon.x,na.rm = TRUE) #bbox[1,]
+        ylim <<- range(shape$plot.features$shape.obj$obj$latlon$lat.y,na.rm = TRUE) #bbox[2,]
+print(ylim)
+
         ## missing data
         v <- colnames(df)
         missing <- is.na(df$x)
         n.missing <- sum(missing)
         df <- df[!missing, ]
-        ## information extraction
-        latlon = opts$plot.features$shape.obj$obj$latlon
-		country = opts$plot.features$shape.obj$obj$country
-		each = opts$plot.features$shape.obj$obj$each
-		
-		######I used the xylim within transformed data, instead of from inz.plot.....
-		###should be re-write in the future
-        xlim = range(latlon[, 1])
-        ylim = range(latlon[, 2])
-		
-		
-        colby = opts$plot.features$shape.obj$color
-
-        out <- list(x = xlim, y = ylim, colby = colby,
-                    n.missing = n.missing, xlim = xlim, ylim = ylim, latlon = latlon,country = country,each = each)
+        
+        
+        out <- list(x = xlim, y = ylim, colby = opts$plot.features$temp.col,
+                    n.missing = n.missing, xlim = xlim, ylim = ylim, shape = opts$plot.features$shape.obj)
+       
         class(out) <- c("inzshapemap", "inzmap", "inzscatter")
     } else {
         ## otherwise it's a "scatter" plot ...
         out <- NextMethod()
-		out$map.type = map.type
-		
-		######here I do the 'shift' data, it should be done 'before-this-function' call
-		###should be re-write in the future
-		out$x = lon.rescale(out$x)
-		
         ## sort out opacity
         if (!is.null(features$opacity))
             {
+			
                 opacity.var <- obj$df[[features$opacity]]
                 ratio = 0.7
                 abs.opacity.var = abs(opacity.var)
@@ -67,6 +58,7 @@ create.inz.mapplot <- function(obj)
         
         class(out) <- c("inzmap", class(out))
     }
+
     out$draw.axes <- FALSE
     out
 }
@@ -85,10 +77,11 @@ create.inz.mapplot <- function(obj)
 ##' @export
 plot.inzshapemap <- function(obj, gen) 
 {
-
-    latlon = obj$latlon
+    shape = obj$shape
     cols = obj$colby
-    shade.each =obj$each
+    
+    shade.id = shape$id
+
     ##limit
     xlim = obj$xlim
     ylim = obj$ylim    
@@ -97,6 +90,7 @@ plot.inzshapemap <- function(obj, gen)
     ##compute the ratio
     ratio.map = (diff(xlim)/diff(ylim))
     ratio.win = win.width/win.height
+
     if(ratio.map < ratio.win)
     {
         h = unit(1,'npc')
@@ -105,9 +99,10 @@ plot.inzshapemap <- function(obj, gen)
         w = unit(1,'npc')
         h = unit(ratio.win/ratio.map, 'npc')		
     }
+
     vp = viewport(0.5,0.5,width = w, height = h,name = 'VP:PLOTlayout', xscale = xlim,yscale = ylim)
     pushViewport(vp)
-    grid.polygon(latlon[,1], latlon[,2], default.units = "native", id.length = shade.each,
+    grid.polygon(shape[,1], shape[,2], default.units = "native", id = shade.id,
                         gp = 
                             gpar(col = 'black',
                                  fill  = cols))
@@ -126,7 +121,6 @@ plot.inzshapemap <- function(obj, gen)
 ##' @import RgoogleMaps
 ##' @export
 plot.inzmap <- function(obj, gen) {	
-	
     opts <- gen$opts
     mcex <- gen$mcex
     col.args <- gen$col.args
@@ -143,19 +137,18 @@ plot.inzmap <- function(obj, gen) {
     debug <- if (is.null(opts$debug)) FALSE else opts$debug
 
 
-	######I used the xylim within transformed data, instead of from inz.plot.....
-	###should be re-write in the future
-    xlim <- range(obj$x)
-    ylim <- range(obj$y)
-	
+    ## setting
+    xlim <- current.viewport()$xscale
+    ylim <- current.viewport()$yscale
+
     win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
     win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
     SCALE  <-  2
     size = global.objects$maps$map$size
     type = obj$map.type
-    bb <<- obj
-    get.newmap <- needNewMap(bbox = c(xlim,ylim),size = size,SCALE = SCALE,type = type,
-							window = c(win.width,win.height))
+    
+    get.newmap <- needNewMap(bbox = c(xlim,ylim),size = size,SCALE = SCALE,type = type,window = c(win.width,win.height))
+        if (debug)
     message(paste('get.newmap:',get.newmap))
 
     if (get.newmap) 
@@ -175,7 +168,7 @@ plot.inzmap <- function(obj, gen) {
     grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)
 
     ## define the limit
-    tmp = map.xylim(ylim,xlim,SCALE = SCALE)$window.lim
+    tmp = map.xylim()$window.lim
     xl =tmp[1:2]
     yl = tmp[3:4]
 

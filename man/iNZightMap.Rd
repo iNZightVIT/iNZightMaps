@@ -5,7 +5,7 @@
 \alias{plot.inzightmap}
 \title{Create an iNZight Map Object}
 \usage{
-iNZightMap(lat, lon, data, name = deparse(substitute(data)), shp.name)
+iNZightMap(lat, lon, data, name = deparse(substitute(data)))
 
 \method{plot}{inzightmap}(x, opacity, type = c("roadmap", "mobile",
   "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid"), ...)
