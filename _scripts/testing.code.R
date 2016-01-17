@@ -42,12 +42,3 @@ fakedata$Longitude= -fakedata$Longitude  # i.e., opposite sign
 
 iNZightPlot(Longitude,Latitude,data = fakedata,
             plottype = 'map',plot.features = list(maptype = 'roadmap'))
-
-range(lon.rescale(data.2$Longitude),na.rm = TRUE)
-
-lat.range = c(-50.51416 -32.05253)
-lon.range=c(197.9872,-197.9872+360)
-size.1 = c(640,640)
-MaxZoom(lat.range, lon.range, size.1)
-
-162.0304 197.9872

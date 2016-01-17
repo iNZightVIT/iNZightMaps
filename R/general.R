@@ -31,8 +31,9 @@ function(data,map)
 getNewMap <- function(lat.lim, lon.lim, SCALE, type,zoom)
 {	
 	lat.mean = mean(lat.lim)
-	lon.mean = ifelse(mean(lon.lim) > 180,179, mean(lon.lim))
+	lon.mean = mean(lon.lim)
 	center = c(lat.mean,lon.mean)
+	print(lon.lim)
     map <<- GetMap(center = center, size = Get.map.size(lat.lim,lon.lim)$size,zoom = zoom,maptype = type,SCALE =SCALE)
 	#map <- GetMap(center = c(0,0), zoom = 1)
 
@@ -56,6 +57,11 @@ lon.rescale = function(lon)
 	if(lon.range[1] < 0 & lon.range[2] > 0)
 	{
 		lon = ifelse(lon < -135,lon + 360,lon)
+	}
+	mean.lon = mean(lon)
+	if(mean.lon > 180)
+	{
+		lon = lon - 360
 	}
 	lon
 }
@@ -257,5 +263,3 @@ map.xylim = function(latR,lonR,SCALE)
     assign("global.objects", global.objects, envir = .GlobalEnv)
     list(window.lim = window.lim)
 }
-
-
