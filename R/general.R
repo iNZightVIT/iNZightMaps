@@ -33,16 +33,26 @@ getNewMap <- function(lat.lim, lon.lim, SCALE, type,zoom)
 	lat.mean = mean(lat.lim)
 	lon.mean = ifelse(mean(lon.lim) > 180,179, mean(lon.lim))
 	center = c(lat.mean,lon.mean)
-    map <- GetMap(center = center, size = Get.map.size(lat.lim,lon.lim)$size,zoom = zoom,maptype = type,SCALE =SCALE)
+    map <<- GetMap(center = center, size = Get.map.size(lat.lim,lon.lim)$size,zoom = zoom,maptype = type,SCALE =SCALE)
 	#map <- GetMap(center = c(0,0), zoom = 1)
 
     global.objects$maps$map= map
     assign("global.objects", global.objects, envir = .GlobalEnv)
 }
 
+
+
+####a simple tranformation for longitude
+##' transform latitude inorder to get the biggest map as possibile
+##'
+##' transform the longitude
+##' @title transform the latitude
+##' @param lon a numeric value or a numeric vector of longitude
+##' @return a new longitude value or vector that used for plotting in map.
+##' @author Jason Wen
 lon.rescale = function(lon)
 {
-	lon.range = range(lon)
+	lon.range = range(lon,na.rm = TRUE)
 	if(lon.range[1] < 0 & lon.range[2] > 0)
 	{
 		lon = ifelse(lon < -135,lon + 360,lon)
@@ -88,7 +98,7 @@ needNewMap <- function(bbox,window,size,SCALE,type)
             ##individual checking
             a = global.objects$maps$map.detail$bbox
             b = bbox
-            if(any(abs(a - b) > 0.1) )
+            if(any(abs(a - b) != 0) )
             {
             global.objects$maps$map.detail$bbox = bbox
             print('BBOX changed!')
@@ -155,18 +165,14 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 ##'
 ##' since the size of the map should not greater than 640, the size and the zoom needs to be transform before pass to the getNewMap function. 
 ##' @title Get the size of the map in pixels
-##' @param latR.odd a numeric vector of length 2, the range of Latitude
-##' @param lonR.odd a numeric vector of length 2, the range of Longitude
+##' @param latR a numeric vector of length 2, the range of Latitude
+##' @param lonR a numeric vector of length 2, the range of Longitude
 ##' @param SCALE variable from GetMap, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map 
 ##' @return a list that contain the size of the map(in pixels), and the zoom level
 ##' @author Jason Wen
-Get.map.size = function(latR.odd,lonR.odd,SCALE)
+Get.map.size = function(latR,lonR,SCALE)
 {
-    if(missing(latR.odd) || missing(lonR.odd))
-    {
-        latR.odd = current.viewport()$yscale
-        lonR.odd = current.viewport()$xscale
-    }
+
     if(missing(SCALE))
     {
         SCALE = global.objects$maps$map.detail$scale
@@ -175,12 +181,6 @@ Get.map.size = function(latR.odd,lonR.odd,SCALE)
         convertWidth(current.viewport()$width, "mm", TRUE), 
         convertHeight(current.viewport()$height, "mm", TRUE)
     )
-
-
-    latR.odd = current.viewport()$yscale  
-    lonR.odd = current.viewport()$xscale
-    
-
 
     ###give an origin size that helps to compute the zoom
     if(win.size[1] > win.size[2])
@@ -191,8 +191,8 @@ Get.map.size = function(latR.odd,lonR.odd,SCALE)
         size.1 = round(c(640 * win.size[1] / win.size[2], 640))
     }
     
-	lat.range = range(latR.odd)
-	lon.range = range(latR.odd)
+	lat.range = range(latR)
+	lon.range = range(lonR)
 	if(lon.range[1] < 0 & lon.range[2] > 0)
 	{
 		lon.range[1] = lon.range[1] + 360 
@@ -200,9 +200,9 @@ Get.map.size = function(latR.odd,lonR.odd,SCALE)
 	zoom <- min(MaxZoom(lat.range, lon.range, size.1))
 
 	
-    ll <- LatLon2XY(latR.odd[1], lonR.odd[1], zoom)
-    ur <- LatLon2XY(latR.odd[2], lonR.odd[2], zoom)
-    cr <- LatLon2XY(mean(latR.odd), mean(lonR.odd), zoom)
+    ll <- LatLon2XY(latR[1], lonR[1], zoom)
+    ur <- LatLon2XY(latR[2], lonR[2], zoom)
+    cr <- LatLon2XY(mean(latR), mean(lonR), zoom)
     ll.Rcoords <- Tile2R(ll, cr)
     ur.Rcoords <- Tile2R(ur, cr)
     size = 0
@@ -244,9 +244,9 @@ Get.map.size = function(latR.odd,lonR.odd,SCALE)
 ##' @title get the limit of x-axis and y-axis
 ##' @return return a list that contain the limit of x-axis and y-axis 
 ##' @author tell029
-map.xylim = function()
+map.xylim = function(latR,lonR,SCALE)
 {	
-    ZoomSize = Get.map.size()
+    ZoomSize = Get.map.size(latR = latR,lonR = lonR,SCALE = SCALE)
     scale = global.objects$maps$map$SCALE * 2
     size = global.objects$maps$map$size
     offset = 1
