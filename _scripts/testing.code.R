@@ -3,6 +3,7 @@ library(grid)
 library(RColorBrewer)
 library(iNZightPlots)
 library(iNZightMaps)
+library(RgoogleMaps)
 
 
 data.1 = read.csv('C:/Users/yeamin/Desktop/Gapminder-2008.csv',skip = 1)
