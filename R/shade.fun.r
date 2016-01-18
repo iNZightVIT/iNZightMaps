@@ -67,6 +67,17 @@ data.trans = function(x,transform = 'linear')
     percent.data
 }
 
+
+##' draw a map by passing an iNZightPlot object
+##'
+##' the function will also returns a global object which called global.objects
+##' @title Plot an iNZight Map
+##' @param obj object passed from iNZightPlot
+##' @param gen other options passed from iNZightPlot
+##' @return NULL
+##' @author Jason Wen
+##' @import RgoogleMaps
+##' @export
 order.match = function(unmatch.data,shp.region,data.region)
 {
     order = match(shp.region,data.region)
@@ -77,6 +88,17 @@ order.match = function(unmatch.data,shp.region,data.region)
 }
 
 
+
+##' draw a map by passing an iNZightPlot object
+##'
+##' the function will also returns a global object which called global.objects
+##' @title Plot an iNZight Map
+##' @param obj object passed from iNZightPlot
+##' @param gen other options passed from iNZightPlot
+##' @return NULL
+##' @author Jason Wen
+##' @import RgoogleMaps
+##' @export
 col.fun = function(data,color.index,
                     display = 'hue',na.fill = 'white',offset = 0,col = 'red')
 {
@@ -189,6 +211,17 @@ col.fun = function(data,color.index,
     color.out
 }
 
+
+##' draw a map by passing an iNZightPlot object
+##'
+##' the function will also returns a global object which called global.objects
+##' @title Plot an iNZight Map
+##' @param obj object passed from iNZightPlot
+##' @param gen other options passed from iNZightPlot
+##' @return NULL
+##' @author Jason Wen
+##' @import RgoogleMaps
+##' @export
 col.missing = function(shape.obj)
 {
 	country = shape.obj$country
@@ -201,6 +234,17 @@ col.missing = function(shape.obj)
 	color.out
 }
 
+
+##' draw a map by passing an iNZightPlot object
+##'
+##' the function will also returns a global object which called global.objects
+##' @title Plot an iNZight Map
+##' @param obj object passed from iNZightPlot
+##' @param gen other options passed from iNZightPlot
+##' @return NULL
+##' @author Jason Wen
+##' @import RgoogleMaps
+##' @export
 color.bind = function(color,obj)
 {
 
@@ -209,13 +253,3 @@ color.bind = function(color,obj)
 }
 
 
-function(){
-e = rep(FALSE,length(m.split))
-for(i in 1:length(m.split)){
-    for(j in 1:length(s.split)){
-        e[i] = any(c(any(m.split[[i]] %in% s.split[[j]]),e[i]))
-
-    }
-}
-missing.name[e]
-}

@@ -13,6 +13,7 @@ create.inz.shapemapplot <- function(obj) {
             
             message('color could not find in the shape object, fill the area randomly')
         }else{
+            colby = opts$plot.features$shape.obj$color
             latlon = opts$plot.features$shape.obj$obj$latlon
             country = opts$plot.features$shape.obj$obj$country
             each = opts$plot.features$shape.obj$obj$each
