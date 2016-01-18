@@ -20,7 +20,7 @@
 iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
     if (missing(data) || is.null(data))
         stop("iNZightMaps required you to use a data.frame.")
-    
+
     attr(data, "name") <- name
 
     ## Get latitude values
@@ -30,7 +30,7 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
     } else {
         lat <- data.frame(lat)
     }
-    
+
     ## Get longitude values
     if (inherits(lon, "formula")) {
         mf <- substitute(model.frame(lon, data = data))
@@ -39,9 +39,6 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
         lon <- data.frame(lon)
     }
 
-    ## remove missing lat/lon rows
-#    isna <- is.na(lat
-    
     data$.latitude <- lat[[1]]
     data$.longitude <- lon[[1]]
 
@@ -61,18 +58,16 @@ plot.inzightmap <- function(x,
                             opacity,
                             type =
                                 c("roadmap", "mobile", "satellite", "terrain", "hybrid",
-                                  "mapmaker-roadmap", "mapmaker-hybrid",'shape'),
-                            map.opacity = 1,
+                                  "mapmaker-roadmap", "mapmaker-hybrid"),
                             ...) {
-
     mc <- match.call()
+    
     mc$data <- mc$x 
     mc$x <- expression(.longitude)
     mc$y <- expression(.latitude)
     mc$plottype <- "map"
-    mc$plot.features <- list(maptype = match.arg(type), map.opacity = map.opacity)
-    mc$map.opacity <- NULL
-
+    mc$plot.features <- list(maptype = match.arg(type))
+    
     if (!missing(opacity)) {
         if (inherits(opacity, "formula")) {
             opacity <- as.character(opacity)[2]

@@ -13,9 +13,9 @@ needNewMap(bbox, window, size, SCALE, type)
 
 \item{SCALE}{a numeric vector of length 1, the scale of the pervious map}
 
-\item{sized}{a numeric vector of length 2, the size of the pervious map}
+\item{type}{a character vector of length 1, type the type of the pervious map}
 
-\item{a}{character vector of length 1, type the type of the pervious map}
+\item{sized}{a numeric vector of length 2, the size of the pervious map}
 }
 \value{
 Logical value TRUE/FALSE TRUE = something are not matched, FALSE = the pervious map is ok for re-use.

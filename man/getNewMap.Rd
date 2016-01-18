@@ -4,12 +4,12 @@
 \alias{getNewMap}
 \title{Get an new map object}
 \usage{
-getNewMap(xlim, ylim, SCALE, type, zoom)
+getNewMap(lat.lim, lon.lim, SCALE, type, zoom)
 }
 \arguments{
-\item{xlim}{the range of longitude}
+\item{lat.lim}{the range of longitude}
 
-\item{ylim}{the range of latitude}
+\item{lon.lim}{the range of latitude}
 
 \item{SCALE}{variable from \link{GetMap}, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map}
 
