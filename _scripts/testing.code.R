@@ -4,11 +4,12 @@ library(RColorBrewer)
 library(iNZightPlots)
 library(iNZightMaps)
 
+
 data.1 = read.csv('C:/Users/yeamin/Desktop/Gapminder-2008.csv',skip = 1)
 location = 'C:/Users/yeamin/Desktop/world/ne_110m_admin_0_countries.shp'
 data("nzquakes")
 shp <- readShapeSpatial(location)
-shapeobj <- shape.extract(shp)
+shape.obj <- shape.extract(shp)
 
 data.t = data.trans(data.1$Exports,transform = 'linear')
 data.o = order.match(data.t,shp[[4]],data.1$Country)
@@ -38,7 +39,8 @@ data.2 = nzquakes
 
 
 fakedata <- data.2
-fakedata$Longitude= -fakedata$Longitude  # i.e., opposite sign
+fakedata$Latitude= -fakedata$Latitude  # i.e., opposite sign
 
 iNZightPlot(Longitude,Latitude,data = fakedata,
             plottype = 'map',plot.features = list(maptype = 'roadmap'))
+

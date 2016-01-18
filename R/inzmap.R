@@ -18,28 +18,39 @@ create.inz.mapplot <- function(obj)
     map.type <- obj$opts$plot.features$maptype
     opts <- obj$opts
     
-    if (map.type == "shape") {
-        ## Geographical shape file shaded by variable 'x'
-        
-        
+    if (map.type == "shape") {  
+        ###when the colby could not find
+        colby = opts$plot.features$shape.obj$color
+        if(is.null(colby))
+        {
+            colby = col.missing(opts$plot.features$shape.obj)
+            latlon = opts$plot.features$shape.obj$latlon
+            country = opts$plot.features$shape.obj$country
+            each = opts$plot.features$shape.obj$each
+            
+            message('color could not find in the shape object, fill the area randomly')
+        }else{
+            latlon = opts$plot.features$shape.obj$obj$latlon
+            country = opts$plot.features$shape.obj$obj$country
+            each = opts$plot.features$shape.obj$obj$each
+        }
+    
         df <- obj$df
         ## missing data
         v <- colnames(df)
         missing <- is.na(df$x)
         n.missing <- sum(missing)
         df <- df[!missing, ]
+        
         ## information extraction
-        latlon = opts$plot.features$shape.obj$obj$latlon
-		country = opts$plot.features$shape.obj$obj$country
-		each = opts$plot.features$shape.obj$obj$each
-		
-		######I used the xylim within transformed data, instead of from inz.plot.....
-		###should be re-write in the future
+
+        
+        ######I used the xylim within transformed data, instead of from inz.plot.....
+        ###should be re-write in the future
         xlim = range(latlon[, 1])
         ylim = range(latlon[, 2])
-		
-		
-        colby = opts$plot.features$shape.obj$color
+
+        
 
         out <- list(x = xlim, y = ylim, colby = colby,
                     n.missing = n.missing, xlim = xlim, ylim = ylim, latlon = latlon,country = country,each = each)
@@ -47,12 +58,12 @@ create.inz.mapplot <- function(obj)
     } else {
         ## otherwise it's a "scatter" plot ...
         out <- NextMethod()
-		out$map.type = map.type
-		
-		######here I do the 'shift' data, it should be done 'before-this-function' call
-		###should be re-write in the future
-		out$x = lon.rescale(out$x)
-		
+        out$map.type = map.type
+        
+        ######here I do the 'shift' data, it should be done 'before-this-function' call
+        ###should be re-write in the future
+        out$x = lon.rescale(out$x)
+        
         ## sort out opacity
         if (!is.null(features$opacity))
             {
@@ -61,7 +72,7 @@ create.inz.mapplot <- function(obj)
                 abs.opacity.var = abs(opacity.var)
                 opacity.var.transformed = abs.opacity.var/max(abs.opacity.var) * ratio+ (1 - ratio)
                 out$opacity <- opacity.var.transformed
-                if(any(out$opacity < 1 ))
+                if(any(out$opacity < 1))
                     out$pch = rep(19,length(out$pch))
             }
         
@@ -85,7 +96,7 @@ create.inz.mapplot <- function(obj)
 ##' @export
 plot.inzshapemap <- function(obj, gen) 
 {
-
+b <<- obj
     latlon = obj$latlon
     cols = obj$colby
     shade.each =obj$each
@@ -126,7 +137,7 @@ plot.inzshapemap <- function(obj, gen)
 ##' @import RgoogleMaps
 ##' @export
 plot.inzmap <- function(obj, gen) {	
-	
+    
     opts <- gen$opts
     mcex <- gen$mcex
     col.args <- gen$col.args
@@ -143,11 +154,11 @@ plot.inzmap <- function(obj, gen) {
     debug <- if (is.null(opts$debug)) FALSE else opts$debug
 
 
-	######I used the xylim within transformed data, instead of from inz.plot.....
-	###should be re-write in the future
+    ######I used the xylim within transformed data, instead of from inz.plot.....
+    ###should be re-write in the future
     xlim <- range(obj$x)
     ylim <- range(obj$y)
-	
+    
     win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
     win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
     SCALE  <-  2
@@ -155,7 +166,7 @@ plot.inzmap <- function(obj, gen) {
     type = obj$map.type
     bb <<- obj
     get.newmap <- needNewMap(bbox = c(xlim,ylim),size = size,SCALE = SCALE,type = type,
-							window = c(win.width,win.height))
+                            window = c(win.width,win.height))
     message(paste('get.newmap:',get.newmap))
 
     if (get.newmap) 

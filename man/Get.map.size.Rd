@@ -4,12 +4,12 @@
 \alias{Get.map.size}
 \title{Get the size of the map in pixels}
 \usage{
-Get.map.size(latR.odd, lonR.odd, SCALE)
+Get.map.size(latR, lonR, SCALE)
 }
 \arguments{
-\item{latR.odd}{a numeric vector of length 2, the range of Latitude}
+\item{latR}{a numeric vector of length 2, the range of Latitude}
 
-\item{lonR.odd}{a numeric vector of length 2, the range of Longitude}
+\item{lonR}{a numeric vector of length 2, the range of Longitude}
 
 \item{SCALE}{variable from GetMap, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map}
 }

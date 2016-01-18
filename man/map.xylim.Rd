@@ -4,7 +4,7 @@
 \alias{map.xylim}
 \title{get the limit of x-axis and y-axis}
 \usage{
-map.xylim()
+map.xylim(latR, lonR, SCALE)
 }
 \value{
 return a list that contain the limit of x-axis and y-axis
