@@ -9,7 +9,7 @@ iNZightMap(lat, lon, data, name = deparse(substitute(data)))
 
 \method{plot}{inzightmap}(x, opacity, type = c("roadmap", "mobile",
   "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid",
-  "shape"), ...)
+  "shape"), map.opacity = 1, ...)
 }
 \arguments{
 \item{lat}{a formula specifying the name of the latitude variable in \code{data}}

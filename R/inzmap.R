@@ -6,9 +6,9 @@
 ##' @import grid maptools
 ##' @export
 create.inz.mapplot <- function(obj)
-{  
+{
     map.type <- obj$opts$plot.features$maptype
-    
+
     ## Create the global object if it isn't already
     if (!"global.objects" %in% ls(envir = .GlobalEnv))
         assign("global.objects", list(), envir = .GlobalEnv)
@@ -17,12 +17,12 @@ create.inz.mapplot <- function(obj)
 
     map.type <- obj$opts$plot.features$maptype
     opts <- obj$opts
-    
+
     if (map.type == "shape") {
-        
+
         ## Geographical shape file shaded by variable 'x'
-        
-        
+
+
         df <- obj$df
         ## missing data
         v <- colnames(df)
@@ -39,9 +39,9 @@ create.inz.mapplot <- function(obj)
         out <- list(x = xlim, y = ylim, colby = colby, map.type = map.type,
                     n.missing = n.missing, xlim = xlim, ylim = ylim, latlon = latlon)
         class(out) <- c("inzshapemap", "inzmap", "inzscatter")
-        
+
     } else {
-        
+
         ## otherwise it's a "scatter" plot ...
         out <- NextMethod()
         out$map.type <- map.type
@@ -53,13 +53,13 @@ create.inz.mapplot <- function(obj)
             abs.opacity.var = abs(opacity.var)
             opacity.var.transformed = abs.opacity.var/max(abs.opacity.var) * ratio+ (1 - ratio)
             out$opacity <- opacity.var.transformed
-            
+
             if (any(out$opacity < 1 ))
                 out$pch = rep(19,length(out$pch))
         }
-        
+
         class(out) <- c("inzmap", class(out))
-        
+
     }
 
     out$draw.axes <- FALSE
@@ -78,16 +78,16 @@ create.inz.mapplot <- function(obj)
 ##' @author Jason Wen
 ##' @import maptools
 ##' @export
-plot.inzshapemap <- function(obj, gen) 
+plot.inzshapemap <- function(obj, gen)
 {
     latlon = obj$latlon
     cols = obj$colby
-    
+
     shade.id = obj$latlon$id
     a <<- obj
     ##limit
     xlim = obj$xlim
-    ylim = obj$ylim    
+    ylim = obj$ylim
     win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
     win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
     ##compute the ratio
@@ -99,15 +99,15 @@ plot.inzshapemap <- function(obj, gen)
         w = unit(ratio.map/ratio.win, 'npc')
     }else{
         w = unit(1,'npc')
-        h = unit(ratio.win/ratio.map, 'npc')		
+        h = unit(ratio.win/ratio.map, 'npc')
     }
     vp = viewport(0.5,0.5,width = w, height = h,name = 'VP:PLOTlayout', xscale = xlim,yscale = ylim)
     pushViewport(vp)
     grid.polygon(latlon[,1], latlon[,2], default.units = "native", id = shade.id,
-                        gp = 
+                        gp =
                             gpar(col = 'black',
                                  fill  = cols))
-    
+
 }
 
 
@@ -121,7 +121,7 @@ plot.inzshapemap <- function(obj, gen)
 ##' @author Jason Wen
 ##' @import RgoogleMaps
 ##' @export
-plot.inzmap <- function(obj, gen) {	
+plot.inzmap <- function(obj, gen) {
     opts <- gen$opts
     mcex <- gen$mcex
     col.args <- gen$col.args
@@ -147,12 +147,12 @@ plot.inzmap <- function(obj, gen) {
     SCALE  <-  2
     size = global.objects$maps$map$size
     type = obj$map.type
-    
+
     get.newmap <- needNewMap(bbox = c(xlim,ylim),size = size,SCALE = SCALE,type = type,window = c(win.width,win.height))
         if (debug)
     message(paste('get.newmap:',get.newmap))
 
-    if (get.newmap) 
+    if (get.newmap)
     {
         if (debug) message(xlim)
         if (debug) message(ylim)
