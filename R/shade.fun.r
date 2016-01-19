@@ -30,8 +30,8 @@ shape.extract = function(shp)
     latlon = do.call(rbind,polygon.data)
     latlon.data = data.frame(latlon = latlon)
 	colnames(latlon.data) = c('lon.x','lat.y')
-	country = shp[[4]]	
-    obj = list(latlon = latlon.data,each = index,country = country,col.index = col.index)
+	region = shp[[4]]	
+    obj = list(latlon = latlon.data,each = index,region = region,col.index = col.index)
     class(obj) <- c("shape.object")
 	obj
 }
@@ -224,9 +224,9 @@ col.fun = function(data,color.index,
 ##' @export
 col.missing = function(shape.obj)
 {
-	country = shape.obj$country
+	region = shape.obj$region
 	col.index = shape.obj$col.index
-	length = length(rep(country,col.index))
+	length = length(rep(region,col.index))
 	r = runif(length)
 	g = runif(length)
 	b = runif(length)

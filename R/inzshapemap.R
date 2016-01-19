@@ -1,23 +1,32 @@
 create.inz.shapemapplot <- function(obj) {
     df <- obj$df
     opts <- obj$opts
+    pf <- opts$plot.features
+    
+    ## Set the colours for countries `y` based on value `x` (in `df`):
+    x.trans <- data.trans(df$x, transform = pf$transform)
+    x.ord <- order.match(x.trans, pf$shape.object$region, df$y)
+    cols <- col.fun(x.ord, pf$shape.object$col.index, display = pf$col.method,
+                    col = pf$col, offset = pf$col.offset)
+    ## cols <- col.fun(pf$shape.object$col.fun, pf$shape.object$col.args)
+    shp.obj <- color.bind(cols, pf$shape.object)
 
-    ## when the colby could not find
-    colby = opts$plot.features$shape.obj$color
-    if(is.null(colby))
-        {
-            colby = col.missing(opts$plot.features$shape.obj)
-            latlon = opts$plot.features$shape.obj$latlon
-            country = opts$plot.features$shape.obj$country
-            each = opts$plot.features$shape.obj$each
+
+    
+    ## if(is.null(colby))
+    ##     {
+    ##         colby = col.missing(opts$plot.features$shape.obj)
+    ##         latlon = opts$plot.features$shape.obj$latlon
+    ##         country = opts$plot.features$shape.obj$country
+    ##         each = opts$plot.features$shape.obj$each
             
-            message('color could not find in the shape object, fill the area randomly')
-        }else{
-            colby = opts$plot.features$shape.obj$color
-            latlon = opts$plot.features$shape.obj$obj$latlon
-            country = opts$plot.features$shape.obj$obj$country
-            each = opts$plot.features$shape.obj$obj$each
-        }
+    ##         message('color could not find in the shape object, fill the area randomly')
+    ##     }else{
+    ##         colby = opts$plot.features$shape.obj$color
+    ##         latlon = opts$plot.features$shape.obj$obj$latlon
+    ##         country = opts$plot.features$shape.obj$obj$country
+    ##         each = opts$plot.features$shape.obj$obj$each
+    ##     }
     
     ## missing data
     v <- colnames(df)
@@ -29,14 +38,19 @@ create.inz.shapemapplot <- function(obj) {
     
     ## I used the xylim within transformed data, instead of from inz.plot.....
     ## should be re-write in the future
-    xlim = range(latlon[, 1])
-    ylim = range(latlon[, 2])
+
+    xlim = range(shp.obj$obj$latlon[, 1])
+    ylim = range(shp.obj$obj$latlon[, 2])
     
-    
-    out <- list(x = xlim, y = ylim, colby = colby,
+    out <- list(x = xlim, y = ylim, colby = shp.obj$color,
                 n.missing = n.missing, xlim = xlim, ylim = ylim,
-                latlon = latlon, country = country, each = each)
+                latlon = shp.obj$obj$latlon, region = shp.obj$obj$region,
+                each = shp.obj$obj$each)
+    
     class(out) <- c("inzshapemap", "inzmap", "inzscatter")
+
+    out$draw.axes <- FALSE
+    out
 }
 
 
