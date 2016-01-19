@@ -66,6 +66,7 @@ plot.inzightmap <- function(x,
     mc$x <- expression(.longitude)
     mc$y <- expression(.latitude)
     mc$plottype <- "map"
+    mc$largesample <- FALSE
     mc$plot.features <- list(maptype = match.arg(type))
     
     if (!missing(opacity)) {
