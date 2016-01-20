@@ -2,32 +2,20 @@ create.inz.shapemapplot <- function(obj) {
     df <- obj$df
     opts <- obj$opts
     pf <- opts$plot.features
-    
     ## Set the colours for countries `y` based on value `x` (in `df`):
     x.trans <- data.trans(df$x, transform = pf$transform)
-    x.ord <- order.match(x.trans, pf$shape.object$region, df$y)
-    cols <- col.fun(x.ord, pf$shape.object$col.index, display = pf$col.method,
-                    col = pf$col, offset = pf$col.offset)
+    x.ord <- x.trans[pf$shape.object$ordered]
+    col <- col.fun(data = x.ord, 
+                    color.index = pf$shape.object$col.index, 
+                    display = pf$col.method,
+                    col = pf$col,
+                    offset = pf$col.offset,
+                    na.fill = pf$na.fill)
+                    
+
     ## cols <- col.fun(pf$shape.object$col.fun, pf$shape.object$col.args)
-    shp.obj <- color.bind(cols, pf$shape.object)
+    shp.obj <- color.bind(col, pf$shape.object)
 
-
-    
-    ## if(is.null(colby))
-    ##     {
-    ##         colby = col.missing(opts$plot.features$shape.obj)
-    ##         latlon = opts$plot.features$shape.obj$latlon
-    ##         country = opts$plot.features$shape.obj$country
-    ##         each = opts$plot.features$shape.obj$each
-            
-    ##         message('color could not find in the shape object, fill the area randomly')
-    ##     }else{
-    ##         colby = opts$plot.features$shape.obj$color
-    ##         latlon = opts$plot.features$shape.obj$obj$latlon
-    ##         country = opts$plot.features$shape.obj$obj$country
-    ##         each = opts$plot.features$shape.obj$obj$each
-    ##     }
-    
     ## missing data
     v <- colnames(df)
     missing <- is.na(df$x)
@@ -35,7 +23,6 @@ create.inz.shapemapplot <- function(obj) {
     df <- df[!missing, ]
     
     ## information extraction
-    
     ## I used the xylim within transformed data, instead of from inz.plot.....
     ## should be re-write in the future
 
@@ -44,11 +31,10 @@ create.inz.shapemapplot <- function(obj) {
     
     out <- list(x = xlim, y = ylim, colby = shp.obj$color,
                 n.missing = n.missing, xlim = xlim, ylim = ylim,
-                latlon = shp.obj$obj$latlon, region = shp.obj$obj$region,
-                each = shp.obj$obj$each)
-    
-    class(out) <- c("inzshapemap", "inzmap", "inzscatter")
+                shape.object = shp.obj$obj,col = col)
+                
 
+    class(out) <- c("inzshapemap", "inzmap", "inzscatter")
     out$draw.axes <- FALSE
     out
 }
@@ -65,17 +51,14 @@ create.inz.shapemapplot <- function(obj) {
 ##' @import maptools
 ##' @export
 plot.inzshapemap <- function(obj, gen) {
-    latlon = obj$latlon
+    latlon <<- obj$shape.object$latlon
     cols = obj$colby
-    
-    shade.each <- obj$each
-
+    shade.each <- obj$shape.object$each
     ##limit
-    xlim = obj$xlim
-    ylim = obj$ylim
+    xlim =  current.viewport()$xscale
+    ylim =  current.viewport()$yscale
     win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
     win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
-
     ##compute the ratio
     ratio.map = (diff(xlim)/diff(ylim))
     ratio.win = win.width/win.height
@@ -89,7 +72,7 @@ plot.inzshapemap <- function(obj, gen) {
     }
     vp = viewport(0.5,0.5,width = w, height = h,name = 'VP:PLOTlayout', xscale = xlim,yscale = ylim)
     pushViewport(vp)
-
     grid.polygon(latlon[,1], latlon[,2], default.units = "native", id.length = shade.each,
                  gp = gpar(col = 'black', fill  = cols))
+            
 }

@@ -7,7 +7,6 @@
 ##' @export
 create.inz.mapplot <- function(obj) {
     map.type <- obj$opts$plot.features$maptype
-    
     ## Create the global object if it isn't already
     if (!"global.objects" %in% ls(envir = .GlobalEnv))
         assign("global.objects", list(), envir = .GlobalEnv)
@@ -24,6 +23,7 @@ create.inz.mapplot <- function(obj) {
     ##here I do the 'shift' data, it should be done 'before-this-function' call
     ##should be re-write in the future
     out$x = lon.rescale(out$x)
+    out$xlim = range(out$x)
     
     ## sort out opacity
     if (!is.null(features$opacity)) {
@@ -63,7 +63,7 @@ plot.inzmap <- function(obj, gen) {
     if(is.null(obj$opacity))
         {
             opacity = 1
-            
+
     }else
         {
             opacity = obj$opacity
@@ -71,11 +71,11 @@ plot.inzmap <- function(obj, gen) {
     
     debug <- if (is.null(opts$debug)) FALSE else opts$debug
     
-    
+    b <<- obj
     ##I used the xylim within transformed data, instead of from inz.plot.....
     ## should be re-write in the future
-    xlim <- range(obj$x)
-    ylim <- range(obj$y)
+	xlim <- current.viewport()$xscale
+	ylim <- current.viewport()$yscale
     
     win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
     win.height <- convertHeight(current.viewport()$height, "mm", TRUE)

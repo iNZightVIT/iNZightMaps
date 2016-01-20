@@ -7,7 +7,7 @@
 ##' @author Jason Wen
 ##' @import maptools
 ##' @export
-shape.extract = function(shp)
+shape.extract = function(shp,column.index = 2)
 {
 
     polygon.data = list()
@@ -30,7 +30,7 @@ shape.extract = function(shp)
     latlon = do.call(rbind,polygon.data)
     latlon.data = data.frame(latlon = latlon)
 	colnames(latlon.data) = c('lon.x','lat.y')
-	region = shp[[4]]	
+	region = shp[[column.index]]	
     obj = list(latlon = latlon.data,each = index,region = region,col.index = col.index)
     class(obj) <- c("shape.object")
 	obj
@@ -78,10 +78,10 @@ data.trans = function(x,transform = 'linear')
 ##' @author Jason Wen
 ##' @import RgoogleMaps
 ##' @export
-order.match = function(unmatch.data,shp.region,data.region)
+order.match = function(shp.region,data.region)
 {
     order = match(shp.region,data.region)
-    orderd.data = unmatch.data[order]
+    orderd.data = order
     na.data = shp.region[is.na(orderd.data)]
     print(paste('number of unmatch region:',length(na.data)))
     orderd.data
@@ -113,7 +113,6 @@ col.fun = function(data,color.index,
     }
     
     ###the color can not be offset if it is bio-color
-
     ###display transform
     switch(display,
     
@@ -247,9 +246,11 @@ col.missing = function(shape.obj)
 ##' @export
 color.bind = function(color,obj)
 {
-
     with.color = list(obj = obj, color = color)
     with.color
 }
 
-
+getShapeFile = function()
+{
+    
+}

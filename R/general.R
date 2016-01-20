@@ -33,10 +33,7 @@ getNewMap <- function(lat.lim, lon.lim, SCALE, type,zoom)
 	lat.mean = mean(lat.lim)
 	lon.mean = mean(lon.lim)
 	center = c(lat.mean,lon.mean)
-	print(lon.lim)
     map <<- GetMap(center = center, size = Get.map.size(lat.lim,lon.lim)$size,zoom = zoom,maptype = type,SCALE =SCALE)
-	#map <- GetMap(center = c(0,0), zoom = 1)
-
     global.objects$maps$map= map
     assign("global.objects", global.objects, envir = .GlobalEnv)
 }
@@ -87,7 +84,6 @@ needNewMap <- function(bbox,window,size,SCALE,type)
     ##check for the map object
     if(any(map.odd == NULL))
     {
-        #print('no map object!!!')
         need = TRUE
     }
     else
@@ -107,7 +103,6 @@ needNewMap <- function(bbox,window,size,SCALE,type)
             if(any(abs(a - b) != 0) )
             {
             global.objects$maps$map.detail$bbox = bbox
-            print('BBOX changed!')
             need[1] = TRUE					
             }else
             {
@@ -117,7 +112,6 @@ needNewMap <- function(bbox,window,size,SCALE,type)
             if(any(global.objects$maps$map.detail$size != size))
             {
                 global.objects$maps$map.detail$size = size
-                print('size changed!')
                 need[2] = TRUE
 
             }else
@@ -127,17 +121,14 @@ needNewMap <- function(bbox,window,size,SCALE,type)
             if(global.objects$maps$map.detail$scale != SCALE)
             {
                 global.objects$maps$map.detail$scale = SCALE
-                print('scale changed!')
                 need[3] = TRUE
 
             }else
             {
                 need[3] = FALSE
             }
-                #print(type)
             if(type != global.objects$maps$map.detail$type)
             {
-                print('type changed!')
                 global.objects$maps$map.detail$type = type
                 need[4] = TRUE
             }else
@@ -147,7 +138,6 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 
             if(any(global.objects$maps$map.detail$window != window))
             {
-                print('window changed!')
                 global.objects$maps$map.detail$window = window
                 need[5] = TRUE
             }

@@ -4,7 +4,7 @@
 \alias{shape.extract}
 \title{Plot an iNZight Map}
 \usage{
-shape.extract(shp)
+shape.extract(shp, column.index. = 2)
 }
 \arguments{
 \item{shp}{a SpatialPolygonsDataFrame object, see \link{readShapeSpatial}}
