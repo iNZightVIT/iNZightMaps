@@ -23,8 +23,12 @@ create.inz.mapplot <- function(obj) {
     
     ##here I do the 'shift' data, it should be done 'before-this-function' call
     ##should be re-write in the future
+    is.google.map(out$y,out$x)
+    
+    
     out$x = lon.rescale(out$x)
     out$xlim = range(out$x)
+    
     
     ## sort out opacity
     if (!is.null(features$opacity)) {

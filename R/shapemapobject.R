@@ -53,7 +53,7 @@ iNZightShapeMap <- function(file.name,column.index,region, data) {
 
 plot.inzightshapemap <- function(x, variable, region, data,
                                  col.fun = "hue", transform = "linear",
-                                 col.offset = 0.2, col = "red",na.fill = 'white',
+                                 col.offset = 0.2, col = "red",na.fill = 'white',full.map = TRUE,
                                  ...) {
 
   ##  mc <- match.call(expand.dots = TRUE)
@@ -87,7 +87,8 @@ plot.inzightshapemap <- function(x, variable, region, data,
         col.method = col.fun, 
         col.offset = col.offset,
         col = col,
-        na.fill = na.fill
+        na.fill = na.fill,
+        full.map = full.map
         )
     
     #call <- c(call, list(...))

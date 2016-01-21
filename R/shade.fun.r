@@ -32,7 +32,6 @@ shape.extract = function(shp,column.index = 2)
 	colnames(latlon.data) = c('lon.x','lat.y')
 	region = shp[[column.index]]	
     obj = list(latlon = latlon.data,each = index,region = region,col.index = col.index)
-    print(dim(latlon.data))
     class(obj) <- c("shape.object")
 	obj
 }

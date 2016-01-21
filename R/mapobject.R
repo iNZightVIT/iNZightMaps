@@ -41,7 +41,7 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
 
     data$.latitude <- lat[[1]]
     data$.longitude <- lon[[1]]
-
+    
     class(data) <- c("inzightmap", class(data))
     data
 }

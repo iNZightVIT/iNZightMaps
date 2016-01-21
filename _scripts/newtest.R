@@ -1,13 +1,15 @@
 
 ll = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/shpdata/world.rds'
-obj <- iNZightShapeMap(ll, region = 'Country', data = data.1)
+data.2 = data.1[data.1$Country %in% c('China','Japan'),]
+obj <- iNZightShapeMap(ll, region = 'Country', data = data.2)
 
 
 plot(obj, variable = ~CO2Emissions,
      region = ~Country,
-     data = data.1,
+     data = data.2,
      col.method = 'blue',
-     transform = 'log')
+     transform = 'log',
+     full.map = FALSE)
 
 
 

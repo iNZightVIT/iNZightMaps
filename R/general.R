@@ -253,3 +253,22 @@ map.xylim = function(latR,lonR,SCALE)
     assign("global.objects", global.objects, envir = .GlobalEnv)
     list(window.lim = window.lim)
 }
+
+
+
+is.google.map = function(lat,lon)
+{
+    
+    TRUE
+    if(any(lat > 90)  || any(lat < -90))
+    {
+        warning('latitudes are not in the range of [-90,90]')
+        FALSE
+    }
+    if(any(lon > 180)  || any(lon < -180))
+    {
+        warning('longitudes are not in the range of [-180,180]')
+        FALSE
+    }
+    
+}
