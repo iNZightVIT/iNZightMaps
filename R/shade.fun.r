@@ -32,6 +32,7 @@ shape.extract = function(shp,column.index = 2)
 	colnames(latlon.data) = c('lon.x','lat.y')
 	region = shp[[column.index]]	
     obj = list(latlon = latlon.data,each = index,region = region,col.index = col.index)
+    print(dim(latlon.data))
     class(obj) <- c("shape.object")
 	obj
 }
@@ -253,4 +254,25 @@ color.bind = function(color,obj)
 getShapeFile = function()
 {
     
+}
+
+
+win.ratio = function()
+{
+    win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
+    win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
+    ##compute the ratio
+    xlim = current.viewport()$xscale
+    ylim = current.viewport()$yscale
+    ratio.map = (diff(xlim)/diff(ylim))
+    ratio.win = win.width/win.height
+    if(ratio.map < ratio.win)
+    {
+        h = unit(1,'npc')
+        w = unit(ratio.map/ratio.win, 'npc')
+    }else{
+        w = unit(1,'npc')
+        h = unit(ratio.win/ratio.map, 'npc')
+    }
+    c(w,h)
 }

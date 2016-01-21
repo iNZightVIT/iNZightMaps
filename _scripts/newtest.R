@@ -1,23 +1,36 @@
 
 ll = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/shpdata/world.rds'
-file_ext(ll)
 obj <- iNZightShapeMap(ll, region = 'Country', data = data.1)
 
 
-plot(obj, variable = ~ChildrenPerWoman, region = ~Country,data = data.1)
+plot(obj, variable = ~CO2Emissions,
+     region = ~Country,
+     data = data.1,
+     col.method = 'blue',
+     transform = 'log')
 
 
 
+data.1 = read.csv('C:/Users/yeamin/Desktop/Gapminder-2008.csv',skip = 1)
 
-iNZightPlot(EnergyUsePerPerson, Country, data = data.1, plottype = 'shapemap',
+data.1 = data.1[data.1$Country %in% c('China','Japan'),]
+obj <- iNZightShapeMap(ll, region = 'Country', data = data.1)
+iNZightPlot(ChildrenPerWoman, Country, data = data.1, plottype = 'shapemap',
             plot.features =list(
               shape.object = obj,
               transform = "linear", 
               col.offset = 0.2, 
               col = "red",
-              col.method = 'bi.polar',
+              col.method = 'hue',
               na.fill = 'gray')
             )
 
-aa = 'woifjewiojfioewjfoiewjfiowejfewiof.csv'
-grepl('.CSV',aa)
+iNZightPlot(CO2Emissions, Country, data = data.1, plottype = 'shapemap',
+            plot.features =list(
+              shape.object = obj,
+              transform = "normal", 
+              col.offset = 0, 
+              col = "red",
+              col.method = 'hue',
+              na.fill = 'gray')
+)

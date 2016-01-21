@@ -10,10 +10,10 @@
 ##' @export
 iNZightShapeMap <- function(file.name,column.index,region, data) {
 
-    ## extract
+    ## file checking
     if(!missing(file.name))
     {
-    ext = file_ext(file.name)
+        ext = file_ext(file.name)
         switch(ext,
             rds = 
             {
@@ -33,9 +33,12 @@ iNZightShapeMap <- function(file.name,column.index,region, data) {
             stop('file.name must be either shp or rds')
         }
     }
-    
+    ## order matching
     if (!missing(data))
     {
+        if(missing(region))
+            stop('require the column name of region in data set')
+        
         order = order.match(out$region,data[,region])
         out$ordered = order        
     }else

@@ -7,6 +7,7 @@
 ##' @export
 create.inz.mapplot <- function(obj) {
     map.type <- obj$opts$plot.features$maptype
+    
     ## Create the global object if it isn't already
     if (!"global.objects" %in% ls(envir = .GlobalEnv))
         assign("global.objects", list(), envir = .GlobalEnv)
@@ -63,7 +64,7 @@ plot.inzmap <- function(obj, gen) {
     if(is.null(obj$opacity))
         {
             opacity = 1
-
+            
     }else
         {
             opacity = obj$opacity
