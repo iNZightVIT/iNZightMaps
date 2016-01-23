@@ -2,9 +2,9 @@
 % Please edit documentation in R/shade.fun.r
 \name{shape.extract}
 \alias{shape.extract}
-\title{Plot an iNZight Map}
+\title{extract and create a shape object}
 \usage{
-shape.extract(shp, column.index. = 2)
+shape.extract(shp, column.index = 2)
 }
 \arguments{
 \item{shp}{a SpatialPolygonsDataFrame object, see \link{readShapeSpatial}}

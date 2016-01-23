@@ -4,12 +4,15 @@
 \alias{order.match}
 \title{Plot an iNZight Map}
 \usage{
-order.match(unmatch.data, shp.region, data.region)
+order.match(shp.region, data.region)
 }
 \arguments{
-\item{obj}{object passed from iNZightPlot}
+\item{shp.region}{a character vector}
 
-\item{gen}{other options passed from iNZightPlot}
+\item{data.region}{a character vector}
+}
+\value{
+an integer vector
 }
 \description{
 draw a map by passing an iNZightPlot object

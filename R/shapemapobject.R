@@ -1,45 +1,48 @@
-##' description ...
+##' Create an iNZightShapeMap object
 ##'
 ##' details ....
 ##'
 ##' @title Create an iNZight Shape Map Object
 ##' @param location the location
+##' @param shp.region a character value, the column name in the region/country column of the shp file
+##' @param data.region a character value, the column name in the region/country column of the data set
+##' @param data the data set
 ##'
 ##' @examples
-##'
+##' @import maptools tools
 ##' @export
-iNZightShapeMap <- function(file.name,column.index,region, data) {
+iNZightShapeMap <- function(location,shp.region,data.region, data) {
 
     ## file checking
-    if(!missing(file.name))
+    if(!missing(location))
     {
-        ext = file_ext(file.name)
+        ext = file_ext(location)
         switch(ext,
             rds = 
             {
-                out = readRDS(file.name)
+                out = readRDS(location)
             },
             
             shp = 
             {
-                shp = readShapeSpatial(file.name)
-                out = shape.extract(shp,column.index)   
+                shp = readShapeSpatial(location)
+                out = shape.extract(shp,shp.region)   
             }
         
         )
-    ext.read = c('rds','shp')
+        ext.read = c('rds','shp')
         if(!(ext %in% ext.read))
         {
-            stop('file.name must be either shp or rds')
+            stop('location must be either shp or rds')
         }
     }
     ## order matching
     if (!missing(data))
     {
-        if(missing(region))
+        if(missing(data.region))
             stop('require the column name of region in data set')
         
-        order = order.match(out$region,data[,region])
+        order = order.match(out$region,data[,data.region])
         out$ordered = order        
     }else
         stop('data is missing!')

@@ -16,6 +16,6 @@ return the limit of x-axis and y-axis of the plot.
 the map.xylim function does not contain any arguments, and it returns the limit of x-axis and y-axis after the plot called.
 }
 \author{
-tell029
+Jason Wen
 }
 

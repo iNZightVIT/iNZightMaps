@@ -1,7 +1,7 @@
 ##' extract the information from a SpatialPolygonsDataFrame object and 
 ##'
 ##' the function will also returns a global object which called global.objects
-##' @title Plot an iNZight Map
+##' @title extract and create a shape object
 ##' @param shp a SpatialPolygonsDataFrame object, see \link{readShapeSpatial}
 ##' @return a shape object
 ##' @author Jason Wen
@@ -36,15 +36,14 @@ shape.extract = function(shp,column.index = 2)
 	obj
 }
 
-##' Transform a 
+##' Transform the data into the range of [0,1]
 ##'
-##' the function will also returns a global object which called global.objects
-##' @title Plot an iNZight Map
+##' 
+##' @title data transformation
 ##' @param x a numeric value or vector. 
 ##' @param transform the method for transformation, can be linear,log,sqrt,exp,power and normal
 ##' @return a transformed numeric vector
 ##' @author Jason Wen
-##' @import maptools
 ##' @export
 data.trans = function(x,transform = 'linear')
 {
@@ -63,6 +62,7 @@ data.trans = function(x,transform = 'linear')
             b = b - min(b,na.rm = TRUE)
         },
     )
+    
     percent.data = b/diff(range(b,na.rm = TRUE))
     percent.data
 }
@@ -72,12 +72,10 @@ data.trans = function(x,transform = 'linear')
 ##'
 ##' the function will also returns a global object which called global.objects
 ##' @title Plot an iNZight Map
-##' @param obj object passed from iNZightPlot
-##' @param gen other options passed from iNZightPlot
-##' @return NULL
+##' @param shp.region a character vector
+##' @param data.region a character vector
+##' @return an integer vector 
 ##' @author Jason Wen
-##' @import RgoogleMaps
-##' @export
 order.match = function(shp.region,data.region)
 {
     order = match(shp.region,data.region)
@@ -89,21 +87,24 @@ order.match = function(shp.region,data.region)
 
 
 
-##' draw a map by passing an iNZightPlot object
-##'
-##' the function will also returns a global object which called global.objects
-##' @title Plot an iNZight Map
-##' @param obj object passed from iNZightPlot
-##' @param gen other options passed from iNZightPlot
-##' @return NULL
+##' Choose a type of color that helps read the map nicely.
+##' @title Color Specification
+##' @param data a numeric vector that should lie on the range of [0,1]
+##' @param color.index an integer vector
+##' @param display a character value, the method for display colors. It should be one value of "hcl","hue","heat","rainbow","terrain","topo","cm","gray","r","n"
+##' @param na.fill a character value, fill the unmatch region/country by the color.
+##' @param offset a numeric value within the range of [0,1] 
+##' @param col the color for fill the match region/country, it only needs to be specify if display = 'hue'
+##' @return an color vector
 ##' @author Jason Wen
-##' @import RgoogleMaps
-##' @export
+##' @import RColorBrewer
 col.fun = function(data,color.index,
                     display = 'hue',na.fill = 'white',offset = 0,col = 'red')
 {
     impossible.number = 0.091823021983
-    bio.color = c('bi.polar','cm.colors	')
+    bio.color = c('bi.polar','cm')
+    
+    data = round(data,2)
     if(display %in% bio.color)
     {
         fill.float = ifelse(is.na(data) == TRUE, impossible.number,data)
@@ -111,7 +112,6 @@ col.fun = function(data,color.index,
     {
         fill.float = ifelse(is.na(data) == TRUE, impossible.number,data * (1 - offset) + (offset))
     }
-    
     ###the color can not be offset if it is bio-color
     ###display transform
     switch(display,
@@ -129,42 +129,45 @@ col.fun = function(data,color.index,
         
         heat = 
         {
-            over.col = heat.colors(length(color.index) * 100)
+            over.col = heat.colors(length(color.index) * 100 + 1)
             orderd.col = over.col[length(over.col):1]
-            id = round(fill.float * length(color.index) * 100)
+            id = fill.float * length(color.index) * 100 + 1
             fill.col = orderd.col[id]
+    cc <<- id
+    d <<- orderd.col
         },
         
         rainbow = 
         {
-            over.col = rainbow(length(color.index) * 100)
+            over.col = rainbow(length(color.index) * 100 + 1)
             orderd.col = over.col
-            id = round(fill.float * length(color.index) * 100)
+            id = fill.float * length(color.index) * 100 + 1
             fill.col = orderd.col[id]            
         },
         
-        terrain.colors = 
+        terrain = 
         {
-            over.col = terrain.colors(length(color.index) * 100)
+            over.col = terrain.colors(length(color.index) * 100 + 1)
             orderd.col = over.col
-            id = round(fill.float * length(color.index) * 100)
+            id = fill.float * length(color.index) * 100 + 1
             fill.col = orderd.col[id]	            
         },
         
-        topo.colors = 
+        topo = 
         {
-            over.col = topo.colors(length(color.index) * 100)
+            over.col = topo.colors(length(color.index) * 100 + 1)
             orderd.col = over.col
-            id = round(fill.float * length(color.index) * 100)
+            id = fill.float * length(color.index) * 100 + 1
             fill.col = orderd.col[id]
         },
         
-        cm.colors = 
+        cm = 
         {
-            over.col = cm.colors(length(color.index) * 100)
+            over.col = cm.colors(length(color.index) * 100 + 1)
             orderd.col = over.col
-            id = round(fill.float * length(color.index) * 100)
+            id = fill.float * length(color.index) * 100 + 1
             fill.col = orderd.col[id]
+            print(fill.col)
         },
         
         bi.polar = 
@@ -211,16 +214,7 @@ col.fun = function(data,color.index,
 }
 
 
-##' draw a map by passing an iNZightPlot object
-##'
-##' the function will also returns a global object which called global.objects
-##' @title Plot an iNZight Map
-##' @param obj object passed from iNZightPlot
-##' @param gen other options passed from iNZightPlot
-##' @return NULL
-##' @author Jason Wen
-##' @import RgoogleMaps
-##' @export
+
 col.missing = function(shape.obj)
 {
 	region = shape.obj$region
@@ -234,16 +228,14 @@ col.missing = function(shape.obj)
 }
 
 
-##' draw a map by passing an iNZightPlot object
+##' bind the color and a shape object together
 ##'
 ##' the function will also returns a global object which called global.objects
 ##' @title Plot an iNZight Map
-##' @param obj object passed from iNZightPlot
-##' @param gen other options passed from iNZightPlot
-##' @return NULL
+##' @param color a numeric vector see\link{rgb}
+##' @param obj an shape obj
+##' @return a list that contain shape object and colors for filling
 ##' @author Jason Wen
-##' @import RgoogleMaps
-##' @export
 color.bind = function(color,obj)
 {
     with.color = list(obj = obj, color = color)
@@ -256,6 +248,11 @@ getShapeFile = function()
 }
 
 
+##' compute the ratio of the current width and height of the window.
+##' @title compute the ratio of the window
+##' @return a vector of length of 2 that specify the current width and height 
+##' @author Jason Wen
+##' @export
 win.ratio = function()
 {
     win.width <- convertWidth(current.viewport()$width, "mm", TRUE)

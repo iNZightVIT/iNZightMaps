@@ -2,21 +2,29 @@
 % Please edit documentation in R/shade.fun.r
 \name{col.fun}
 \alias{col.fun}
-\title{Plot an iNZight Map}
+\title{Color Specification}
 \usage{
 col.fun(data, color.index, display = "hue", na.fill = "white", offset = 0,
   col = "red")
 }
 \arguments{
-\item{obj}{object passed from iNZightPlot}
+\item{data}{a numeric vector that should lie on the range of [0,1]}
 
-\item{gen}{other options passed from iNZightPlot}
+\item{color.index}{an integer vector}
+
+\item{display}{a character value, the method for display colors. It should be one value of "hcl","hue","heat","rainbow","terrain","topo","cm","gray","r","n"}
+
+\item{na.fill}{a character value, fill the unmatch region/country by the color.}
+
+\item{offset}{a numeric value within the range of [0,1]}
+
+\item{col}{the color for fill the match region/country, it only needs to be specify if display = 'hue'}
+}
+\value{
+an color vector
 }
 \description{
-draw a map by passing an iNZightPlot object
-}
-\details{
-the function will also returns a global object which called global.objects
+Choose a type of color that helps read the map nicely.
 }
 \author{
 Jason Wen

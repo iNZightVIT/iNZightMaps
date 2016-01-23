@@ -157,6 +157,8 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 ###get the range of latitude/longitude, then transform it into resolution unit, 
 ###then make it into the same ratio as the window's
 ###also make sure the size lie on the interval of [0,640]
+
+
 ##' compute the size and the zoom level that needs for request a new map.
 ##'
 ##' since the size of the map should not greater than 640, the size and the zoom needs to be transform before pass to the getNewMap function. 
@@ -239,7 +241,7 @@ Get.map.size = function(latR,lonR,SCALE)
 ##' the map.xylim function does not contain any arguments, and it returns the limit of x-axis and y-axis after the plot called.
 ##' @title get the limit of x-axis and y-axis
 ##' @return return a list that contain the limit of x-axis and y-axis 
-##' @author tell029
+##' @author Jason Wen
 map.xylim = function(latR,lonR,SCALE)
 {	
     ZoomSize = Get.map.size(latR = latR,lonR = lonR,SCALE = SCALE)
@@ -256,6 +258,12 @@ map.xylim = function(latR,lonR,SCALE)
 
 
 
+##' The coordinates should be lie on the same range of Google Map's. i.e. longitude = [-180,180], latitude = [-90,90]
+##' @param lat a numeric vector
+##' @param lon a numeric vector
+##' @return return an logical value that tells wheater the coordinates are all lie on the same range of google map's or not.
+##' @title Is Google Map?
+##' @author Jason Wen
 is.google.map = function(lat,lon)
 {
     

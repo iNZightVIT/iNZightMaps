@@ -4,18 +4,26 @@
 \alias{iNZightShapeMap}
 \title{Create an iNZight Shape Map Object}
 \usage{
-iNZightShapeMap(shp.RDS, location, column.index, region, data)
+iNZightShapeMap(location, shp.region, data.region, data)
 }
 \arguments{
 \item{location}{the location}
+
+\item{shp.region}{a character value, the column name in the region/country column of the shp file}
+
+\item{data.region}{a character value, the column name in the region/country column of the data set}
+
+\item{data}{the data set}
 }
 \description{
-description ...
+Create an iNZightShapeMap object
 }
 \details{
 details ....
 }
 \examples{
-
+data(nzquakes)
+mapobj <- iNZightMap(lat = ~Latitude, lon = ~Longitude, data = nzquakes)
+plot(mapobj, opacity = ~Depth, colby = Felt, sizeby = Magnitude, type = "terrain")
 }
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/shade.fun.r
 \name{data.trans}
 \alias{data.trans}
-\title{Plot an iNZight Map}
+\title{data transformation}
 \usage{
 data.trans(x, transform = "linear")
 }
@@ -15,10 +15,7 @@ data.trans(x, transform = "linear")
 a transformed numeric vector
 }
 \description{
-Transform a
-}
-\details{
-the function will also returns a global object which called global.objects
+Transform the data into the range of [0,1]
 }
 \author{
 Jason Wen

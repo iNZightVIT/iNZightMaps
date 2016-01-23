@@ -7,12 +7,15 @@
 color.bind(color, obj)
 }
 \arguments{
-\item{obj}{object passed from iNZightPlot}
+\item{color}{a numeric vector see\link{rgb}}
 
-\item{gen}{other options passed from iNZightPlot}
+\item{obj}{an shape obj}
+}
+\value{
+a list that contain shape object and colors for filling
 }
 \description{
-draw a map by passing an iNZightPlot object
+bind the color and a shape object together
 }
 \details{
 the function will also returns a global object which called global.objects
