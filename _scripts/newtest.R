@@ -6,7 +6,7 @@ data.2 = data.1[data.1$Country %in% c('Algeria','Angola','Burkina Faso','Cameroo
                                       'Nigeria','Sudan'),]
 
 
-data.3 = data.1[data.1$Country %in% c('China','Peru'),]
+data.3 = data.1[data.1$Country %in% c('New Zealand','China'),]
 obj <- iNZightShapeMap(ll, data.region = 'Country', data = data.3)
 
 
@@ -17,7 +17,8 @@ plot(obj, variable = ~CO2Emissions,
      transform = 'linear',
      full.map =F)
 
-
+ee = obj$each
+length(rep(1:length(ee),ee))
 
 data.1 = read.csv('C:/Users/yeamin/Desktop/bank.csv',skip = 4)
 s.set = data.1$Country.Name %in% c('China','Japan')
@@ -34,7 +35,7 @@ iNZightPlot(X1960, Country.Name, data = data.1, plottype = 'shapemap',
               col = "blue",
               col.method = 'heat',
               na.fill = 'gray',
-              full.map = T)
+              full.map = F)
             )
 data.3$Imports
 
@@ -51,3 +52,6 @@ iNZightPlot(CO2Emissions, Country, data = data.2, plottype = 'shapemap',g1 = Yea
               na.fill = 'gray',
               full.map = F)
 )
+
+
+obj$col.index[136]
