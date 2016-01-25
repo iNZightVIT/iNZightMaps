@@ -10,7 +10,6 @@
 ##' @return an iNZight Shape Map Object
 ##' @author Tom Elliott
 ##' @import maptools
-##' @examples
 ##' @import maptools tools
 ##' @export
 iNZightShapeMap <- function(location,shp.region,data.region, data) {

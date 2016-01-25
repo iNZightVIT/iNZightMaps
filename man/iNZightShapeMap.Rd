@@ -15,15 +15,16 @@ iNZightShapeMap(location, shp.region, data.region, data)
 
 \item{data}{the data set}
 }
+\value{
+an iNZight Shape Map Object
+}
 \description{
 Create an iNZightShapeMap object
 }
 \details{
 details ....
 }
-\examples{
-data(nzquakes)
-mapobj <- iNZightMap(lat = ~Latitude, lon = ~Longitude, data = nzquakes)
-plot(mapobj, opacity = ~Depth, colby = Felt, sizeby = Magnitude, type = "terrain")
+\author{
+Tom Elliott
 }
 
