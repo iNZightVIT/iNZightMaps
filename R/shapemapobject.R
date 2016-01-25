@@ -7,7 +7,9 @@
 ##' @param shp.region a character value, the column name in the region/country column of the shp file
 ##' @param data.region a character value, the column name in the region/country column of the data set
 ##' @param data the data set
-##'
+##' @return an iNZight Shape Map Object
+##' @author Tom Elliott
+##' @import maptools
 ##' @examples
 ##' @import maptools tools
 ##' @export
@@ -53,10 +55,24 @@ iNZightShapeMap <- function(location,shp.region,data.region, data) {
 
 
 
-
+##' Create an iNZightShapeMap object
+##'
+##' details ....
+##'
+##' @title Create an iNZight Shape Map Object
+##' @param x the iNZight Shape Map Object
+##' @param variablie the variable or the column name in the data
+##' @param region a variable or the column name of the region column
+##' @param data the data set
+##' @param col.fun a character value
+##' @param full.map logical value.
+##' @return NULL
+##' @author Tom Elliott
+##' @import maptools
+##' @export
 plot.inzightshapemap <- function(x, variable, region, data,
                                  col.fun = "hue", transform = "linear",
-                                 col.offset = 0.2, col = "red",na.fill = 'white',full.map = TRUE,
+                                 col.offset = 0.2, col = "red",na.fill = 'white',full.map = TRUE,extend.ratio = 1,
                                  ...) {
 
   ##  mc <- match.call(expand.dots = TRUE)
@@ -91,7 +107,8 @@ plot.inzightshapemap <- function(x, variable, region, data,
         col.offset = col.offset,
         col = col,
         na.fill = na.fill,
-        full.map = full.map
+        full.map = full.map,
+        extend.ratio = extend.ratio
         )
     
     #call <- c(call, list(...))

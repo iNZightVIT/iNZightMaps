@@ -49,6 +49,16 @@ data.trans = function(x,transform = 'linear')
 {
     a = x
     b = a - min(a,na.rm = TRUE)
+    transform.option = c('linear','log','sqrt','exp','power','normal')
+    impossible.number = 0.091823021983
+    bio.color = c('bi.polar')
+    if(!(transform %in% transform.option))
+    {
+        stop("Invaild transform method,please select one method from:
+            'linear','log','sqrt','exp','power','normal'")
+    }
+    
+    
     switch(transform,
         linear = {b = b},
         log = {b = log(b + 1)},
@@ -101,13 +111,19 @@ order.match = function(shp.region,data.region)
 col.fun = function(data,color.index,
                     display = 'hue',na.fill = 'white',offset = 0,col = 'red')
 {
+    display.option = c('hcl','hue','heat','cm','rainbow','terrain','topo','cm','bi.polar','r','n')
     impossible.number = 0.091823021983
-    bio.color = c('bi.polar','cm')
+    bio.color = c('bi.polar')
+    if(!(display %in% display.option))
+    {
+        stop("display method not found,please select one method from:
+            'hcl','hue','heat','cm','rainbow','terrain','topo','cm','bi.polar','r','n' ")
+    }
     
     data = round(data,2)
     if(display %in% bio.color)
     {
-        fill.float = ifelse(is.na(data) == TRUE, impossible.number,data)
+        fill.float = ifelse(is.na(data) == TRUE, impossible.number,data,gray)
     }else
     {
         fill.float = ifelse(is.na(data) == TRUE, impossible.number,data * (1 - offset) + (offset))
@@ -133,8 +149,6 @@ col.fun = function(data,color.index,
             orderd.col = over.col[length(over.col):1]
             id = fill.float * length(color.index) * 100 + 1
             fill.col = orderd.col[id]
-    cc <<- id
-    d <<- orderd.col
         },
         
         rainbow = 
@@ -271,4 +285,14 @@ win.ratio = function()
         h = unit(ratio.win/ratio.map, 'npc')
     }
     c(w,h)
+}
+
+
+re.scale = function(x,ratio)
+{
+  mid = mean(x)
+  l = diff(x)/2
+  l.r = l * ratio
+  c(mid - l.r, mid + l.r)
+  
 }
