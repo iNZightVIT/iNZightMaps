@@ -6,7 +6,7 @@ data.2 = data.1[data.1$Country %in% c('Algeria','Angola','Burkina Faso','Cameroo
                                       'Nigeria','Sudan'),]
 
 
-data.3 = data.1[data.1$Country %in% c('China','India','France','Japan'),]
+data.3 = data.1[data.1$Country %in% c('China','New Zealand','Japan'),]
 data.4 = data.1[data.1$Country %in% c('Albania', 'Andorra', 'Austria', 'Belarus', 'Belgium', 
                                       'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 
                                       'Cyprus','Czech Republic', 
@@ -17,16 +17,17 @@ data.4 = data.1[data.1$Country %in% c('Albania', 'Andorra', 'Austria', 'Belarus'
                                       'Lithuania', 'Luxemburg', 'Macedonia', 
                                       'Malta', 'Moldova', 'Monaco', 'Montenegro'),]
 
-dataIn = data.3
+dataIn = data.2
 obj <- iNZightShapeMap(ll, data.region = 'Country', data = dataIn)
 system.time(plot(obj, variable = ~CO2Emissions,
-     region = ~Country,
-     data = dataIn,
-     col.fun = 'heat',
-     transform = 'log',
-     offset = 0,
-     full.map =F,
-     extend.ratio =1))
+                 region = ~Country,
+                 data = dataIn,
+                 col.fun = 'heat',
+                 transform = 'normal',
+                 na.fill = 'gray',
+                 offset = 0,
+                 full.map = F,
+                 extend.ratio =10))
 
 
 
@@ -40,7 +41,7 @@ iNZightPlot(CO2Emissions, Country, data = data.2, plottype = 'shapemap',g1 = Lea
               col.method = 'hue',
               na.fill = 'White',
               full.map = F,
-              )
+            )
 )
 
 obj <- iNZightShapeMap(ll, data.region = 'Country', data = data.3)

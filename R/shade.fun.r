@@ -296,3 +296,66 @@ re.scale = function(x,ratio)
   c(mid - l.r, mid + l.r)
   
 }
+
+
+
+within = function(x,lim)
+{
+    (x[,1] > lim[1] & x[,1] < lim[2]) & 
+    (x[,2] > lim[3] & x[,2] < lim[4])
+}
+
+sub.region = function(obj,d.region)
+{
+    latlon = obj$latlon
+    each = obj$each
+    col.index = obj$col.index
+    col = obj$col
+    col.1 = col
+    region = obj$region
+    logic = region %in% d.region
+    polygon.index.fill = rep(logic,col.index)  
+    
+    region.sub = region[logic]
+    col.index.sub = col.index[logic]
+    col.sub = col[polygon.index.fill]
+    each.sub = each[rep(logic,col.index)]
+    latlon.sub = latlon[rep(rep(logic,col.index),each),]
+    lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
+    
+    obj = list(latlon = latlon.sub,each = each.sub,
+             col.index = col.index.sub, region = region.sub,
+             xylim = lim.sub,col = col.sub)
+    obj
+}
+
+
+sub.lim = function(obj,lim)
+{
+    latlon = obj$latlon
+    each = obj$each
+    col.index = obj$col.index
+    col = obj$col
+    region = obj$region
+    ## change the limit then re-subset it
+    with = within(latlon,lim)
+    id = rep(1:length(each),each)
+    each.sub = as.numeric(rownames(table(id[with])))
+    latlon.sub = latlon[id %in% each.sub,]
+    lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
+    ## re-subset
+    with.out = within(latlon,lim.sub)
+    each.index = as.numeric(rownames(table(id[1:length(each) %in% id[with.out]])))
+    latlon.out = latlon[id %in% each.index,]
+    each.out = each[each.index]
+    col.out = col[each.index]
+    region.out = rownames(table(as.character(rep(rep(region,col.index),each)[with.out])))
+    col.index.out = col.index[region %in% region.out]
+    lim.out = lim.sub
+    obj = list(latlon = latlon.out,each = each.out,
+             col.index = col.index.out, region = region.out,
+             xylim = lim.out,col = col.out)
+    obj
+}
+
+
