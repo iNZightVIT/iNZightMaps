@@ -27,7 +27,7 @@ system.time(plot(obj, variable = ~CO2Emissions,
                  na.fill = 'gray',
                  offset = 0,
                  full.map = F,
-                 extend.ratio =10))
+                 extend.ratio =2))
 
 
 

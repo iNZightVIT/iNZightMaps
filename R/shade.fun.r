@@ -284,7 +284,7 @@ win.ratio = function()
         w = unit(1,'npc')
         h = unit(ratio.win/ratio.map, 'npc')
     }
-    c(w,h)
+    c(w = w,h = h)
 }
 
 
@@ -297,15 +297,13 @@ re.scale = function(x,ratio)
   
 }
 
-
-
 within = function(x,lim)
 {
     (x[,1] > lim[1] & x[,1] < lim[2]) & 
     (x[,2] > lim[3] & x[,2] < lim[4])
 }
 
-sub.region = function(obj,d.region)
+subByRegion = function(obj,d.region)
 {
     latlon = obj$latlon
     each = obj$each
@@ -330,19 +328,34 @@ sub.region = function(obj,d.region)
 }
 
 
-sub.lim = function(obj,lim)
+subByLim = function(obj,lim,r = TRUE)
 {
-    latlon = obj$latlon
-    each = obj$each
-    col.index = obj$col.index
+    latlon<<- obj$latlon
+    each <<- obj$each
+    col.index <<- obj$col.index
     col = obj$col
-    region = obj$region
+    co <<- col
+    region <<- obj$region
+    
+    
+    
     ## change the limit then re-subset it
     with = within(latlon,lim)
+    each.id = rep(each,)
+    
+    
+    
+    
+    
+    
+    
+    
+    print(with)
     id = rep(1:length(each),each)
     each.sub = as.numeric(rownames(table(id[with])))
     latlon.sub = latlon[id %in% each.sub,]
     lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
+    
     ## re-subset
     with.out = within(latlon,lim.sub)
     each.index = as.numeric(rownames(table(id[1:length(each) %in% id[with.out]])))
@@ -351,11 +364,30 @@ sub.lim = function(obj,lim)
     col.out = col[each.index]
     region.out = rownames(table(as.character(rep(rep(region,col.index),each)[with.out])))
     col.index.out = col.index[region %in% region.out]
+    region.1 = region[region %in% region.out]
     lim.out = lim.sub
     obj = list(latlon = latlon.out,each = each.out,
              col.index = col.index.out, region = region.out,
              xylim = lim.out,col = col.out)
+   # print(obj)
     obj
 }
 
-
+reLim = function(obj,ignore.region = c('Russia','Antarctica'))
+{
+    latlon = obj$latlon
+    each = obj$each
+    col.index = obj$col.index
+    col = obj$col
+    region = obj$region
+    xylim = obj$xylim
+    region.id = rep(rep(region,col.index),each)
+    logic = region.id %in% region
+    latlon.re = latlon[!logic]
+    xylim.out = c(range(latlon.re[,1]),range(latlon.re[,2]))
+    obj$xylim = xylim.out
+    
+    obj
+    
+    
+}
