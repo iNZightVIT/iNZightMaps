@@ -6,7 +6,7 @@ data.2 = data.1[data.1$Country %in% c('Algeria','Angola','Burkina Faso','Cameroo
                                       'Nigeria','Sudan'),]
 
 
-data.3 = data.1[data.1$Country %in% c('Australia','New Zealand'),]
+data.3 = data.1[data.1$Country %in% c('New Zealand'),]
 data.4 = data.1[data.1$Country %in% c('Albania', 'Andorra', 'Austria', 'Belarus', 'Belgium', 
                                       'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 
                                       'Cyprus','Czech Republic', 
@@ -19,10 +19,10 @@ system.time(plot(obj, variable = ~CO2Emissions,
                  data = dataIn,
                  col.fun = 'heat',
                  transform = 'log',
-                 na.fill = 'white',
+                 na.fill = 'gray',
                  offset = 0.2,
                  full.map = F,
-                 extend.ratio =1))
+                 extend.ratio = 5))
 
 
 
@@ -36,6 +36,7 @@ iNZightPlot(CO2Emissions, Country, data = data.2, plottype = 'shapemap',g1 = Lea
               col.method = 'hue',
               na.fill = 'White',
               full.map = F,
+              extend.ratio = 3
             )
 )
 

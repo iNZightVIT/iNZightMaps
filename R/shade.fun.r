@@ -1,9 +1,9 @@
-##' extract the information from a SpatialPolygonsDataFrame object and 
+##' extract the information from a SpatialPolygonsDataFrame object.
 ##'
-##' the function will also returns a global object which called global.objects
+##' the function will also returns a global object which called global.objects.
 ##' @title extract and create a shape object
-##' @param shp a SpatialPolygonsDataFrame object, see \link{readShapeSpatial}
-##' @return a shape object
+##' @param shp a SpatialPolygonsDataFrame object, see \link{readShapeSpatial}.
+##' @return a shape object.
 ##' @author Jason Wen
 ##' @import maptools
 ##' @export
@@ -36,13 +36,13 @@ shape.extract = function(shp,column.index = 2)
 	obj
 }
 
-##' Transform the data into the range of [0,1]
+##' Transform the data into the range of [0,1].
 ##'
 ##' 
 ##' @title data transformation
 ##' @param x a numeric value or vector. 
-##' @param transform the method for transformation, can be linear,log,sqrt,exp,power and normal
-##' @return a transformed numeric vector
+##' @param transform the method for transformation, can be linear,log,sqrt,exp,power and normal.
+##' @return a transformed numeric vector.
 ##' @author Jason Wen
 ##' @export
 data.trans = function(x,transform = 'linear')
@@ -77,14 +77,13 @@ data.trans = function(x,transform = 'linear')
     percent.data
 }
 
-
-##' draw a map by passing an iNZightPlot object
+##' draw a map by passing an iNZightPlot object.
 ##'
-##' the function will also returns a global object which called global.objects
+##' the function will also returns a global object which called global.objects.
 ##' @title Plot an iNZight Map
-##' @param shp.region a character vector
-##' @param data.region a character vector
-##' @return an integer vector 
+##' @param shp.region a character vector.
+##' @param data.region a character vector.
+##' @return an integer vector .
 ##' @author Jason Wen
 order.match = function(shp.region,data.region)
 {
@@ -95,29 +94,28 @@ order.match = function(shp.region,data.region)
     orderd.data
 }
 
-
-
 ##' Choose a type of color that helps read the map nicely.
 ##' @title Color Specification
-##' @param data a numeric vector that should lie on the range of [0,1]
-##' @param color.index an integer vector
-##' @param display a character value, the method for display colors. It should be one value of "hcl","hue","heat","rainbow","terrain","topo","cm","gray","r","n"
-##' @param na.fill a character value, fill the unmatch region/country by the color.
-##' @param offset a numeric value within the range of [0,1] 
-##' @param col the color for fill the match region/country, it only needs to be specify if display = 'hue'
-##' @return an color vector
+##' @param data a numeric vector that should lie on the range of [0,1].
+##' @param color.index an integer vector from inzshapemap object.
+##' @param display a character value, the method for display colors. It should be choosen by one of the following display method: "hcl","hue","heat","rainbow","terrain","topo","cm","gray","r","n".
+##' @param na.fill a character value that sepecify the color that use to fill the unmatch region/country.
+##' @param offset a numeric value within the range of [0,1] .
+##' @param col the color for fill the match region/country, it only needs to be specify if display = 'hue'.
+##' @return A color vector.
 ##' @author Jason Wen
 ##' @import RColorBrewer
+##' @details hcl,HCL Color Specification, whith c = 35 and l = 85 see \link{hcl}. hue, when display = 'hue', then the 'col' arg need to be specified. The alpha will depend on the data, see \link{rgb}. rainbow,terrain,topo,cm are the method from \link{RColorBrewer}. r,n , the color filled randomly expect n will fill the entire map even the region is unmatch.
 col.fun = function(data,color.index,
                     display = 'hue',na.fill = 'white',offset = 0,col = 'red')
 {
-    display.option = c('hcl','hue','heat','cm','rainbow','terrain','topo','cm','bi.polar','r','n')
+    display.option = c('hcl','hue','heat','cm','rainbow','terrain','topo','cm','bi.polar','r','n','gray')
     impossible.number = 0.091823021983
     bio.color = c('bi.polar')
     if(!(display %in% display.option))
     {
         stop("display method not found,please select one method from:
-            'hcl','hue','heat','cm','rainbow','terrain','topo','cm','bi.polar','r','n' ")
+            'hcl','hue','heat','cm','rainbow','terrain','topo','cm','bi.polar','r','n','grat' ")
     }
     
     data = round(data,2)
@@ -181,7 +179,6 @@ col.fun = function(data,color.index,
             orderd.col = over.col
             id = fill.float * length(color.index) * 100 + 1
             fill.col = orderd.col[id]
-            print(fill.col)
         },
         
         bi.polar = 
@@ -206,17 +203,17 @@ col.fun = function(data,color.index,
         
         r = 
         {
-            r = ifelse(is.na(order) == TRUE, impossible.number,runif(order))
-            g = ifelse(is.na(order) == TRUE, impossible.number,runif(order))
-            b = ifelse(is.na(order) == TRUE, impossible.number,runif(order))
+            r = ifelse(fill.float == impossible.number, impossible.number,runif(fill.float))
+            g = ifelse(fill.float == impossible.number, impossible.number,runif(fill.float))
+            b = ifelse(fill.float == impossible.number, impossible.number,runif(fill.float))
             fill.col = rgb(r,g,b)	
         },
         
         n = 
         {
-            r = runif(length(shp@polygons))
-            g = runif(length(shp@polygons))
-            b = runif(length(shp@polygons))
+            r = runif(length(fill.float))
+            g = runif(length(fill.float))
+            b = runif(length(fill.float))
             na.fill = rgb(r,g,b)
             fill.col = rgb(r,g,b)	
         }
@@ -227,47 +224,12 @@ col.fun = function(data,color.index,
     color.out
 }
 
-
-
-col.missing = function(shape.obj)
-{
-	region = shape.obj$region
-	col.index = shape.obj$col.index
-	length = length(rep(region,col.index))
-	r = runif(length)
-	g = runif(length)
-	b = runif(length)
-	color.out = rgb(r,g,b)
-	color.out
-}
-
-
-##' bind the color and a shape object together
-##'
-##' the function will also returns a global object which called global.objects
-##' @title Plot an iNZight Map
-##' @param color a numeric vector see\link{rgb}
-##' @param obj an shape obj
-##' @return a list that contain shape object and colors for filling
-##' @author Jason Wen
-color.bind = function(color,obj)
-{
-    with.color = list(obj = obj, color = color)
-    with.color
-}
-
-getShapeFile = function()
-{
-    
-}
-
-
 ##' compute the ratio of the current width and height of the window.
-##' @title compute the ratio of the window
-##' @return a vector of length of 2 that specify the current width and height 
+##' @title compute the ratio of the window.
+##' @return a vector of length of 2 that specify the current width and height .
 ##' @author Jason Wen
 ##' @export
-win.ratio = function(xlim,ylim)
+win.ratio = function()
 {
     win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
     win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
@@ -287,7 +249,13 @@ win.ratio = function(xlim,ylim)
     c(w = w,h = h)
 }
 
-
+##' rearrange the limit by given a ratio.
+##' @title rearrange the limit
+##' @param x a vector of length 2.
+##' @param ratio a numeric value.
+##' @return a vector of length of 2, re-sized by the ratio.
+##' @author Jason Wen
+##' @export
 re.scale = function(x,ratio)
 {
   mid = mean(x)
@@ -297,38 +265,80 @@ re.scale = function(x,ratio)
   
 }
 
+##' is the latitude and longitude within the limit?
+##' @title identify the which set of latitude and longitude are within the limit.
+##' @param x a numeric matrix with n*2 dimension.
+##' @param lim a numeric vectro with length 4.
+##' @return a logical vector of length of n, indicates which row in x is within in the limit.
+##' @author Jason Wen
+##' @export
 within = function(x,lim)
 {
     (x[,1] > lim[1] & x[,1] < lim[2]) & 
     (x[,2] > lim[3] & x[,2] < lim[4])
 }
 
-subByRegion = function(obj,d.region)
+##' Calculate the inner limit.
+##' @title inner limit
+##' @details the limit is computed by calculate the limit of the given region.
+##' @param obj an inzshapemap object.
+##' @param d.region a character vector that sepecify the region or country.
+##' @return a numeric vector with length 4, the inner limit/bbox of the map.
+##' @author Jason Wen
+##' @export
+innerLim = function(obj,d.region)
 {
     latlon = obj$latlon
     each = obj$each
     col.index = obj$col.index
-    col = obj$col
-    col.1 = col
     region = obj$region
+    
     logic = region %in% d.region
     polygon.index.fill = rep(logic,col.index)  
-    
-    region.sub = region[logic]
-    col.index.sub = col.index[logic]
-    col.sub = col[polygon.index.fill]
     each.sub = each[rep(logic,col.index)]
     latlon.sub = latlon[rep(rep(logic,col.index),each),]
-    lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
+    lim.sub = c(range(latlon.sub[,1],na.rm = TRUE),range(latlon.sub[,2],na.rm = TRUE))
+    lim.sub
+}
+
+##' Calculate the outer limit.
+##' @title outer limit
+##' @details the limit is computed by calculate the limit of the given inner limit. If there is a region been cut by the inner limit, then the outer limit will extend up to the limit of the region.
+##' @param obj an inzshapemap object.
+##' @param lim a numeric vector of length 4.
+##' @param ignore.region a character value or vector, sepecify which regions are been ignored when calculate the limit.
+##' @return a numeric vector with length 4, the outer limit/bbox of the map.
+##' @author Jason Wen
+##' @export
+outerLim = function(obj,lim,ignore.region = c('Russia','Antarctica'))
+{    
+    latlon = obj$latlon
+    each = obj$each
+    col.index = obj$col.index
+    region = obj$region
     
-    obj = list(latlon = latlon.sub,each = each.sub,
-             col.index = col.index.sub, region = region.sub,
-             xylim = lim.sub,col = col.sub)
-    obj
+    with = within(latlon,lim)
+    id = rep(1:length(each),each)
+    each.index = as.numeric(rownames(table(id[with])))
+    log.pre = id %in% each.index
+    log.pre[rep(rep((region %in% ignore.region),col.index),each)] = FALSE
+    latlon.sub = latlon[log.pre,]
+
+    lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
+    lim.sub
+    
+    
 }
 
 
-subByLim = function(obj,lim,r = TRUE)
+##' Subset by limit.
+##' @title subset by limit
+##' @param obj an inzshapemap object.
+##' @param lim a numeric vector of length 4.
+##' @return an inzshapemap object.
+##' @author Jason Wen
+##' @export
+subByLim = function(obj,lim)
 {
     latlon = obj$latlon
     each = obj$each
@@ -344,15 +354,19 @@ subByLim = function(obj,lim,r = TRUE)
     each.sub = each[each.index]
     latlon.sub = latlon[id %in% each.index,]
     lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
-
     region.id = rep(rep(region,col.index),each)
-
     with.sub = within(latlon,lim.sub)
+    
+    
     latlon.out = latlon[id %in% id[with.sub],]
     each.sub.index = as.numeric(rownames(table(id[with.sub])))
     each.out = each[each.sub.index]
+    
+    ## some regions have multiple length
     e = rep(rep(1:length(region),col.index),each)
     e.index = as.numeric(rownames(table(e[with.sub])))
+    
+    ## out
     region.out = region[e.index]
     col.index.out = col.index[e.index]
     col.out = col[each.sub.index]
@@ -362,26 +376,4 @@ subByLim = function(obj,lim,r = TRUE)
              col.index = col.index.out, region = region.out,
              xylim = lim.out,col = col.out)
     obj
-}
-
-reLim = function(obj,lim,ignore.region = c('Russia','Antarctica'))
-{    
-    latlon <<- obj$latlon
-    each <<- obj$each
-    col.index <<- obj$col.index
-    col = obj$col
-    co <<- col
-    region <<- obj$region
-    
-    with = within(latlon,lim)
-    id = rep(1:length(each),each)
-    each.index = as.numeric(rownames(table(id[with])))
-    log.pre = id %in% each.index
-    log.pre[rep(rep((region %in% ignore.region),col.index),each)] = FALSE
-    latlon.sub = latlon[log.pre,]
-
-    lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
-    lim.sub
-    
-    
 }

@@ -53,17 +53,17 @@ create.inz.shapemapplot = function(obj) {
 ##' @author Jason Wen
 ##' @export
 plot.inzshapemap = function(obj, gen) {
-
-    if(obj$shape.object$full.map == FALSE)
+    s.obj = obj$shape.object
+    if(s.obj$full.map == FALSE)
     {
-        ratio = obj$shape.object$extend.ratio
-        obj.fill = subByRegion(obj$shape.object,obj$df$y)
-        lim.in = c(re.scale(obj.fill$xylim[1:2],ratio),
-                    re.scale(obj.fill$xylim[3:4],ratio))
-        lim = reLim(obj$shape.object,lim.in)
-        big.region = c('Russia','Antarctica')
-        xlim = lim[1:2]
-        ylim = lim[3:4]
+        ratio = s.obj$extend.ratio
+        inner.lim = innerLim(s.obj,obj$df$y)
+        lim.in = c(re.scale(inner.lim[1:2],ratio),
+                    re.scale(inner.lim[3:4],ratio))
+                    
+        lim.out = outerLim(s.obj,lim.in)
+        xlim = lim.out[1:2]
+        ylim = lim.out[3:4]
         
         w = convertWidth(current.viewport()$width, "mm", TRUE)
         h = convertHeight(current.viewport()$height, "mm", TRUE)
@@ -83,25 +83,20 @@ plot.inzshapemap = function(obj, gen) {
 
         }
         lim = c(xlim,ylim)
-        obj = subByLim(obj$shape.object,lim)
+        s.obj = subByLim(s.obj,lim)
         
         veiw.wh = c(1,1)
     }else
     {
-        obj = obj$shape.object
-        xlim = obj$xylim[1:2]
-        ylim = obj$xylim[3:4]
-        veiw.wh = win.ratio(xlim = xlim, ylim = ylim)
+        xlim = s.obj$xylim[1:2]
+        ylim = s.obj$xylim[3:4]
+        veiw.wh = win.ratio()
     }
     
-    latlon = obj$latlon
-    cols = obj$col
-    shade.each = obj$each
+    latlon = s.obj$latlon
+    cols = s.obj$col
+    shade.each = s.obj$each
     ##limit
-
-    
-    print(xlim)
-    print(ylim)
     vp = viewport(0.5,0.5,width = veiw.wh[1], height = veiw.wh[2],name = 'VP:PLOTlayout', xscale = xlim,yscale = ylim)
     pushViewport(vp)
     grid.polygon(latlon[,1], latlon[,2], default.units = "native", id.length = shade.each,
