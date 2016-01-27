@@ -6,28 +6,23 @@ data.2 = data.1[data.1$Country %in% c('Algeria','Angola','Burkina Faso','Cameroo
                                       'Nigeria','Sudan'),]
 
 
-data.3 = data.1[data.1$Country %in% c('China','New Zealand','Japan'),]
+data.3 = data.1[data.1$Country %in% c('Australia','New Zealand'),]
 data.4 = data.1[data.1$Country %in% c('Albania', 'Andorra', 'Austria', 'Belarus', 'Belgium', 
                                       'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 
                                       'Cyprus','Czech Republic', 
-                                      'Estonia', 'Finland', 
-                                      'Germany', 'Greece', 'Hungary', 
-                                      'Iceland', 'Ireland', 'Italy', 
-                                      'Kosovo', 'Latvia', 'Liechtenstein', 
-                                      'Lithuania', 'Luxemburg', 'Macedonia', 
-                                      'Malta', 'Moldova', 'Monaco', 'Montenegro'),]
+                                      'Estonia', 'Finland'),]
 
-dataIn = data.2
+dataIn = data.3
 obj <- iNZightShapeMap(ll, data.region = 'Country', data = dataIn)
 system.time(plot(obj, variable = ~CO2Emissions,
                  region = ~Country,
                  data = dataIn,
                  col.fun = 'heat',
-                 transform = 'normal',
-                 na.fill = 'gray',
-                 offset = 0,
+                 transform = 'log',
+                 na.fill = 'white',
+                 offset = 0.2,
                  full.map = F,
-                 extend.ratio =2))
+                 extend.ratio =1))
 
 
 

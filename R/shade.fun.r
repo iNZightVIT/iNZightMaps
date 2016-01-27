@@ -267,7 +267,7 @@ getShapeFile = function()
 ##' @return a vector of length of 2 that specify the current width and height 
 ##' @author Jason Wen
 ##' @export
-win.ratio = function()
+win.ratio = function(xlim,ylim)
 {
     win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
     win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
@@ -330,64 +330,58 @@ subByRegion = function(obj,d.region)
 
 subByLim = function(obj,lim,r = TRUE)
 {
-    latlon<<- obj$latlon
+    latlon = obj$latlon
+    each = obj$each
+    col.index = obj$col.index
+    col = obj$col
+    co = col
+    region = obj$region
+    
+    
+    with = within(latlon,lim)
+    id = rep(1:length(each),each)
+    each.index = as.numeric(rownames(table(id[with])))
+    each.sub = each[each.index]
+    latlon.sub = latlon[id %in% each.index,]
+    lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
+
+    region.id = rep(rep(region,col.index),each)
+
+    with.sub = within(latlon,lim.sub)
+    latlon.out = latlon[id %in% id[with.sub],]
+    each.sub.index = as.numeric(rownames(table(id[with.sub])))
+    each.out = each[each.sub.index]
+    e = rep(rep(1:length(region),col.index),each)
+    e.index = as.numeric(rownames(table(e[with.sub])))
+    region.out = region[e.index]
+    col.index.out = col.index[e.index]
+    col.out = col[each.sub.index]
+    lim.out = lim.sub
+    
+    obj = list(latlon = latlon.out,each = each.out,
+             col.index = col.index.out, region = region.out,
+             xylim = lim.out,col = col.out)
+    obj
+}
+
+reLim = function(obj,lim,ignore.region = c('Russia','Antarctica'))
+{    
+    latlon <<- obj$latlon
     each <<- obj$each
     col.index <<- obj$col.index
     col = obj$col
     co <<- col
     region <<- obj$region
     
-    
-    
-    ## change the limit then re-subset it
     with = within(latlon,lim)
-    each.id = rep(each,)
-    
-    
-    
-    
-    
-    
-    
-    
-    print(with)
     id = rep(1:length(each),each)
-    each.sub = as.numeric(rownames(table(id[with])))
-    latlon.sub = latlon[id %in% each.sub,]
-    lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
-    
-    ## re-subset
-    with.out = within(latlon,lim.sub)
-    each.index = as.numeric(rownames(table(id[1:length(each) %in% id[with.out]])))
-    latlon.out = latlon[id %in% each.index,]
-    each.out = each[each.index]
-    col.out = col[each.index]
-    region.out = rownames(table(as.character(rep(rep(region,col.index),each)[with.out])))
-    col.index.out = col.index[region %in% region.out]
-    region.1 = region[region %in% region.out]
-    lim.out = lim.sub
-    obj = list(latlon = latlon.out,each = each.out,
-             col.index = col.index.out, region = region.out,
-             xylim = lim.out,col = col.out)
-   # print(obj)
-    obj
-}
+    each.index = as.numeric(rownames(table(id[with])))
+    log.pre = id %in% each.index
+    log.pre[rep(rep((region %in% ignore.region),col.index),each)] = FALSE
+    latlon.sub = latlon[log.pre,]
 
-reLim = function(obj,ignore.region = c('Russia','Antarctica'))
-{
-    latlon = obj$latlon
-    each = obj$each
-    col.index = obj$col.index
-    col = obj$col
-    region = obj$region
-    xylim = obj$xylim
-    region.id = rep(rep(region,col.index),each)
-    logic = region.id %in% region
-    latlon.re = latlon[!logic]
-    xylim.out = c(range(latlon.re[,1]),range(latlon.re[,2]))
-    obj$xylim = xylim.out
-    
-    obj
+    lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
+    lim.sub
     
     
 }
