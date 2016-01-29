@@ -7,7 +7,7 @@
 innerLim(obj, d.region)
 }
 \arguments{
-\item{obj}{an inzshapemap object}
+\item{obj}{an inzshapemap object.}
 
 \item{d.region}{a character vector that sepecify the region or country.}
 }
@@ -15,10 +15,10 @@ innerLim(obj, d.region)
 a numeric vector with length 4, the inner limit/bbox of the map.
 }
 \description{
-Calculate the inner limit
+Calculate the inner limit.
 }
 \details{
-the limit is computed by calculate the limit of the given region
+the limit is computed by calculate the limit of the given region.
 }
 \author{
 Jason Wen

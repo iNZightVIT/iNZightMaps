@@ -9,13 +9,13 @@ data.trans(x, transform = "linear")
 \arguments{
 \item{x}{a numeric value or vector.}
 
-\item{transform}{the method for transformation, can be linear,log,sqrt,exp,power and normal}
+\item{transform}{the method for transformation, can be linear,log,sqrt,exp,power and normal.}
 }
 \value{
-a transformed numeric vector
+a transformed numeric vector.
 }
 \description{
-Transform the data into the range of [0,1]
+Transform the data into the range of [0,1].
 }
 \author{
 Jason Wen

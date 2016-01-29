@@ -7,18 +7,18 @@
 order.match(shp.region, data.region)
 }
 \arguments{
-\item{shp.region}{a character vector}
+\item{shp.region}{a character vector.}
 
-\item{data.region}{a character vector}
+\item{data.region}{a character vector.}
 }
 \value{
-an integer vector
+an integer vector .
 }
 \description{
-draw a map by passing an iNZightPlot object
+draw a map by passing an iNZightPlot object.
 }
 \details{
-the function will also returns a global object which called global.objects
+the function will also returns a global object which called global.objects.
 }
 \author{
 Jason Wen

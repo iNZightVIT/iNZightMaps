@@ -279,7 +279,7 @@ re.scale = function(x,ratio)
 ##' @return a logical vector of length of n, indicates which row in x is within in the limit.
 ##' @author Jason Wen
 ##' @export
-within = function(x,lim)
+lim.inside = function(x,lim)
 {
     (x[,1] > lim[1] & x[,1] < lim[2]) & 
     (x[,2] > lim[3] & x[,2] < lim[4])
@@ -324,7 +324,7 @@ outerLim = function(obj,lim,ignore.region = c('Russia','Antarctica','New Zealand
     col.index = obj$col.index
     region = obj$region
     
-    with = within(latlon,lim)
+    with = lim.inside(latlon,lim)
     id = rep(1:length(each),each)
     each.index = as.numeric(rownames(table(id[with])))
     log.pre = id %in% each.index
@@ -355,14 +355,14 @@ subByLim = function(obj,lim)
     region = obj$region
     
     
-    with = within(latlon,lim)
+    with = lim.inside(latlon,lim)
     id = rep(1:length(each),each)
     each.index = as.numeric(rownames(table(id[with])))
     each.sub = each[each.index]
     latlon.sub = latlon[id %in% each.index,]
     lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
     region.id = rep(rep(region,col.index),each)
-    with.sub = within(latlon,lim.sub)
+    with.sub = lim.inside(latlon,lim.sub)
     
     
     latlon.out = latlon[id %in% id[with.sub],]
@@ -396,6 +396,17 @@ order.match = function(shp.region,data.region)
     orderd.data
 }
 
+
+
+##' Calaudate the bbox of a country
+##'
+##' @title Calaudate the bbox of a country
+##' @param obj the iNZight Shape Map Object
+##' @param name the name of the country
+##' @return a 2*2 numeric matrix
+##' @author Jason
+##' @import countrycode
+##' @export
 name.match = function(shp.region,data.region)
 {
     s = countrycode(shp.region, "country.name", "iso3c")
@@ -441,20 +452,3 @@ region.bbox = function(obj,name)
     bbox
 }
 
-bar.polygon = function(var,d.region,col = 'blue', center,obj)
-{
-    lat.ori = center[,2]
-    lon.ori = center[,1]
-    name = as.character(center$i.region)
-    sapply(name,region.bbox,obj = obj)
-    
-    x.orderd = order.match(d.region,obj$region)
-    
-    
-    percent.data = data.trans(var)
-    lat.max = 0.1 * diff(range(obj$latlon[,2]))
-    lat.length = lat.max * percent.data
-    lat.upper = lat.ori + lat.length
-    print(lat.upper)
-    
-}

@@ -5,6 +5,7 @@ library(iNZightPlots)
 library(RgoogleMaps)
 library(countrycode)
 library(stringr)
+library(iNZightMaps)
 
 
 data.1 = read.csv('C:/Users/yeamin/Desktop/Gapminder-2008.csv',skip = 1)

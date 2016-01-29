@@ -4,11 +4,9 @@
 ##' @param obj an object from within iNZightPlot
 ##' @return Object
 ##' @author Tom Elliott
-##' @import iNZightPlots
-##' @import grid maptools
+##' @import iNZightPlots maptools
 ##' @export
 create.inz.shapemapplot = function(obj) {
-
     df = obj$df
     opts = obj$opts
     pf = opts$plot.features

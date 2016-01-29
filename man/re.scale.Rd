@@ -7,15 +7,15 @@
 re.scale(x, ratio)
 }
 \arguments{
-\item{x}{a vector of length 2}
+\item{x}{a vector of length 2.}
 
-\item{ratio}{a numeric value}
+\item{ratio}{a numeric value.}
 }
 \value{
-a vector of length of 2, re-sized by the ratio
+a vector of length of 2, re-sized by the ratio.
 }
 \description{
-rearrange the limit by given a ratio
+rearrange the limit by given a ratio.
 }
 \author{
 Jason Wen

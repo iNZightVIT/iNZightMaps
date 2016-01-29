@@ -2,12 +2,12 @@
 % Please edit documentation in R/shade.fun.r
 \name{win.ratio}
 \alias{win.ratio}
-\title{compute the ratio of the window}
+\title{compute the ratio of the window.}
 \usage{
 win.ratio()
 }
 \value{
-a vector of length of 2 that specify the current width and height
+a vector of length of 2 that specify the current width and height .
 }
 \description{
 compute the ratio of the current width and height of the window.

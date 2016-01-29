@@ -7,16 +7,16 @@
 shape.extract(shp, column.index = 2)
 }
 \arguments{
-\item{shp}{a SpatialPolygonsDataFrame object, see \link{readShapeSpatial}}
+\item{shp}{a SpatialPolygonsDataFrame object, see \link{readShapeSpatial}.}
 }
 \value{
-a shape object
+a shape object.
 }
 \description{
-extract the information from a SpatialPolygonsDataFrame object and
+extract the information from a SpatialPolygonsDataFrame object.
 }
 \details{
-the function will also returns a global object which called global.objects
+the function will also returns a global object which called global.objects.
 }
 \author{
 Jason Wen

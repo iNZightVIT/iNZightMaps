@@ -4,24 +4,24 @@
 \alias{col.fun}
 \title{Color Specification}
 \usage{
-col.fun(data, color.index, display = "hue", na.fill = "white", offset = 0,
-  col = "red")
+col.fun(data, color.index, display = "hue", na.fill = "#F4A460",
+  offset = 0, col = "red")
 }
 \arguments{
-\item{data}{a numeric vector that should lie on the range of [0,1]}
+\item{data}{a numeric vector that should lie on the range of [0,1].}
 
-\item{color.index}{an integer vector from inzshapemap object}
+\item{color.index}{an integer vector from inzshapemap object.}
 
-\item{display}{a character value, the method for display colors. It should be choosen by one of the following display method: "hcl","hue","heat","rainbow","terrain","topo","cm","gray","r","n"}
+\item{display}{a character value, the method for display colors. It should be choosen by one of the following display method: "hcl","hue","heat","rainbow","terrain","topo","cm","gray","r","n".}
 
 \item{na.fill}{a character value that sepecify the color that use to fill the unmatch region/country.}
 
-\item{offset}{a numeric value within the range of [0,1]}
+\item{offset}{a numeric value within the range of [0,1] .}
 
-\item{col}{the color for fill the match region/country, it only needs to be specify if display = 'hue'}
+\item{col}{the color for fill the match region/country, it only needs to be specify if display = 'hue'.}
 }
 \value{
-an color vector
+A color vector.
 }
 \description{
 Choose a type of color that helps read the map nicely.

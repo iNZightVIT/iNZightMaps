@@ -9,8 +9,7 @@
 ##' @param data the data set
 ##' @return an iNZight Shape Map Object
 ##' @author Tom Elliott
-##' @import maptools
-##' @import maptools tools
+##' @import maptools countrycode tools
 ##' @export
 iNZightShapeMap <- function(location,shp.region,data.region, data) {
 
@@ -72,7 +71,7 @@ iNZightShapeMap <- function(location,shp.region,data.region, data) {
 ##' @param full.map logical value.
 ##' @return NULL
 ##' @author Tom Elliott
-##' @import maptools
+##' @import maptools countrycode
 ##' @export
 plot.inzightshapemap <- function(x, variable, region, data,
                                  col.fun = "hue", transform = "linear",

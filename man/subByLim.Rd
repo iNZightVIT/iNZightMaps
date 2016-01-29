@@ -7,15 +7,15 @@
 subByLim(obj, lim)
 }
 \arguments{
-\item{obj}{an inzshapemap object}
+\item{obj}{an inzshapemap object.}
 
-\item{lim}{a numeric vector of length 4}
+\item{lim}{a numeric vector of length 4.}
 }
 \value{
-an inzshapemap object
+an inzshapemap object.
 }
 \description{
-Subset by limit
+Subset by limit.
 }
 \author{
 Jason Wen
