@@ -112,7 +112,7 @@ plot.inzshapemap = function(obj, gen) {
         txt = region.name
         grid.text(txt, x = center.x, y =center.y,
               just = "centre",default.units = "native",
-              gp=gpar(fontsize=9), check=TRUE)
+              gp=gpar(fontsize=8), check=TRUE)
     }
 
     popViewport()
