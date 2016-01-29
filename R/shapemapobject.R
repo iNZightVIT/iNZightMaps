@@ -43,7 +43,12 @@ iNZightShapeMap <- function(location,shp.region,data.region, data) {
         if(missing(data.region))
             stop('require the column name of region in data set')
         
-        order = order.match(out$region,data[,data.region])
+        
+        sd = name.match(data[,data.region],out$region)
+        sd.1 <<- sd
+        sd.2 <<- list(out$region,data[,data.region])
+        order = order.match(sd[[1]],sd[[2]])
+        print(length(order))
         out$ordered = order        
     }else
         stop('data is missing!')
@@ -71,7 +76,7 @@ iNZightShapeMap <- function(location,shp.region,data.region, data) {
 ##' @export
 plot.inzightshapemap <- function(x, variable, region, data,
                                  col.fun = "hue", transform = "linear",
-                                 col.offset = 0.2, col = "red",na.fill = 'white',full.map = TRUE,extend.ratio = 1,
+                                 col.offset = 0.2, col = "red",na.fill = '#F4A460',full.map = TRUE,extend.ratio = 1,name = FALSE,
                                  ...) {
 
   ##  mc <- match.call(expand.dots = TRUE)
@@ -107,7 +112,8 @@ plot.inzightshapemap <- function(x, variable, region, data,
         col = col,
         na.fill = na.fill,
         full.map = full.map,
-        extend.ratio = extend.ratio
+        extend.ratio = extend.ratio,
+        name = name
         )
     
     #call <- c(call, list(...))
@@ -116,3 +122,5 @@ plot.inzightshapemap <- function(x, variable, region, data,
 
     invisible(call)
 }
+
+

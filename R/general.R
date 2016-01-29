@@ -280,3 +280,5 @@ is.google.map = function(lat,lon)
     }
     
 }
+
+

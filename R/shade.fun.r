@@ -31,7 +31,14 @@ shape.extract = function(shp,column.index = 2)
     latlon.data = data.frame(latlon = latlon)
 	colnames(latlon.data) = c('lon.x','lat.y')
 	region = shp[[column.index]]	
-    obj = list(latlon = latlon.data,each = index,region = region,col.index = col.index)
+    cents = coordinates(shp)
+    area = sapply(slot(shp, "polygons"), slot, "area")
+    max.area = tapply(area,region,max)
+    i.region = region[area %in% max.area]
+    center = cents[area %in% max.area,]
+    center.region = data.frame(lon.x = center[,1], lat.y = center[,2], i.region = i.region)
+    obj = list(latlon = latlon.data,center.region = center.region,  ## data frame
+                each = index,region = region,col.index = col.index) ## list
     class(obj) <- c("shape.object")
 	obj
 }
@@ -107,7 +114,7 @@ order.match = function(shp.region,data.region)
 ##' @import RColorBrewer
 ##' @details hcl,HCL Color Specification, whith c = 35 and l = 85 see \link{hcl}. hue, when display = 'hue', then the 'col' arg need to be specified. The alpha will depend on the data, see \link{rgb}. rainbow,terrain,topo,cm are the method from \link{RColorBrewer}. r,n , the color filled randomly expect n will fill the entire map even the region is unmatch.
 col.fun = function(data,color.index,
-                    display = 'hue',na.fill = 'white',offset = 0,col = 'red')
+                    display = 'hue',na.fill = '#F4A460',offset = 0,col = 'red')
 {
     display.option = c('hcl','hue','heat','cm','rainbow','terrain','topo','cm','bi.polar','r','n','gray')
     impossible.number = 0.091823021983
@@ -310,7 +317,7 @@ innerLim = function(obj,d.region)
 ##' @return a numeric vector with length 4, the outer limit/bbox of the map.
 ##' @author Jason Wen
 ##' @export
-outerLim = function(obj,lim,ignore.region = c('Russia','Antarctica'))
+outerLim = function(obj,lim,ignore.region = c('Russia','Antarctica','New Zealand'))
 {    
     latlon = obj$latlon
     each = obj$each
@@ -376,4 +383,78 @@ subByLim = function(obj,lim)
              col.index = col.index.out, region = region.out,
              xylim = lim.out,col = col.out)
     obj
+}
+
+
+
+order.match = function(shp.region,data.region)
+{
+    order = match(shp.region,data.region)
+    orderd.data = order
+    na.data = shp.region[is.na(orderd.data)]
+    print(paste('number of unmatch region:',length(na.data)))
+    orderd.data
+}
+
+name.match = function(shp.region,data.region)
+{
+    s = countrycode(shp.region, "country.name", "iso3c")
+    d = countrycode(data.region, "country.name", "iso3c")
+    is.na(s)
+    is.na(d)
+    if(all(is.na(s)))
+    {
+        d = data.region
+        s = shp.region
+    }
+    n = nchar(as.character(data.region))
+    if(all(length(n) == 2))
+    {
+        d = countrycode(data.region, "iso2c", "iso3c")
+    }
+    list(d = d, s = s)
+}
+
+
+##' Calaudate the bbox of a country
+##'
+##' @title Calaudate the bbox of a country
+##' @param obj the iNZight Shape Map Object
+##' @param name the name of the country
+##' @return a 2*2 numeric matrix
+##' @author Jason
+##' @export
+region.bbox = function(obj,name)
+{
+    latlon = obj$latlon
+    each =obj$each
+    region = obj$region
+    col.index = obj$col.index
+
+    region.ind = rep(rep(region,col.index),each)
+    nn = region.ind %in% name
+    lat.lim = range(latlon[nn,1])
+    lon.lim = range(latlon[nn,2])
+    bbox = c(lat.lim, lon.lim)
+    dim(bbox) = c(2,2)
+    colnames(bbox) = c('lat','lon')
+    bbox
+}
+
+bar.polygon = function(var,d.region,col = 'blue', center,obj)
+{
+    lat.ori = center[,2]
+    lon.ori = center[,1]
+    name = as.character(center$i.region)
+    sapply(name,region.bbox,obj = obj)
+    
+    x.orderd = order.match(d.region,obj$region)
+    
+    
+    percent.data = data.trans(var)
+    lat.max = 0.1 * diff(range(obj$latlon[,2]))
+    lat.length = lat.max * percent.data
+    lat.upper = lat.ori + lat.length
+    print(lat.upper)
+    
 }

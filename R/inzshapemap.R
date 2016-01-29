@@ -34,11 +34,12 @@ create.inz.shapemapplot = function(obj) {
     xlim = obj$xylim[1:2]
     ylim = obj$xylim[3:4]
 
-   # print(obj$shape.object$latlon[,1])
+    # print(obj$shape.object$latlon[,1])
     out = list(x = xlim, y = ylim,colby = obj$col,n.missing = n.missing,
-                xlim = xlim, ylim = ylim,shape.object = obj,df = df)
+                xlim = xlim, ylim = ylim,shape.object = obj,df = df,name = pf$name)
     class(out) = c("inzshapemap", "inzmap", "inzscatter")
     out$draw.axes = FALSE
+    
     out
 }
 
@@ -61,7 +62,7 @@ plot.inzshapemap = function(obj, gen) {
         lim.in = c(re.scale(inner.lim[1:2],ratio),
                     re.scale(inner.lim[3:4],ratio))
                     
-        lim.out = outerLim(s.obj,lim.in)
+        lim.out = outerLim(s.obj,lim.in)#data.region = obj$df$y)
         xlim = lim.out[1:2]
         ylim = lim.out[3:4]
         
@@ -93,6 +94,9 @@ plot.inzshapemap = function(obj, gen) {
         veiw.wh = win.ratio()
     }
     
+    name = obj$name
+
+    
     latlon = s.obj$latlon
     cols = s.obj$col
     shade.each = s.obj$each
@@ -100,7 +104,19 @@ plot.inzshapemap = function(obj, gen) {
     vp = viewport(0.5,0.5,width = veiw.wh[1], height = veiw.wh[2],name = 'VP:PLOTlayout', xscale = xlim,yscale = ylim)
     pushViewport(vp)
     grid.polygon(latlon[,1], latlon[,2], default.units = "native", id.length = shade.each,
-                 gp = gpar(col = 'black', fill  = cols))
+                 gp = gpar(col = '#B29980', fill  = cols))
+    if(name == TRUE)
+    {
+        region.name = obj$shape.object$center.region$i.region
+        center.x = obj$shape.object$center.region$lon.x
+        center.y = obj$shape.object$center.region$lat.y
+        txt = countrycode(region.name, "country.name", "iso3c")
+        txt = region.name
+        grid.text(txt, x = center.x, y =center.y,
+              just = "centre",default.units = "native",
+              gp=gpar(fontsize=9), check=TRUE)
+    }
+
     popViewport()
     
     grid.rect(gp = gpar(fill = 'transparent'))
