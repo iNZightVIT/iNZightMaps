@@ -11,7 +11,7 @@ Authors@R: c(person("Eric", "Lim", role = c("aut"),
 Depends:
     R (>= 3.0)
 Imports:
-    RgoogleMaps, maptools, iNZightPlots, grid
+    RgoogleMaps, maptools, iNZightPlots, grid, RColorBrewer, countrycode
 Suggests:
     iNZight
 Description: Simple plotting functions for geographical data.
