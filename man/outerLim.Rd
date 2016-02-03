@@ -4,7 +4,7 @@
 \alias{outerLim}
 \title{outer limit}
 \usage{
-outerLim(obj, lim, ignore.region = c("Russia", "Antarctica", "New Zealand"))
+outerLim(obj, lim, ignore.region = c("Russia", "Antarctica"))
 }
 \arguments{
 \item{obj}{an inzshapemap object.}

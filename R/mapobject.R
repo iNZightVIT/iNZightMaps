@@ -75,6 +75,7 @@ plot.inzightmap <- function(x,
         }
         mc$plot.features$opacity <- opacity
         mc$extra.vars <- opacity
+        
     }
 
     ## set the plot labels:

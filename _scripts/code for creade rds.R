@@ -18,11 +18,3 @@ obj <- iNZightShapeMap(location = obj.location,column.index = 4)
 shape.extract(obj.location,1)
 
 
-
-pattern <- "a.b"
-strings <- c("ABB", "aaB", "aab")
-str_detect(strings, pattern)
-str_detect(strings, ignore.case(pattern))
-
-
-match("B", tolower(c("A","B","C")))

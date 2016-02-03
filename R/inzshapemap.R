@@ -37,7 +37,6 @@ create.inz.shapemapplot = function(obj) {
                 xlim = xlim, ylim = ylim,shape.object = obj,df = df,name = pf$name)
     class(out) = c("inzshapemap", "inzmap", "inzscatter")
     out$draw.axes = FALSE
-    
     out
 }
 
@@ -52,7 +51,9 @@ create.inz.shapemapplot = function(obj) {
 ##' @author Jason Wen
 ##' @export
 plot.inzshapemap = function(obj, gen) {
+    df = obj$df
     s.obj = obj$shape.object
+    name = obj$name
     if(s.obj$full.map == FALSE)
     {
         ratio = s.obj$extend.ratio
@@ -60,7 +61,22 @@ plot.inzshapemap = function(obj, gen) {
         lim.in = c(re.scale(inner.lim[1:2],ratio),
                     re.scale(inner.lim[3:4],ratio))
                     
-        lim.out = outerLim(s.obj,lim.in)#data.region = obj$df$y)
+        ## make sure the bar within the viewport
+        if(name == 'bar')
+        {
+            latlon = s.obj$latlon
+            var = c('BodyMassIndex_F','ChildrenPerWoman','Populationtotal','Populationdensity')
+            #bar.obj = bar.coor(var = var, data = dataIn, x = xx, y = yy, xmax = xmax, ymax = ymax)
+            xmax = 0.004 * diff(range(latlon[,1]))
+            ymax = 0.1 * diff(range(latlon[,2]))
+            lim.in = c(lim.in[1:3],max(lim.in[4],max(bar.obj$d1[,2],na.rm = TRUE)))
+                        print(bar.obj)
+            print(bar.obj)
+
+        }
+                    
+        
+        lim.out = outerLim(s.obj,lim.in)
         xlim = lim.out[1:2]
         ylim = lim.out[3:4]
         
@@ -68,6 +84,8 @@ plot.inzshapemap = function(obj, gen) {
         h = convertHeight(current.viewport()$height, "mm", TRUE)
         x = diff(xlim)
         y = diff(ylim) 
+        print(ylim)
+        
         if(h/w < y/x)
         {
             x.tmp = y/(h/w)
@@ -92,29 +110,62 @@ plot.inzshapemap = function(obj, gen) {
         veiw.wh = win.ratio()
     }
     
-    name = obj$name
-
     
     latlon = s.obj$latlon
     cols = s.obj$col
     shade.each = s.obj$each
+    
     ##limit
     vp = viewport(0.5,0.5,width = veiw.wh[1], height = veiw.wh[2],name = 'VP:PLOTlayout', xscale = xlim,yscale = ylim)
     pushViewport(vp)
+    ## backagound
+    grid.polygon(c(-180,180,180,-180,-180),c(90,90,-90,-90,90),
+                    default.units = "native",gp = gpar(col = '#B29980', fill  = '#F5F5F5'))
+                    
+    ## shape map
     grid.polygon(latlon[,1], latlon[,2], default.units = "native", id.length = shade.each,
                  gp = gpar(col = '#B29980', fill  = cols))
-    if(name == TRUE)
-    {
-        region.name = obj$shape.object$center.region$i.region
-        center.x = obj$shape.object$center.region$lon.x
-        center.y = obj$shape.object$center.region$lat.y
-        txt = countrycode(region.name, "country.name", "iso3c")
-        txt = region.name
-        grid.text(txt, x = center.x, y =center.y,
-              just = "centre",default.units = "native",
-              gp=gpar(fontsize=8), check=TRUE)
+                 
+                 
+    region.name = obj$shape.object$center.region$i.region
+    center.x = obj$shape.object$center.region$lon.x
+    center.y = obj$shape.object$center.region$lat.y
+    order = match(region.name,df$y)
+    value = round(df$x[order],2)
+    region.name = obj$shape.object$center.region$i.region
+    full.option = c('bar','r','v','b')
+    switch(name,
+        'bar' = 
+        {
+            xmax = 0.004 * diff(range(latlon[,1]))
+            ymax = 0.1 * diff(range(latlon[,2]))
+            grid.polygon(bar.obj$d1[,1],bar.obj$d1[,2],default.units = "native", id.length = bar.obj$each,
+                        gp = gpar(col = '#B29980', fill  = bar.obj$col))
+            print(bar.obj$d1[,2])
+            out.str = countrycode(region.name, "country.name", "iso3c")
+            center.y = center.y - diff(ylim) * 0.01            
+        },
+        'r' = 
+        {
+            out.str = region.name
+        },
+        'v' = 
+        {
+            center.x = center.x[!is.na(value)]
+            center.y = center.y[!is.na(value)]
+            out.str = value[!is.na(value)]
+        },
+        'b' = 
+        {
+            value[is.na(value)] = ''
+            out.str = ifelse(value == '',paste(region.name),paste(region.name,value,sep = '\n'))       
+        }
+    )
+    if(name %in% full.option){
+        grid.text(out.str, x = center.x, y =center.y,
+                just = "centre",default.units = "native",
+                gp=gpar(fontsize=9), check=TRUE)
     }
-
     popViewport()
     
     grid.rect(gp = gpar(fill = 'transparent'))

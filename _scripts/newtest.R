@@ -1,39 +1,11 @@
-
-
-data.1 = read.csv('C:/Users/yeamin/Desktop/Gapminder-2008.csv',skip = 1)
-location = 'C:/Users/yeamin/Desktop/world/ne_110m_admin_0_countries.shp'
-shp <- readShapeSpatial(location)
-shape.obj <- shape.extract(shp)
-
-
-data.t = data.trans(data.1$Exports,transform = 'linear')
-data.o = order.match(shp[[4]],data.1$Country)
-color = col.fun(data.o,
-                color.index = shape.obj$col.index,
-                display = 'hue',col = 'red',offset = 0)
-shapeobj = color.bind(color,shape.obj)
-plot.inzshapemap(shapeobj)
-
-
-
-
-
-
-data.2 = read.csv('C:/Users/yeamin/Desktop/GeoNet_CMT_solutions.csv')
-data.2$Latitude = data.2$Latitude + 180
-
-system.time(iNZightPlot(Longitude,Latitude,data = data.2,
-                        plottype = 'map',plot.features = list(maptype = 'roadmap')))
-
-
-
-iNZightPlot(Longitude,Latitude,data = data.2,colby =dp,g1 = str,
-            plottype = 'map',plot.features = list(maptype = 'roadmap'))
-
-
-
-data("nzquakes")
-data.2 = nzquakes
+library(maptools)
+library(grid)
+library(RColorBrewer)
+library(iNZightPlots)
+library(RgoogleMaps)
+library(countrycode)
+library(stringr)
+library(iNZightMaps)
 
 
 ll = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
@@ -43,24 +15,26 @@ data.2 = data.1[data.1$Country %in% c('Algeria','Angola','Burkina Faso','Cameroo
                                       'Nigeria','Sudan'),]
 
 
-data.3 = data.1[data.1$Country %in% c('New Zealand','Australia'),]
+data.3 = data.1[data.1$Country %in% c('New Zealand','Australia','Japan'),]
 data.4 = data.1[data.1$Country %in% c('Albania', 'Andorra', 'Austria', 'Belarus', 'Belgium', 
                                       'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 
                                       'Cyprus','Czech Republic', 
                                       'Estonia', 'Finland'),]
-dataIn = data.1
+dataIn = data.4
 obj <- iNZightShapeMap(ll, data.region = 'Country', data = dataIn)
-system.time(plot(obj, variable = ~ChildrenPerWoman,
+var = c('BodyMassIndex_F','ChildrenPerWoman','Populationtotal','Populationdensity')
+bar.obj = bar.coor(var = var, data = dataIn, x = x, y = y, xmax = xmax, ymax = ymax)
+system.time(plot(obj, variable = ~Imports,
                  region = ~Country,
                  data = dataIn,
-                 col.fun = 'hue',
-                 transform = 'log',
-                 na.fill = '#7A853D',
+                 col.fun = 'e',
+                 col = 'red',
+                 transform = 'linear',
+                 na.fill = '#C0C0C0',
                  col.offset = 0,
-                 full.map = T,
-                 extend.ratio = 2,
-                 col = 'purple',
-                 name =T))
+                 full.map = F,
+                 extend.ratio = 1,
+                 name = 'bar'))
 
 
 
@@ -73,8 +47,9 @@ iNZightPlot(CO2Emissions, Country, data = data.4, plottype = 'shapemap',#g1 = Le
               col = "blue",
               col.method = 'hue',
               na.fill = 'White',
-              full.map = F,
-              extend.ratio = 1
+              full.map = T,
+              extend.ratio = 1,
+              name = TRUE
             )
 )
 
@@ -87,7 +62,7 @@ iNZightPlot(ChildrenPerWoman, Country, data = data.3, plottype = 'shapemap',g1 =
               col = "blue",
               col.method = 'rainbow',
               na.fill = 'White',
-              full.map = F,
+              full.map = T,
               extend.ratio = 2)
 )
 
@@ -101,9 +76,10 @@ obj <- iNZightShapeMap(ll, data.region = 'area', data = data.1)
 plot(obj, variable = ~population,g1 = year,
                  region = ~area,
                  data = data.1,
-                 col.fun = 'heat',
+                 col.fun = 'hue',
                  transform = 'power',
                  na.fill = 'white',
+                 col = 'blue',
                  offset = 0,
                  full.map =F,
                  extend.ratio = 1)
@@ -117,6 +93,6 @@ iNZightPlot(population, area, data = data.1, plottype = 'shapemap',g1 = year,
               col.method = 'r',
               na.fill = 'White',
               full.map = F,
-              extend.ratio = 2)
+              extend.ratio = 3)
 )
 

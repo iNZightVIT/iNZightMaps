@@ -105,30 +105,30 @@ order.match = function(shp.region,data.region)
 ##' @title Color Specification
 ##' @param data a numeric vector that should lie on the range of [0,1].
 ##' @param color.index an integer vector from inzshapemap object.
-##' @param display a character value, the method for display colors. It should be choosen by one of the following display method: "hcl","hue","heat","rainbow","terrain","topo","cm","gray","r","n".
+##' @param display a character value, the method for display colors. It should be choosen by one of the following display method: "hcl","hue","heat","rainbow","terrain","topo","cm","gray","r","n","e".
 ##' @param na.fill a character value that sepecify the color that use to fill the unmatch region/country.
 ##' @param offset a numeric value within the range of [0,1] .
 ##' @param col the color for fill the match region/country, it only needs to be specify if display = 'hue'.
 ##' @return A color vector.
 ##' @author Jason Wen
 ##' @import RColorBrewer
-##' @details hcl,HCL Color Specification, whith c = 35 and l = 85 see \link{hcl}. hue, when display = 'hue', then the 'col' arg need to be specified. The alpha will depend on the data, see \link{rgb}. rainbow,terrain,topo,cm are the method from \link{RColorBrewer}. r,n , the color filled randomly expect n will fill the entire map even the region is unmatch.
+##' @details hcl,HCL Color Specification, whith c = 35 and l = 85 see \link{hcl}. hue, when display = 'hue', then the 'col' arg need to be specified. The alpha will depend on the data, see \link{rgb}. rainbow,terrain,topo,cm are the method from \link{RColorBrewer}. r,n , the color filled randomly expect n will fill the entire map even the region is unmatch. e, equal color.
 col.fun = function(data,color.index,
                     display = 'hue',na.fill = '#F4A460',offset = 0,col = 'red')
 {
-    display.option = c('hcl','hue','heat','cm','rainbow','terrain','topo','cm','bi.polar','r','n','gray')
+    display.option = c('hcl','hue','heat','cm','rainbow','terrain','topo','cm','bi.polar','r','n','gray','e')
     impossible.number = 0.091823021983
     bio.color = c('bi.polar')
     if(!(display %in% display.option))
     {
         stop("display method not found,please select one method from:
-            'hcl','hue','heat','cm','rainbow','terrain','topo','cm','bi.polar','r','n','grat' ")
+            'hcl','hue','heat','cm','rainbow','terrain','topo','cm','bi.polar','r','n','grat','e' ")
     }
     
     data = round(data,2)
     if(display %in% bio.color)
     {
-        fill.float = ifelse(is.na(data) == TRUE, impossible.number,data,gray)
+        fill.float = ifelse(is.na(data) == TRUE, impossible.number,data)
     }else
     {
         fill.float = ifelse(is.na(data) == TRUE, impossible.number,data * (1 - offset) + (offset))
@@ -223,6 +223,11 @@ col.fun = function(data,color.index,
             b = runif(length(fill.float))
             na.fill = rgb(r,g,b)
             fill.col = rgb(r,g,b)	
+        },
+        e = 
+        {
+            char.col.trans = col2rgb(col)/255
+            fill.col =rgb(char.col.trans[1],char.col.trans[2],char.col.trans[3],1)
         }
         
     )
@@ -317,7 +322,7 @@ innerLim = function(obj,d.region)
 ##' @return a numeric vector with length 4, the outer limit/bbox of the map.
 ##' @author Jason Wen
 ##' @export
-outerLim = function(obj,lim,ignore.region = c('Russia','Antarctica','New Zealand'))
+outerLim = function(obj,lim,ignore.region = c('Russia','Antarctica'))
 {    
     latlon = obj$latlon
     each = obj$each
@@ -427,6 +432,8 @@ name.match = function(shp.region,data.region)
 }
 
 
+
+
 ##' Calaudate the bbox of a country
 ##'
 ##' @title Calaudate the bbox of a country
@@ -451,4 +458,99 @@ region.bbox = function(obj,name)
     colnames(bbox) = c('lat','lon')
     bbox
 }
+
+region.bbox1 = function(obj,name)
+{
+    latlon = obj$latlon
+    each =obj$each
+    region = obj$region
+    col.index = obj$col.index
+
+    region.ind = rep(rep(region,col.index),each)
+    nn = region.ind %in% name
+    lat.lim = range(latlon[nn,1],na.rm = TRUE)
+    lon.lim = range(latlon[nn,2],na.rm = TRUE)
+    bbox = c(lat.lim, lon.lim)
+    bbox
+}
+
+bar.coor = function(var,data,x,y,xmax,ymax,bar.col = c('#E0FFFF','#FAFAD2','#FFA07A','#C71585'))
+{
+
+
+    a = rep(rep(1:length(region),col.index),each)
+    b = rep(rep(region %in% data$Country,col.index),each)
+
+    s.region = rownames(table(as.character(region[as.numeric(rownames(table(a[b])))])))
+    region.lim = do.call(rbind,lapply(s.region,region.bbox1,obj = obj))
+    ind = match(s.region,obj$center.region$i.region)
+    x = obj$center.region$lon.x[ind]
+    y = obj$center.region$lat.y[ind]
+
+
+    l = apply(region.lim,1,function(x)c(diff(x[1:2]),diff(x[3:4])))
+    plot.num = as.character(length(var))
+    bar.weight.tot = as.numeric(plot.num) * xmax * 0.85
+    s.length.x = ifelse(l[1,] > bar.weight.tot,xmax,l[1,]/as.numeric(plot.num))/2
+    
+
+    switch(plot.num,
+       '1' = 
+       {
+            xl = x - s.length.x
+            xr = x + s.length.x
+       },
+       '2' = {
+            xl.1 = x - 2 * s.length.x
+            xr.1 = x
+            xl.2 = x
+            xr.2 = x + 2 * s.length.x
+            xl = c(xl.1,xl.2)
+            xr = c(xr.1,xr.2)
+         
+       },
+       '3' = {   
+            xl.1 = x - 3 * s.length.x
+            xr.1 = x - 1 * s.length.x
+            xl.2 = x - 1 * s.length.x
+            xr.2 = x + 1 * s.length.x
+            xl.3 = x + 1 * s.length.x
+            xr.3 = x + 3 * s.length.x   
+            xl = c(xl.1,xl.2,xl.3)
+            xr = c(xr.1,xr.2,xr.3)                
+       },
+       '4' = {
+            xl.1 = x - 4 * s.length.x
+            xr.1 = x - 2 * s.length.x
+            xl.2 = x - 2 * s.length.x
+            xr.2 = x
+            xl.3 = x
+            xr.3 = x + 2 * s.length.x 
+            xl.4 = x + 2 * s.length.x  
+            xr.4 = x + 4 * s.length.x 
+            xl = c(xl.1,xl.2,xl.3,xl.4)
+            xr = c(xr.1,xr.2,xr.3,xr.4)  
+       }
+    )
+
+    data.in = data[which(data$Country %in% s.region),]
+
+    t.length.y = ifelse(ymax > l[2,] * 0.85, l[2,] * 0.85, ymax )
+    data.t = apply(data.in[,var],2,data.trans)
+    data.matrix = as.matrix(data.t)
+    dim(data.matrix) = c(dim(data.matrix)[1] * dim(data.matrix)[2],1)
+    yt =  rep(y,length(var)) + data.matrix * ymax
+    yb = y
+    sep.n = nrow(dataIn)
+    a = cbind(xl,xr,yb,yt)
+    e = a[rep(1:dim(a)[1],each = 5) + rep(c(0,dim(a)[1],dim(a)[1],0,0),dim(a)[1])]
+    f = a[rep(1:dim(a)[1],each = 5) + rep(c(2*dim(a)[1],2*dim(a)[1],3*dim(a)[1],3*dim(a)[1],2*dim(a)[1]),dim(a)[1])]
+    d1 = cbind(e,f)
+    ee1 = rep(5,dim(a)[1])
+    col = rep(bar.col,each = sep.n)
+    bar.obj = list(d1 = d1,col = col,each = ee1)
+
+}
+
+
 

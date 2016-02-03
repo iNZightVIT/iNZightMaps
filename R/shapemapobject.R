@@ -9,7 +9,7 @@
 ##' @param data the data set
 ##' @return an iNZight Shape Map Object
 ##' @author Tom Elliott
-##' @import maptools countrycode tools
+##' @import maptools tools
 ##' @export
 iNZightShapeMap <- function(location,shp.region,data.region, data) {
 
@@ -44,8 +44,6 @@ iNZightShapeMap <- function(location,shp.region,data.region, data) {
         
         
         sd = name.match(data[,data.region],out$region)
-        sd.1 <<- sd
-        sd.2 <<- list(out$region,data[,data.region])
         order = order.match(sd[[1]],sd[[2]])
         print(length(order))
         out$ordered = order        
@@ -71,7 +69,7 @@ iNZightShapeMap <- function(location,shp.region,data.region, data) {
 ##' @param full.map logical value.
 ##' @return NULL
 ##' @author Tom Elliott
-##' @import maptools countrycode
+##' @import maptools
 ##' @export
 plot.inzightshapemap <- function(x, variable, region, data,
                                  col.fun = "hue", transform = "linear",
@@ -96,6 +94,8 @@ plot.inzightshapemap <- function(x, variable, region, data,
     } else {
         call$y <- data.frame(region)[[1]]
     }
+    call$xlab <- ""
+    call$ylab <- ""
 
     ## set variable names:
     call$varnames <- list(x = as.character(variable)[2],
