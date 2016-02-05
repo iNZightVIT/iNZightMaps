@@ -12,7 +12,7 @@ col.fun(data, color.index, display = "hue", na.fill = "#F4A460",
 
 \item{color.index}{an integer vector from inzshapemap object.}
 
-\item{display}{a character value, the method for display colors. It should be choosen by one of the following display method: "hcl","hue","heat","rainbow","terrain","topo","cm","gray","r","n".}
+\item{display}{a character value, the method for display colors. It should be choosen by one of the following display method: "hcl","hue","heat","rainbow","terrain","topo","cm","gray","r","n","e".}
 
 \item{na.fill}{a character value that sepecify the color that use to fill the unmatch region/country.}
 
@@ -27,7 +27,7 @@ A color vector.
 Choose a type of color that helps read the map nicely.
 }
 \details{
-hcl,HCL Color Specification, whith c = 35 and l = 85 see \link{hcl}. hue, when display = 'hue', then the 'col' arg need to be specified. The alpha will depend on the data, see \link{rgb}. rainbow,terrain,topo,cm are the method from \link{RColorBrewer}. r,n , the color filled randomly expect n will fill the entire map even the region is unmatch.
+hcl,HCL Color Specification, whith c = 35 and l = 85 see \link{hcl}. hue, when display = 'hue', then the 'col' arg need to be specified. The alpha will depend on the data, see \link{rgb}. rainbow,terrain,topo,cm are the method from \link{RColorBrewer}. r,n , the color filled randomly expect n will fill the entire map even the region is unmatch. e, equal color.
 }
 \author{
 Jason Wen

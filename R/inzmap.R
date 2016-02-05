@@ -95,6 +95,7 @@ plot.inzmap <- function(obj, gen) {
 
     if (get.newmap)
         {
+        print(123)
             if (debug) message(xlim)
             if (debug) message(ylim)
             getNewMap(lat.lim = ylim, lon.lim = xlim, SCALE = SCALE, type = type,zoom = Get.map.size(ylim,xlim)$zoom)
@@ -104,8 +105,19 @@ plot.inzmap <- function(obj, gen) {
             global.objects$maps$map.detail$size <<- global.objects$maps$map$size
             global.objects$maps$map.detail$scale <<- global.objects$maps$map$SCALE
             global.objects$maps$map.detail$type <<- type
+            global.objects$maps$map.detail$points <<- cbind(obj$y,obj$x)
         }
-    
+        
+    ptCols <- iNZightPlots:::colourPoints(obj$colby, col.args, opts)
+    ## passing the details inorder to redraw.
+    global.objects$maps$pf$cex <<- obj$propsize
+    global.objects$maps$pf$col <<- ptCols
+    global.objects$maps$pf$lwd <<- opts$lwd.pt
+    global.objects$maps$pf$alpha <<- opts$alpha * opacity
+    global.objects$maps$pf$fill <<- obj$fill.pt
+    global.objects$maps$pf$opacity <<- opacity  
+    global.objects$maps$pf$pch <<- obj$pch    
+    global.objects$maps$map.detail$num <<- 1
     ## drawing~~~~
     grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)
     
@@ -117,6 +129,8 @@ plot.inzmap <- function(obj, gen) {
     ## setting the viewport
     vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
     pushViewport(vp)
+    
+    
 
     ## transform the points
     dd = cbind(obj$y,obj$x)
@@ -125,8 +139,7 @@ plot.inzmap <- function(obj, gen) {
     ## other scatter plot things
     if (length(obj$x) == 0)
         return()
-
-    ptCols <- iNZightPlots:::colourPoints(obj$colby, col.args, opts)
+    
     NotInView <- obj$x < min(xlim) | obj$x > max(xlim) | obj$y < min(ylim) | obj$y > max(ylim)
     obj$pch[NotInView] <- NA
     grid.points(point[[1]], point[[2]], pch = obj$pch,
@@ -137,5 +150,8 @@ plot.inzmap <- function(obj, gen) {
               fill = obj$fill.pt),
               name = "SCATTERPOINTS")
     invisible(NULL)
-
+    
+    ## not sure why the xyscale will change 
+    vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
+    pushViewport(vp)
 }

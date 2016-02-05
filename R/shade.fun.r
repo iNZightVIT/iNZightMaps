@@ -79,9 +79,12 @@ data.trans = function(x,transform = 'linear')
             b = b - min(b,na.rm = TRUE)
         },
     )
-    
     percent.data = b/diff(range(b,na.rm = TRUE))
-    percent.data
+    if(length(a) > 1)
+        percent.data
+        else
+            1
+
 }
 
 ##' draw a map by passing an iNZightPlot object.
@@ -236,30 +239,7 @@ col.fun = function(data,color.index,
     color.out
 }
 
-##' compute the ratio of the current width and height of the window.
-##' @title compute the ratio of the window.
-##' @return a vector of length of 2 that specify the current width and height .
-##' @author Jason Wen
-##' @export
-win.ratio = function()
-{
-    win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
-    win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
-    ##compute the ratio
-    xlim = current.viewport()$xscale
-    ylim = current.viewport()$yscale
-    ratio.map = (diff(xlim)/diff(ylim))
-    ratio.win = win.width/win.height
-    if(ratio.map < ratio.win)
-    {
-        h = unit(1,'npc')
-        w = unit(ratio.map/ratio.win, 'npc')
-    }else{
-        w = unit(1,'npc')
-        h = unit(ratio.win/ratio.map, 'npc')
-    }
-    c(w = w,h = h)
-}
+
 
 ##' rearrange the limit by given a ratio.
 ##' @title rearrange the limit
@@ -358,6 +338,7 @@ subByLim = function(obj,lim)
     col = obj$col
     co = col
     region = obj$region
+    aa <<- obj
     
     
     with = lim.inside(latlon,lim)
@@ -386,19 +367,8 @@ subByLim = function(obj,lim)
     
     obj = list(latlon = latlon.out,each = each.out,
              col.index = col.index.out, region = region.out,
-             xylim = lim.out,col = col.out)
+             xylim = lim.out,col = col.out,center.region = obj$center.region)
     obj
-}
-
-
-
-order.match = function(shp.region,data.region)
-{
-    order = match(shp.region,data.region)
-    orderd.data = order
-    na.data = shp.region[is.na(orderd.data)]
-    print(paste('number of unmatch region:',length(na.data)))
-    orderd.data
 }
 
 
@@ -431,6 +401,39 @@ name.match = function(shp.region,data.region)
     list(d = d, s = s)
 }
 
+##' compute and return the xlim and ylim within aspect ratio
+##'
+##' @title win.ratio
+##' @param xlim a numeric vector of length 2
+##' @param ylim a numeric vector of length 2
+##' @return a numeric vector of length 4, the first two componets specified the new xlim and the last two componets specified the new ylim.
+##' @author Jason
+##' @import countrycode
+##' @export
+win.ratio = function(xlim,ylim)
+{
+    x = diff(xlim)
+    y = diff(ylim) 
+    
+    w = convertWidth(current.viewport()$width, "mm", TRUE)
+    h = convertHeight(current.viewport()$height, "mm", TRUE)
+    
+    if(h/w < y/x)
+    {
+        x.tmp = y/(h/w)
+        x.r = x.tmp/x
+        xlim = re.scale(xlim,x.r)
+
+    }else
+    {
+        y.tmp = (h/w) * x
+        y.r = y.tmp/y
+        ylim = re.scale(ylim,y.r)
+
+    }
+    lim = c(xlim,ylim)
+    lim
+}
 
 
 
@@ -439,10 +442,11 @@ name.match = function(shp.region,data.region)
 ##' @title Calaudate the bbox of a country
 ##' @param obj the iNZight Shape Map Object
 ##' @param name the name of the country
-##' @return a 2*2 numeric matrix
+##' @vector logical value, if it is TRUE then return a vector of length 4 otherwise return an 2*2 matrix
+##' @return a 2*2 numeric matrix or a vector of length 4
 ##' @author Jason
 ##' @export
-region.bbox = function(obj,name)
+region.bbox = function(obj,name,vector = FALSE)
 {
     latlon = obj$latlon
     each =obj$each
@@ -454,35 +458,27 @@ region.bbox = function(obj,name)
     lat.lim = range(latlon[nn,1])
     lon.lim = range(latlon[nn,2])
     bbox = c(lat.lim, lon.lim)
-    dim(bbox) = c(2,2)
-    colnames(bbox) = c('lat','lon')
+    if(vector == FALSE)
+    {
+        dim(bbox) = c(2,2)
+        colnames(bbox) = c('lat','lon')
+    }
     bbox
 }
 
-region.bbox1 = function(obj,name)
+
+
+bar.coor = function(obj,var,data,xmax = 1,ymax = 18,bar.col = c('#E0FFFF','#FAFAD2','#FFA07A','#C71585'))
 {
-    latlon = obj$latlon
-    each =obj$each
     region = obj$region
     col.index = obj$col.index
-
-    region.ind = rep(rep(region,col.index),each)
-    nn = region.ind %in% name
-    lat.lim = range(latlon[nn,1],na.rm = TRUE)
-    lon.lim = range(latlon[nn,2],na.rm = TRUE)
-    bbox = c(lat.lim, lon.lim)
-    bbox
-}
-
-bar.coor = function(var,data,x,y,xmax,ymax,bar.col = c('#E0FFFF','#FAFAD2','#FFA07A','#C71585'))
-{
-
+    each = obj$each
 
     a = rep(rep(1:length(region),col.index),each)
     b = rep(rep(region %in% data$Country,col.index),each)
 
     s.region = rownames(table(as.character(region[as.numeric(rownames(table(a[b])))])))
-    region.lim = do.call(rbind,lapply(s.region,region.bbox1,obj = obj))
+    region.lim = do.call(rbind,lapply(s.region,region.bbox,obj = obj,vector = TRUE))
     ind = match(s.region,obj$center.region$i.region)
     x = obj$center.region$lon.x[ind]
     y = obj$center.region$lat.y[ind]
@@ -533,18 +529,19 @@ bar.coor = function(var,data,x,y,xmax,ymax,bar.col = c('#E0FFFF','#FAFAD2','#FFA
        }
     )
 
-    data.in = data[which(data$Country %in% s.region),]
-
-    t.length.y = ifelse(ymax > l[2,] * 0.85, l[2,] * 0.85, ymax )
-    data.t = apply(data.in[,var],2,data.trans)
+    data.sub = data[which(data$Country %in% s.region),]
+    data.in = data.sub[var]
+    data.in[is.na(data.in)] = 0
+    data.t = apply(data.in,2,data.trans)
     data.matrix = as.matrix(data.t)
     dim(data.matrix) = c(dim(data.matrix)[1] * dim(data.matrix)[2],1)
     yt =  rep(y,length(var)) + data.matrix * ymax
     yb = y
-    sep.n = nrow(dataIn)
+    sep.n = nrow(data.in)
     a = cbind(xl,xr,yb,yt)
     e = a[rep(1:dim(a)[1],each = 5) + rep(c(0,dim(a)[1],dim(a)[1],0,0),dim(a)[1])]
     f = a[rep(1:dim(a)[1],each = 5) + rep(c(2*dim(a)[1],2*dim(a)[1],3*dim(a)[1],3*dim(a)[1],2*dim(a)[1]),dim(a)[1])]
+
     d1 = cbind(e,f)
     ee1 = rep(5,dim(a)[1])
     col = rep(bar.col,each = sep.n)
@@ -553,4 +550,95 @@ bar.coor = function(var,data,x,y,xmax,ymax,bar.col = c('#E0FFFF','#FAFAD2','#FFA
 }
 
 
+##' Zoom in/out when click the plot
+##'
+##' @title Zoom in/out
+##' @param ratio a numeric value, define the ratio of zomm in or out
+##' @return NULL
+##' @details if ratio < 1 then zoom in, if ratio > 1 then zoom out, if ratio = 1 then shift the plot.
+##' @author Jason
+##' @export
+sClickOnZoom = function(ratio = 1/2)
+{
+    s.obj = inzshpobj$s.obj
+    bar.obj = inzshpobj$bar.obj
+    name = inzshpobj$name    
+    latlon = s.obj$latlon
+    cols = s.obj$col
+    shade.each = s.obj$each
+    region.name = inzshpobj$region.name
+    value = inzshpobj$value
+    ylim = c(-10,10)
+    
+    ox.lim = inzshpobj$s.obj$xylim
+    
+    center.x = s.obj$center.region$lon.x
+    center.y = s.obj$center.region$lat.y
+    region.name = s.obj$center.region$i.region
+        
+    if(inzshpobj$num == 1)
+        seekViewport('VP:MAPSHAPES')
 
+    xylim = c(current.viewport()$xscale,current.viewport()$yscale)
+    p.npc = grid.locator()
+    p.center = as.numeric(p.npc)
+    nx.lim = rep(p.center[1],2) + c(-1,1) * diff(xylim[1:2]) * ratio * 1/2
+    ny.lim = rep(p.center[2],2) + c(-1,1) * diff(xylim[3:4]) * ratio * 1/2
+    vp = viewport(0.5,0.5,1,1,name = 'VP:map',xscale = nx.lim,yscale = ny.lim)
+    pushViewport(vp)
+
+
+    grid.polygon(c(-360,360,360,-360,-360),c(360,360,-360,-360,360),
+                    default.units = "native",gp = gpar(col = '#B29980', fill  = '#F5F5F5'))
+    grid.polygon(s.obj$latlon[,1], s.obj$latlon[,2], 
+             default.units = "native", id.length = s.obj$each,
+             gp = gpar(col = '#B29980', fill  = s.obj$col))
+    drawing.option(bar.obj = bar.obj,
+                    latlon = latlon,cols = cols,
+                    shade.each = shade.each,region.name = region.name ,
+                    value = value ,name = name,
+                    center.x = center.x,center.y = center.y ,y.shift = ylim)  
+    grid.rect(gp = gpar(fill = 'transparent'))
+    inzshpobj$num <<- inzshpobj$num + 1
+}
+
+
+
+
+drawing.option = function(bar.obj,latlon,cols,shade.each,region.name,value,name,center.x,center.y,y.shift)
+{
+    full.option = c('bar','r','v','b')
+    switch(name,
+        'bar' = 
+        {
+            xmax = 0.004 * diff(range(latlon[,1]))
+            ymax = 0.1 * diff(range(latlon[,2]))
+            grid.polygon(bar.obj$d1[,1],bar.obj$d1[,2],
+                        default.units = "native", id.length = bar.obj$each,
+                        gp = gpar(col = '#B29980', fill  = bar.obj$col))
+            out.str = countrycode(region.name, "country.name", "iso3c")
+            center.y = center.y - diff(y.shift) * 0.01            
+        },
+        'r' = 
+        {
+            out.str = region.name
+        },
+        'v' = 
+        {
+            center.x = center.x[!is.na(value)]
+            center.y = center.y[!is.na(value)]
+            out.str = value[!is.na(value)]
+        },
+        'b' = 
+        {
+            value[is.na(value)] = ''
+            out.str = ifelse(value == '',paste(region.name),paste(region.name,value,sep = '\n'))
+        }
+    )
+    if(name %in% full.option){
+        grid.text(out.str, x = center.x, y =center.y,
+                just = "centre",default.units = "native",
+                gp=gpar(fontsize=9), check=TRUE)
+    }
+}
+    

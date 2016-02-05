@@ -18,25 +18,25 @@ data.2 = data.1[data.1$Country %in% c('Algeria','Angola','Burkina Faso','Cameroo
 data.3 = data.1[data.1$Country %in% c('New Zealand','Australia','Japan'),]
 data.4 = data.1[data.1$Country %in% c('Albania', 'Andorra', 'Austria', 'Belarus', 'Belgium', 
                                       'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 
-                                      'Cyprus','Czech Republic', 
-                                      'Estonia', 'Finland'),]
+                                      'Cyprus','Czech Republic'),]
 dataIn = data.4
 obj <- iNZightShapeMap(ll, data.region = 'Country', data = dataIn)
 var = c('BodyMassIndex_F','ChildrenPerWoman','Populationtotal','Populationdensity')
-bar.obj = bar.coor(var = var, data = dataIn, x = x, y = y, xmax = xmax, ymax = ymax)
+bar.obj = bar.coor(obj = obj,var = var, data = dataIn, xmax = 2, ymax = 5)
 system.time(plot(obj, variable = ~Imports,
                  region = ~Country,
                  data = dataIn,
                  col.fun = 'e',
-                 col = 'red',
+                 col = 'White',
                  transform = 'linear',
                  na.fill = '#C0C0C0',
                  col.offset = 0,
                  full.map = F,
                  extend.ratio = 1,
                  name = 'bar'))
+sClickOnZoom(ratio =1)
 
-
+f[is.na(b$f)] = rep(f[which(is.na(f)) - 1,],na.tot)
 
 obj <- iNZightShapeMap(ll, data.region = 'Country', data = data.4)
 iNZightPlot(CO2Emissions, Country, data = data.4, plottype = 'shapemap',#g1 = Leap.Year,

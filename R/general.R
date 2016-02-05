@@ -145,6 +145,14 @@ needNewMap <- function(bbox,window,size,SCALE,type)
             {
                 need[5] = FALSE	
             }
+            if(global.objects$maps$map.detail$num > 1)
+            {
+                need[6] = TRUE
+            }
+            else
+            {
+                need[6] = FALSE
+            }
 
 			
         }
@@ -281,4 +289,69 @@ is.google.map = function(lat,lon)
     
 }
 
+##' Zoom in/out when click the plot
+##'
+##' @title Zoom in/out
+##' @param ratio a numeric value, define the ratio of zomm in or out
+##' @return NULL
+##' @details if ratio < 1 then zoom in, if ratio > 1 then zoom out, if ratio = 1 then shift the plot.
+##' @author Jason
+##' @export
+ClickOnZoom = function(ratio = 1/2)
+{
+    num = global.objects$maps$map.detail$num
+    global.objects$maps$map.detail$num <<- num + 1
+    
+    xylim = global.objects$maps$map.detail$bbox
+    xlim = xylim[1:2]
+    ylim = xylim[3:4]
+    p.npc = grid.locator()
+    p.center = as.numeric(p.npc)
+    p.center = XY2LatLon(global.objects$maps$map,p.center[1],p.center[2])
+    p.center = c(p.center[2],p.center[1])
+    plot.lim = global.objects$maps$map.detail$xylim
+    nx.lim = rep(p.center[1],2) + c(-1,1) * diff(xylim[1:2]) * ratio/2
+    ny.lim = rep(p.center[2],2) + c(-1,1) * diff(xylim[3:4]) * ratio/2
+    
+    SCALE = global.objects$maps$map.detail$scale
+    size = global.objects$maps$map$size
+    type = global.objects$maps$map.detail$type
+    getNewMap(lat.lim = ny.lim, lon.lim = nx.lim, SCALE = SCALE, type = type,zoom = Get.map.size(ny.lim,nx.lim)$zoom)
+    global.objects$maps$map.detail$bbox <<- c(nx.lim,ny.lim)
+    
+    cex = global.objects$maps$pf$cex
+    col = global.objects$maps$pf$col
+    lwd = global.objects$maps$pf$lwd 
+    alpha = global.objects$maps$pf$alpha
+    fill = global.objects$maps$pf$fill
+    opacity = global.objects$maps$pf$opacity
+    pch = global.objects$maps$pf$pch
+    
 
+    grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)    
+    tmp = map.xylim(ny.lim,nx.lim,SCALE = SCALE)$window.lim
+    xl =tmp[1:2]
+    yl = tmp[3:4]
+    
+    vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
+    pushViewport(vp)
+    
+    y = global.objects$maps$map.detail$points[,1]
+    x = global.objects$maps$map.detail$points[,2]
+    
+    dd = cbind(y,x)
+    point = latlon.xy(dd,map = global.objects$maps$map)
+
+
+    grid.points(point[[1]], point[[2]], pch = pch,
+        gp =
+            gpar(col = col,
+                cex = cex,
+                lwd = lwd, alpha = alpha * opacity,
+                fill = fill),
+                name = "SCATTERPOINTS")
+    
+    invisible(NULL)
+    vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)      
+    
+}
