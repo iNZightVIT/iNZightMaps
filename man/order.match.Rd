@@ -20,6 +20,14 @@ draw a map by passing an iNZightPlot object.
 \details{
 the function will also returns a global object which called global.objects.
 }
+\examples{
+los = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
+shp = readRDS(los)
+shp.region = shp$region
+lod = 'C:/Users/yeamin/Desktop/Gapminder-2008.csv'
+data = read.csv(lod,skip = 1)
+order.match(shp.region,data$Country)
+}
 \author{
 Jason Wen
 }

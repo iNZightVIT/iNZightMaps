@@ -11,7 +11,7 @@ outerLim(obj, lim, ignore.region = c("Russia", "Antarctica"))
 
 \item{lim}{a numeric vector of length 4.}
 
-\item{ignore.region}{a character value or vector, sepecify which regions are been ignored when calculate the limit.}
+\item{ignore.region}{a character value or vector, specify which regions are been ignored when calculate the limit.}
 }
 \value{
 a numeric vector with length 4, the outer limit/bbox of the map.
@@ -21,6 +21,14 @@ Calculate the outer limit.
 }
 \details{
 the limit is computed by calculate the limit of the given inner limit. If there is a region been cut by the inner limit, then the outer limit will extend up to the limit of the region.
+}
+\examples{
+los = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
+lod = 'C:/Users/yeamin/Desktop/Gapminder-2008.csv'
+data = read.csv(lod,skip = 1)
+obj = iNZightShapeMap(los, data.region = 'Country', data = data)
+lim = c(-40,40,-40,40)
+outerLim(obj,lim)
 }
 \author{
 Jason Wen

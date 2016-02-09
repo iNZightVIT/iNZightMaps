@@ -23,8 +23,8 @@ create.inz.shapemapplot = function(obj) {
     
 
     ## cols = col.fun(pf$shape.object$col.fun, pf$shape.object$col.args)
-    ## missing data
     v = colnames(df)
+    ## missing data
     missing = is.na(df$x)
     n.missing = sum(missing)
     df = df[!missing, ]
@@ -32,7 +32,6 @@ create.inz.shapemapplot = function(obj) {
     xlim = obj$xylim[1:2]
     ylim = obj$xylim[3:4]
 
-    # print(obj$shape.object$latlon[,1])
     out = list(x = xlim, y = ylim,colby = obj$col,n.missing = n.missing,
                 xlim = xlim, ylim = ylim,shape.object = obj,df = df,name = pf$name)
     class(out) = c("inzshapemap", "inzmap", "inzscatter")
@@ -53,6 +52,7 @@ create.inz.shapemapplot = function(obj) {
 plot.inzshapemap = function(obj, gen) {
     df = obj$df
     full.s.obj = obj$shape.object
+    bbox = full.s.obj$bbox
     s.obj =full.s.obj
     
     name = obj$name
@@ -111,14 +111,13 @@ plot.inzshapemap = function(obj, gen) {
                 gp = 
                     gpar(col = '#B29980', fill  = cols)
                 )
-    
     ## other features added into the map
     drawing.option(bar.obj = bar.obj,
                 latlon = latlon,cols = cols,
                 shade.each = shade.each,region.name = region.name,
                 value = value ,name = name,
                 center.x = center.x,center.y = center.y ,y.shift = ylim)
-                    
+    
     grid.rect(gp = gpar(fill = 'transparent'))
-    inzshpobj <<- list(s.obj = full.s.obj,bar.obj = bar.obj,name = name,value = value,region.name = region.name,num = 1)
+    inzshpobj <<- list(s.obj = full.s.obj,bar.obj = bar.obj,name = name,value = value,region.name = region.name,num = 1,bbox = bbox)
 }

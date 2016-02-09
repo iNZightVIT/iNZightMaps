@@ -4,18 +4,28 @@
 \alias{region.bbox}
 \title{Calaudate the bbox of a country}
 \usage{
-region.bbox(obj, name)
+region.bbox(obj, name, vector = FALSE)
 }
 \arguments{
 \item{obj}{the iNZight Shape Map Object}
 
-\item{name}{the name of the country}
+\item{name}{a character vector, the name of the country}
+
+\item{vector}{logical value, if it is TRUE then return a vector of length 4 otherwise return an 2*2 matrix}
 }
 \value{
-a 2*2 numeric matrix
+a 2*2 numeric matrix or a vector of length 4
 }
 \description{
 Calaudate the bbox of a country
+}
+\examples{
+los = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
+lod = 'C:/Users/yeamin/Desktop/Gapminder-2008.csv'
+data = read.csv(lod,skip = 1)
+obj = iNZightShapeMap(los, data.region = 'Country', data = data)
+name = data$Country
+region.bbox(obj,name)
 }
 \author{
 Jason

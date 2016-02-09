@@ -7,6 +7,9 @@
 ##' @author Jason Wen
 ##' @import maptools
 ##' @export
+##' @examples
+##' location = 'C:/Users/yeamin/Desktop/something/MED Final 20140226_region.shp'
+##' shape.extract(location)
 shape.extract = function(shp,column.index = 2)
 {
 
@@ -51,6 +54,9 @@ shape.extract = function(shp,column.index = 2)
 ##' @param transform the method for transformation, can be linear,log,sqrt,exp,power and normal.
 ##' @return a transformed numeric vector.
 ##' @author Jason Wen
+##' @examples
+##' x = runif(100,1,100)
+##' data.trans(x)
 ##' @export
 data.trans = function(x,transform = 'linear')
 {
@@ -87,14 +93,20 @@ data.trans = function(x,transform = 'linear')
 
 }
 
-##' draw a map by passing an iNZightPlot object.
+##' re-order the region name in shape file
 ##'
-##' the function will also returns a global object which called global.objects.
-##' @title Plot an iNZight Map
+##' @title re-order the region name in shape file
 ##' @param shp.region a character vector.
 ##' @param data.region a character vector.
-##' @return an integer vector .
+##' @return an integer vector.  
 ##' @author Jason Wen
+##' @examples
+##' los = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
+##' shp = readRDS(los)
+##' shp.region = shp$region
+##' lod = 'C:/Users/yeamin/Desktop/Gapminder-2008.csv'
+##' data = read.csv(lod,skip = 1)
+##' order.match(shp.region,data$Country)
 order.match = function(shp.region,data.region)
 {
     order = match(shp.region,data.region)
@@ -109,13 +121,18 @@ order.match = function(shp.region,data.region)
 ##' @param data a numeric vector that should lie on the range of [0,1].
 ##' @param color.index an integer vector from inzshapemap object.
 ##' @param display a character value, the method for display colors. It should be choosen by one of the following display method: "hcl","hue","heat","rainbow","terrain","topo","cm","gray","r","n","e".
-##' @param na.fill a character value that sepecify the color that use to fill the unmatch region/country.
+##' @param na.fill a character value that specify the color that use to fill the unmatch region/country.
 ##' @param offset a numeric value within the range of [0,1] .
 ##' @param col the color for fill the match region/country, it only needs to be specify if display = 'hue'.
 ##' @return A color vector.
 ##' @author Jason Wen
 ##' @import RColorBrewer
-##' @details hcl,HCL Color Specification, whith c = 35 and l = 85 see \link{hcl}. hue, when display = 'hue', then the 'col' arg need to be specified. The alpha will depend on the data, see \link{rgb}. rainbow,terrain,topo,cm are the method from \link{RColorBrewer}. r,n , the color filled randomly expect n will fill the entire map even the region is unmatch. e, equal color.
+##' @details hcl,HCL Color Specification, whith c = 35 and l = 85 see \link{hcl}. hue, when display = 'hue', then the 'col' arg need to be specified. The alpha will depend on the data, see \link{rgb}. rainbow,terrain,topo,cm are the method from \link{RColorBrewer}. r,n , the color filled randomly expect n will fill the entire map even the region is unmatch. e, equal color for all matched region.
+##' @examples
+##' r.data = runif(100,1,100)
+##' p.data = data.trans(r.data)
+##' color.index = rep(1,100)
+##' col.fun(p.data,color.index)
 col.fun = function(data,color.index,
                     display = 'hue',na.fill = '#F4A460',offset = 0,col = 'red')
 {
@@ -248,6 +265,10 @@ col.fun = function(data,color.index,
 ##' @return a vector of length of 2, re-sized by the ratio.
 ##' @author Jason Wen
 ##' @export
+##' @examples
+##' x = c(0,100)
+##' ratio = 0.5
+##' re.scale(x,ratio)
 re.scale = function(x,ratio)
 {
   mid = mean(x)
@@ -259,11 +280,15 @@ re.scale = function(x,ratio)
 
 ##' is the latitude and longitude within the limit?
 ##' @title identify the which set of latitude and longitude are within the limit.
-##' @param x a numeric matrix with n*2 dimension.
-##' @param lim a numeric vectro with length 4.
+##' @param x a numeric matrix of n*2 dimension.
+##' @param lim a numeric vector of length 4.
 ##' @return a logical vector of length of n, indicates which row in x is within in the limit.
 ##' @author Jason Wen
 ##' @export
+##' @examples
+##' x = cbind(runif(100,-50,50),runif(100,-100,100))
+##' lim = c(-25,25,-80,80)
+##' lim.inside(x,lim)
 lim.inside = function(x,lim)
 {
     (x[,1] > lim[1] & x[,1] < lim[2]) & 
@@ -274,10 +299,17 @@ lim.inside = function(x,lim)
 ##' @title inner limit
 ##' @details the limit is computed by calculate the limit of the given region.
 ##' @param obj an inzshapemap object.
-##' @param d.region a character vector that sepecify the region or country.
+##' @param d.region a character vector that specify the region or country.
 ##' @return a numeric vector with length 4, the inner limit/bbox of the map.
 ##' @author Jason Wen
 ##' @export
+##' @examples
+##' los = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
+##' lod = 'C:/Users/yeamin/Desktop/Gapminder-2008.csv'
+##' data = read.csv(lod,skip = 1)
+##' obj = iNZightShapeMap(los, data.region = 'Country', data = data)
+##' d.region = data$Country
+##' innerLim(obj,d.region)
 innerLim = function(obj,d.region)
 {
     latlon = obj$latlon
@@ -298,10 +330,17 @@ innerLim = function(obj,d.region)
 ##' @details the limit is computed by calculate the limit of the given inner limit. If there is a region been cut by the inner limit, then the outer limit will extend up to the limit of the region.
 ##' @param obj an inzshapemap object.
 ##' @param lim a numeric vector of length 4.
-##' @param ignore.region a character value or vector, sepecify which regions are been ignored when calculate the limit.
+##' @param ignore.region a character value or vector, specify which regions are been ignored when calculate the limit.
 ##' @return a numeric vector with length 4, the outer limit/bbox of the map.
 ##' @author Jason Wen
 ##' @export
+##' @examples
+##' los = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
+##' lod = 'C:/Users/yeamin/Desktop/Gapminder-2008.csv'
+##' data = read.csv(lod,skip = 1)
+##' obj = iNZightShapeMap(los, data.region = 'Country', data = data)
+##' lim = c(-40,40,-40,40)
+##' outerLim(obj,lim)
 outerLim = function(obj,lim,ignore.region = c('Russia','Antarctica'))
 {    
     latlon = obj$latlon
@@ -318,8 +357,6 @@ outerLim = function(obj,lim,ignore.region = c('Russia','Antarctica'))
 
     lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
     lim.sub
-    
-    
 }
 
 
@@ -330,16 +367,20 @@ outerLim = function(obj,lim,ignore.region = c('Russia','Antarctica'))
 ##' @return an inzshapemap object.
 ##' @author Jason Wen
 ##' @export
+##' @examples
+##' los = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
+##' lod = 'C:/Users/yeamin/Desktop/Gapminder-2008.csv'
+##' data = read.csv(lod,skip = 1)
+##' obj = iNZightShapeMap(los, data.region = 'Country', data = data)
+##' lim = c(-40,40,-40,40)
+##' subByLim(obj,lim)
 subByLim = function(obj,lim)
 {
     latlon = obj$latlon
     each = obj$each
     col.index = obj$col.index
     col = obj$col
-    co = col
     region = obj$region
-    aa <<- obj
-    
     
     with = lim.inside(latlon,lim)
     id = rep(1:length(each),each)
@@ -382,6 +423,13 @@ subByLim = function(obj,lim)
 ##' @author Jason
 ##' @import countrycode
 ##' @export
+##' @examples
+##' los = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
+##' shp = readRDS(los)
+##' shp.region = shp$region
+##' lod = 'C:/Users/yeamin/Desktop/Gapminder-2008.csv'
+##' data = read.csv(lod,skip = 1)
+##' name.match(shp.region,data$Country)
 name.match = function(shp.region,data.region)
 {
     s = countrycode(shp.region, "country.name", "iso3c")
@@ -410,6 +458,11 @@ name.match = function(shp.region,data.region)
 ##' @author Jason
 ##' @import countrycode
 ##' @export
+##' @examples
+##' xlim = c(-90,90)
+##' ylim = c(-80,90)
+##' grid.newpage()
+##' win.ratio(xlim,ylim)
 win.ratio = function(xlim,ylim)
 {
     x = diff(xlim)
@@ -441,11 +494,18 @@ win.ratio = function(xlim,ylim)
 ##'
 ##' @title Calaudate the bbox of a country
 ##' @param obj the iNZight Shape Map Object
-##' @param name the name of the country
-##' @vector logical value, if it is TRUE then return a vector of length 4 otherwise return an 2*2 matrix
+##' @param name a character vector, the name of the country
+##' @param vector logical value, if it is TRUE then return a vector of length 4 otherwise return an 2*2 matrix
 ##' @return a 2*2 numeric matrix or a vector of length 4
 ##' @author Jason
 ##' @export
+##' @examples
+##' los = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
+##' lod = 'C:/Users/yeamin/Desktop/Gapminder-2008.csv'
+##' data = read.csv(lod,skip = 1)
+##' obj = iNZightShapeMap(los, data.region = 'Country', data = data)
+##' name = data$Country
+##' region.bbox(obj,name)
 region.bbox = function(obj,name,vector = FALSE)
 {
     latlon = obj$latlon
@@ -467,8 +527,19 @@ region.bbox = function(obj,name,vector = FALSE)
 }
 
 
-
-bar.coor = function(obj,var,data,xmax = 1,ymax = 18,bar.col = c('#E0FFFF','#FAFAD2','#FFA07A','#C71585'))
+##' a function for create a bar object
+##'
+##' @title create bar object
+##' @param obj a inzightshapemap object
+##' @param var a character vectror, the column name of data
+##' @param data the data set
+##' @param xmax the maximum weight of the bar
+##' @param ymax the maximum height of the bar
+##' @param bar.col the color of each bar
+##' @return NULL
+##' @author Jason
+##' @export
+bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,bar.col = c('#E0FFFF','#FAFAD2','#FFA07A','#C71585'))
 {
     region = obj$region
     col.index = obj$col.index
@@ -476,20 +547,17 @@ bar.coor = function(obj,var,data,xmax = 1,ymax = 18,bar.col = c('#E0FFFF','#FAFA
 
     a = rep(rep(1:length(region),col.index),each)
     b = rep(rep(region %in% data$Country,col.index),each)
-
     s.region = rownames(table(as.character(region[as.numeric(rownames(table(a[b])))])))
     region.lim = do.call(rbind,lapply(s.region,region.bbox,obj = obj,vector = TRUE))
     ind = match(s.region,obj$center.region$i.region)
     x = obj$center.region$lon.x[ind]
     y = obj$center.region$lat.y[ind]
 
-
     l = apply(region.lim,1,function(x)c(diff(x[1:2]),diff(x[3:4])))
     plot.num = as.character(length(var))
-    bar.weight.tot = as.numeric(plot.num) * xmax * 0.85
+    bar.weight.tot = as.numeric(plot.num) * xmax
     s.length.x = ifelse(l[1,] > bar.weight.tot,xmax,l[1,]/as.numeric(plot.num))/2
     
-
     switch(plot.num,
        '1' = 
        {
@@ -558,6 +626,24 @@ bar.coor = function(obj,var,data,xmax = 1,ymax = 18,bar.col = c('#E0FFFF','#FAFA
 ##' @details if ratio < 1 then zoom in, if ratio > 1 then zoom out, if ratio = 1 then shift the plot.
 ##' @author Jason
 ##' @export
+##' @examples
+##' los = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
+##' data = read.csv('C:/Users/yeamin/Desktop/Gapminder-2008.csv',skip = 1)
+##' obj <- iNZightShapeMap(los, data.region = 'Country', data = data)
+##' var = c('BodyMassIndex_F','ChildrenPerWoman','Populationtotal','Populationdensity')
+##' bar.obj = bar.coor(obj = obj,var = var, data = data, xmax = 1, ymax = 5)
+##' plot(obj, variable = ~Imports,
+##'                  region = ~Country,
+##'                  data = data,
+##'                  col.fun = 'hue',
+##'                  col = 'orange',
+##'                  transform = 'linear',
+##'                  na.fill = '#C0C0C0',
+##'                  col.offset = 0,
+##'                  full.map = F,
+##'                  extend.ratio = 1,
+##'                  name = 'v')
+##' sClickOnZoom()
 sClickOnZoom = function(ratio = 1/2)
 {
     s.obj = inzshpobj$s.obj
@@ -568,6 +654,7 @@ sClickOnZoom = function(ratio = 1/2)
     shade.each = s.obj$each
     region.name = inzshpobj$region.name
     value = inzshpobj$value
+    sbbox = inzshpobj$bbox
     ylim = c(-10,10)
     
     ox.lim = inzshpobj$s.obj$xylim
@@ -578,17 +665,35 @@ sClickOnZoom = function(ratio = 1/2)
         
     if(inzshpobj$num == 1)
         seekViewport('VP:MAPSHAPES')
+    
 
+    
+        
     xylim = c(current.viewport()$xscale,current.viewport()$yscale)
     p.npc = grid.locator()
     p.center = as.numeric(p.npc)
+    if(p.center[1] < sbbox[1] & p.center[1] > sbbox[2])
+        stop('invalid location')
+        
+    if(p.center[2] < sbbox[3] & p.center[2] > sbbox[4])
+        stop('invalid location')
     nx.lim = rep(p.center[1],2) + c(-1,1) * diff(xylim[1:2]) * ratio * 1/2
     ny.lim = rep(p.center[2],2) + c(-1,1) * diff(xylim[3:4]) * ratio * 1/2
+    
+    if(ratio > 1){
+        if(diff(range(nx.lim)) > diff(sbbox[1:2]) & diff(range(ny.lim)) > diff(sbbox[3:4]))
+        {
+            lim = win.ratio(sbbox[1:2],sbbox[3:4])
+            nx.lim = lim[1:2]
+            ny.lim = lim[3:4]
+        }
+    }
+    
     vp = viewport(0.5,0.5,1,1,name = 'VP:map',xscale = nx.lim,yscale = ny.lim)
     pushViewport(vp)
 
 
-    grid.polygon(c(-360,360,360,-360,-360),c(360,360,-360,-360,360),
+    grid.polygon(c(-1000,1000,1000,-1000,-1000),c(1000,1000,-1000,-1000,1000),
                     default.units = "native",gp = gpar(col = '#B29980', fill  = '#F5F5F5'))
     grid.polygon(s.obj$latlon[,1], s.obj$latlon[,2], 
              default.units = "native", id.length = s.obj$each,
@@ -603,8 +708,22 @@ sClickOnZoom = function(ratio = 1/2)
 }
 
 
-
-
+##' a function for drawing bar char, display the value and/or region name
+##'
+##' @title drawing option
+##' @param bar.obj a bar object see \link{bar.coor}
+##' @param latlon a n*2 numeric matrix the first column specifies the latitudes and the second column specifies the longitudes 
+##' @param cols a color character strings vector
+##' @param shade.each a numeric vector
+##' @param region.name a character vector 
+##' @param value a numeric vector
+##' @param name a character vector
+##' @param center.x a numeric value
+##' @param center.y a numeric value
+##' @param y.shift a numeric value
+##' @return NULL
+##' @author Jason
+##' @export
 drawing.option = function(bar.obj,latlon,cols,shade.each,region.name,value,name,center.x,center.y,y.shift)
 {
     full.option = c('bar','r','v','b')

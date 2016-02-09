@@ -6,14 +6,27 @@
 \usage{
 map.xylim(latR, lonR, SCALE)
 }
+\arguments{
+\item{latR}{a numeric vector of length 2}
+
+\item{lonR}{a numeric vector of length 2}
+
+\item{SCALE}{a numeric value}
+}
 \value{
-return a list that contain the limit of x-axis and y-axis
+return a numeric of length 4 that contain the limit of x-axis and y-axis
 }
 \description{
 return the limit of x-axis and y-axis of the plot.
 }
 \details{
-the map.xylim function does not contain any arguments, and it returns the limit of x-axis and y-axis after the plot called.
+the limit is not the same as latitude/longitude, it is the limit of the plot window
+}
+\examples{
+r.center = runif(4,min = 0,max = 90)
+r.center = runif(4,min = -90,max = 90)
+SCALE = 2
+map.xylim(r.center[1:2],r.center[3:4],SCALE)
 }
 \author{
 Jason Wen

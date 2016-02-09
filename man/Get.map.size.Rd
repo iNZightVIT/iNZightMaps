@@ -22,6 +22,11 @@ compute the size and the zoom level that needs for request a new map.
 \details{
 since the size of the map should not greater than 640, the size and the zoom needs to be transform before pass to the getNewMap function.
 }
+\examples{
+r.center = runif(4,min = -90,max = 90)
+SCALE = 2
+Get.map.size(r.center[1:2],r.center[3:4],SCALE)
+}
 \author{
 Jason Wen
 }

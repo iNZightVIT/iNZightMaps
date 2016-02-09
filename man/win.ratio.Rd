@@ -2,17 +2,28 @@
 % Please edit documentation in R/shade.fun.r
 \name{win.ratio}
 \alias{win.ratio}
-\title{compute the ratio of the window.}
+\title{win.ratio}
 \usage{
-win.ratio()
+win.ratio(xlim, ylim)
+}
+\arguments{
+\item{xlim}{a numeric vector of length 2}
+
+\item{ylim}{a numeric vector of length 2}
 }
 \value{
-a vector of length of 2 that specify the current width and height .
+a numeric vector of length 4, the first two componets specified the new xlim and the last two componets specified the new ylim.
 }
 \description{
-compute the ratio of the current width and height of the window.
+compute and return the xlim and ylim within aspect ratio
+}
+\examples{
+xlim = c(-90,90)
+ylim = c(-80,90)
+grid.newpage()
+win.ratio(xlim,ylim)
 }
 \author{
-Jason Wen
+Jason
 }
 
