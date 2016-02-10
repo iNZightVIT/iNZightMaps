@@ -23,11 +23,11 @@ system.time(plot(obj, variable = ~Imports,
                  transform = 'linear',
                  na.fill = '#C0C0C0',
                  col.offset = 0,
-                 full.map = T,
+                 full.map = F,
                  extend.ratio = 1,
                  name = 'r'))
-sClickOnZoom(ratio = 0.2)
-srezoom(zoom = 10)
+sClickOnZoom(ratio = 0.1)
+srezoom(zoom = 0.9)
 
 obj <- iNZightShapeMap(ll, data.region = 'Country', data = data.4)
 iNZightPlot(CO2Emissions, Country, data = data.4, plottype = 'shapemap',#g1 = Leap.Year,

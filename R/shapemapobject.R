@@ -50,7 +50,7 @@ iNZightShapeMap <- function(location,shp.region,data.region, data) {
         out$bbox = c(range(out$latlon[,1]),range(out$latlon[,2]))
     }else
         stop('data is missing!')
-
+    bar.obj <<- NULL
     class(out) <- c("inzightshapemap", class(out))
     out
 }
@@ -74,7 +74,8 @@ iNZightShapeMap <- function(location,shp.region,data.region, data) {
 ##' @export
 plot.inzightshapemap <- function(x, variable, region, data,
                                  col.fun = "hue", transform = "linear",
-                                 col.offset = 0.2, col = "red",na.fill = '#F4A460',full.map = TRUE,extend.ratio = 1,name = FALSE,
+                                 col.offset = 0.2, col = "red",na.fill = '#F4A460',
+                                 full.map = TRUE,extend.ratio = 1,name = FALSE,
                                  ...) {
 
   ##  mc <- match.call(expand.dots = TRUE)

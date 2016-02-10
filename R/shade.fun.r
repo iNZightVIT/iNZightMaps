@@ -644,7 +644,7 @@ bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,bar.col = c('#E0FFFF','#FA
 ##'                  extend.ratio = 1,
 ##'                  name = 'v')
 ##' sClickOnZoom()
-sClickOnZoom = function(ratio = 1/2,resize = FALSE)
+sClickOnZoom = function(ratio = 1/4,resize = FALSE)
 {
     s.obj = inzshpobj$s.obj
     bar.obj = inzshpobj$bar.obj
@@ -677,30 +677,21 @@ sClickOnZoom = function(ratio = 1/2,resize = FALSE)
         p.center = inzshpobj$click.point
         xylim = win.ratio(inzshpobj$bbox.record[1:2],inzshpobj$bbox.record[3:4])
     }    
-    
-    if(p.center[1] < sbbox[1] & p.center[1] > sbbox[2])
-        stop('invalid location')
         
-    if(p.center[2] < sbbox[3] & p.center[2] > sbbox[4])
-        stop('invalid location')
-        
-    nx.lim = rep(p.center[1],2) + c(-1,1) * diff(xylim[1:2]) * ratio * 1/2
-    ny.lim = rep(p.center[2],2) + c(-1,1) * diff(xylim[3:4]) * ratio * 1/2
+    nx.lim = rep(p.center[1],2) + c(-1,1) * diff(xylim[1:2]) * ratio
+    ny.lim = rep(p.center[2],2) + c(-1,1) * diff(xylim[3:4]) * ratio
+    n.lim = c(nx.lim,ny.lim)
 
     if(resize == FALSE)
         inzshpobj$bbox.record <<- c(nx.lim,ny.lim)
 
     s.obj = subByLim(s.obj,c(nx.lim,ny.lim))
-    if(ratio > 1){
+    if(ratio > 0.5){
         if(diff(range(nx.lim)) > diff(sbbox[1:2]) & diff(range(ny.lim)) > diff(sbbox[3:4]))
-        {
-            lim = win.ratio(sbbox[1:2],sbbox[3:4])
-            nx.lim = lim[1:2]
-            ny.lim = lim[3:4]
-        }
+            n.lim = win.ratio(sbbox[1:2],sbbox[3:4])
     }
 
-    vp = viewport(0.5,0.5,1,1,name = 'VP:map',xscale = nx.lim,yscale = ny.lim)
+    vp = viewport(0.5,0.5,1,1,name = 'VP:map',xscale = n.lim[1:2],yscale = n.lim[3:4])
     pushViewport(vp)
 
     grid.polygon(c(-1000,1000,1000,-1000,-1000),c(1000,1000,-1000,-1000,1000),
@@ -722,6 +713,8 @@ sClickOnZoom = function(ratio = 1/2,resize = FALSE)
 
 srezoom = function(zoom)
 {
+    if(zoom > 0.9 | zoom < 0.1)
+        stop('invalid zoom')
     sClickOnZoom(ratio = zoom,resize = TRUE)
 }
 

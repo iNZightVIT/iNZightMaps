@@ -52,7 +52,7 @@ create.inz.shapemapplot = function(obj) {
 plot.inzshapemap = function(obj, gen) {
     df = obj$df
     full.s.obj = obj$shape.object
-    bbox = full.s.obj$bbox
+    bbox <<- full.s.obj$bbox
     s.obj =full.s.obj
     a <<- gen
     name = obj$name
@@ -61,8 +61,10 @@ plot.inzshapemap = function(obj, gen) {
     {
         ratio = s.obj$extend.ratio
         inner.lim = innerLim(s.obj,obj$df$y)
-        lim.in = c(re.scale(inner.lim[1:2],ratio),
+        lim.in <<- c(re.scale(inner.lim[1:2],ratio),
                     re.scale(inner.lim[3:4],ratio))
+                    
+        
                     
         ## make sure the bar within the viewport
         if(name == 'bar')
@@ -76,15 +78,10 @@ plot.inzshapemap = function(obj, gen) {
         }
         lim.out = outerLim(s.obj,lim.in)
         lim = win.ratio(lim.out[1:2],lim.out[3:4])
-        xlim = lim[1:2]
-        ylim = lim[3:4]
         s.obj = subByLim(s.obj,lim)
     }else
     {
-        
         lim = win.ratio(s.obj$xylim[1:2],s.obj$xylim[3:4])
-        xlim = lim[1:2]
-        ylim = lim[3:4]
     }
     
     
@@ -97,7 +94,7 @@ plot.inzshapemap = function(obj, gen) {
     order = match(region.name,df$y)
     value = round(df$x[order],2)
     
-    vp = viewport(0.5,0.5,width = 1, height = 1,name = 'VP:MAPSHAPES', xscale = xlim,yscale = ylim)
+    vp = viewport(0.5,0.5,width = 1, height = 1,name = 'VP:MAPSHAPES', xscale = lim[1:2],yscale = lim[3:4])
     pushViewport(vp)
     ## backagound
     grid.polygon(c(-360,360,360,-360,-360),
