@@ -349,19 +349,20 @@ ClickOnZoom = function(ratio = 1/2,resize = FALSE,p.center = global.objects$maps
     }
 
     plot.lim = global.objects$maps$map.detail$xylim
-    new.xlim = rep(p.center[1],2) + c(-1,1) * diff(xlim) * ratio/2
-    new.ylim = rep(p.center[2],2) + c(-1,1) * diff(ylim) * ratio/2
+    new.xlim = rep(p.center[1],2) + c(-1,1) * diff(xlim) * ratio
+    new.ylim = rep(p.center[2],2) + c(-1,1) * diff(ylim) * ratio
     
     if(resize == FALSE)
         global.objects$maps$pf$bbox.record <<- c(new.xlim,new.ylim)
     
     
-    SCALE = global.objects$maps$map.detail$scale
-    size = global.objects$maps$map$size
-    type = global.objects$maps$map.detail$type
+
     global.objects$maps$map.detail$bbox <<- c(new.xlim,new.ylim)
     global.objects$maps$pf$click.points <<- p.center
     
+    SCALE = global.objects$maps$map.detail$scale
+    size = global.objects$maps$map$size
+    type = global.objects$maps$map.detail$type
     cex = global.objects$maps$pf$cex
     col = global.objects$maps$pf$col
     lwd = global.objects$maps$pf$lwd 
@@ -397,18 +398,16 @@ ClickOnZoom = function(ratio = 1/2,resize = FALSE,p.center = global.objects$maps
 }
 
 
-##' Zoom in/out on the center point of the map
+##' change the zoom within the center point
 ##'
-##' @title Zoom in/out
-##' @param zoom a numeric value
+##' @title change the zoom within the center point
+##' @param zoom a numeric value between 0.1 to 0.9(minimum zoom to maximum zoom)
 ##' @return NULL
 ##' @author Jason
-##' @examples
-##' data("nzquakes")
-##' iNZightPlot(Longitude,Latitude,data = nzquakes,colby = Depth, plottype = 'map',plot.features = list(maptype = 'roadmap'))
-##' rezoom(zoom = 1.5)
 ##' @export
-rezoom = function(zoom = 1.5)
+rezoom = function(zoom)
 {
+    if(zoom > 0.9 | zoom < 0.1)
+        stop('invalid zoom')
     ClickOnZoom(ratio = zoom,resize = TRUE)
 }

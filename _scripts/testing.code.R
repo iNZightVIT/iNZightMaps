@@ -24,8 +24,8 @@ data.4 = data.1[data.1$Country %in% c('Albania', 'Andorra', 'Austria', 'Belarus'
 data("nzquakes")
 system.time(iNZightPlot(Longitude,Latitude,data = nzquakes,colby = Depth,
                         plottype = 'map',plot.features = list(maptype = 'roadmap')))
-ClickOnZoom()
-rezoom(zoom =1.5)
+ClickOnZoom(0.1)
+rezoom(zoom =0.9)
 
 
 

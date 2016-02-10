@@ -4,7 +4,8 @@
 \alias{ClickOnZoom}
 \title{Zoom in/out}
 \usage{
-ClickOnZoom(ratio = 1/2)
+ClickOnZoom(ratio = 1/2, resize = FALSE,
+  p.center = global.objects$maps$pf$click.points)
 }
 \arguments{
 \item{ratio}{a numeric value, define the ratio of zomm in or out}

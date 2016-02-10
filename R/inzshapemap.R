@@ -52,7 +52,7 @@ create.inz.shapemapplot = function(obj) {
 plot.inzshapemap = function(obj, gen) {
     df = obj$df
     full.s.obj = obj$shape.object
-    bbox <<- full.s.obj$bbox
+    bbox = full.s.obj$bbox
     s.obj =full.s.obj
     a <<- gen
     name = obj$name
@@ -61,9 +61,17 @@ plot.inzshapemap = function(obj, gen) {
     {
         ratio = s.obj$extend.ratio
         inner.lim = innerLim(s.obj,obj$df$y)
-        lim.in <<- c(re.scale(inner.lim[1:2],ratio),
+        lim.in = c(re.scale(inner.lim[1:2],ratio),
                     re.scale(inner.lim[3:4],ratio))
-                    
+        
+        if(all(lim.in >= bbox))
+            win.ratio(lim.in[1:2],lim.in[3:4])
+        else
+        {
+            lim.out = outerLim(s.obj,lim.in)
+            lim = win.ratio(lim.out[1:2],lim.out[3:4])
+            s.obj = subByLim(s.obj,lim)
+        }
         
                     
         ## make sure the bar within the viewport
@@ -74,15 +82,10 @@ plot.inzshapemap = function(obj, gen) {
             xmax = 0.004 * diff(range(latlon[,1]))
             ymax = 0.1 * diff(range(latlon[,2]))
             lim.in = c(lim.in[1:3],max(lim.in[4],max(bar.obj$d1[,2],na.rm = TRUE)))
-
         }
-        lim.out = outerLim(s.obj,lim.in)
-        lim = win.ratio(lim.out[1:2],lim.out[3:4])
-        s.obj = subByLim(s.obj,lim)
+
     }else
-    {
         lim = win.ratio(s.obj$xylim[1:2],s.obj$xylim[3:4])
-    }
     
     
     latlon = s.obj$latlon
@@ -112,12 +115,18 @@ plot.inzshapemap = function(obj, gen) {
                     gpar(col = '#B29980', fill  = cols)
                 )
     ## other features added into the map
-    drawing.option(bar.obj = bar.obj,
+    drawing.features(bar.obj = bar.obj,
                 latlon = latlon,cols = cols,
                 shade.each = shade.each,region.name = region.name,
                 value = value ,name = name,
-                center.x = center.x,center.y = center.y ,y.shift = ylim)
+                center.x = center.x,center.y = center.y)
     
     grid.rect(gp = gpar(fill = 'transparent'))
-    inzshpobj <<- list(s.obj = full.s.obj,bar.obj = bar.obj,name = name,value = value,region.name = region.name,num = 1,bbox = bbox)
+    ## global object
+    inzshpobj <<- list(s.obj = full.s.obj,bar.obj = bar.obj,
+                        name = name,value = value,
+                        region.name = region.name,num = 1,
+                        bbox = bbox, bbox.record = bbox,
+                        click.point = c(mean(lim[1:2]),mean(lim[3:4]))
+                        )
 }

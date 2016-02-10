@@ -11,7 +11,7 @@ library(iNZightMaps)
 ll = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
 l2 = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/AuCity.rds'
 
-dataIn = data.1
+dataIn = data.2
 obj = iNZightShapeMap(ll, data.region = 'Country', data = dataIn)
 var = c('BodyMassIndex_F','ChildrenPerWoman','Populationtotal','Populationdensity')
 bar.obj = bar.coor(obj = obj,var = var, data = dataIn, xmax = 1, ymax = 5)
@@ -23,11 +23,11 @@ system.time(plot(obj, variable = ~Imports,
                  transform = 'linear',
                  na.fill = '#C0C0C0',
                  col.offset = 0,
-                 full.map = F,
+                 full.map = T,
                  extend.ratio = 1,
-                 name = 'r'))
+                 name = 'bar'))
 sClickOnZoom(ratio = 0.1)
-srezoom(zoom = 0.9)
+srezoom(zoom = 0.1)
 
 obj <- iNZightShapeMap(ll, data.region = 'Country', data = data.4)
 iNZightPlot(CO2Emissions, Country, data = data.4, plottype = 'shapemap',#g1 = Leap.Year,

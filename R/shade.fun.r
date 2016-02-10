@@ -312,16 +312,24 @@ lim.inside = function(x,lim)
 ##' innerLim(obj,d.region)
 innerLim = function(obj,d.region)
 {
-    latlon = obj$latlon
-    each = obj$each
-    col.index = obj$col.index
-    region = obj$region
+    latlon <<- obj$latlon
+    each <<- obj$each
+    col.index <<- obj$col.index
+    region <<- obj$region
+    bbox = obj$bbox
     
     logic = region %in% d.region
-    polygon.index.fill = rep(logic,col.index)  
-    each.sub = each[rep(logic,col.index)]
-    latlon.sub = latlon[rep(rep(logic,col.index),each),]
-    lim.sub = c(range(latlon.sub[,1],na.rm = TRUE),range(latlon.sub[,2],na.rm = TRUE))
+    if(all(logic == FALSE))
+        lim.sub = bbox
+    else
+    {
+        polygon.index.fill = rep(logic,col.index)  
+        each.sub = each[rep(logic,col.index)]
+        latlon.sub = latlon[rep(rep(logic,col.index),each),]
+        lim.sub = c(range(latlon.sub[,1],na.rm = TRUE),
+                    range(latlon.sub[,2],na.rm = TRUE)
+                    )
+    }
     lim.sub
 }
 
@@ -350,7 +358,7 @@ outerLim = function(obj,lim,ignore.region = c('Russia','Antarctica'))
     
     with = lim.inside(latlon,lim)
     id = rep(1:length(each),each)
-    each.index = as.numeric(rownames(table(id[with])))
+    each.index = unique(id[with])
     log.pre = id %in% each.index
     log.pre[rep(rep((region %in% ignore.region),col.index),each)] = FALSE
     latlon.sub = latlon[log.pre,]
@@ -383,22 +391,22 @@ subByLim = function(obj,lim)
     region = obj$region
     
     with = lim.inside(latlon,lim)
-    id = rep(1:length(each),each)
-    each.index = as.numeric(rownames(table(id[with])))
+    id.index = 1:length(each)
+    id = rep(id.index,each)
+    each.index = unique(id[with])
     each.sub = each[each.index]
     latlon.sub = latlon[id %in% each.index,]
     lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
     region.id = rep(rep(region,col.index),each)
-    with.sub = lim.inside(latlon,lim.sub)
-    
+    with.sub <<- lim.inside(latlon,lim.sub)
     
     latlon.out = latlon[id %in% id[with.sub],]
-    each.sub.index = as.numeric(rownames(table(id[with.sub])))
+    each.sub.index = unique(id[with.sub])
     each.out = each[each.sub.index]
     
     ## some regions have multiple length
     e = rep(rep(1:length(region),col.index),each)
-    e.index = as.numeric(rownames(table(e[with.sub])))
+    e.index = unique(e[with.sub])
     
     ## out
     region.out = region[e.index]
@@ -547,7 +555,7 @@ bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,bar.col = c('#E0FFFF','#FA
 
     a = rep(rep(1:length(region),col.index),each)
     b = rep(rep(region %in% data$Country,col.index),each)
-    s.region = rownames(table(as.character(region[as.numeric(rownames(table(a[b])))])))
+    s.region = unique(region[unique(a[b])])
     region.lim = do.call(rbind,lapply(s.region,region.bbox,obj = obj,vector = TRUE))
     ind = match(s.region,obj$center.region$i.region)
     x = obj$center.region$lon.x[ind]
@@ -607,13 +615,13 @@ bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,bar.col = c('#E0FFFF','#FA
     yb = y
     sep.n = nrow(data.in)
     a = cbind(xl,xr,yb,yt)
-    e = a[rep(1:dim(a)[1],each = 5) + rep(c(0,dim(a)[1],dim(a)[1],0,0),dim(a)[1])]
-    f = a[rep(1:dim(a)[1],each = 5) + rep(c(2*dim(a)[1],2*dim(a)[1],3*dim(a)[1],3*dim(a)[1],2*dim(a)[1]),dim(a)[1])]
+    x.coor = a[rep(1:dim(a)[1],each = 5) + rep(c(0,dim(a)[1],dim(a)[1],0,0),dim(a)[1])]
+    y.coor = a[rep(1:dim(a)[1],each = 5) + rep(c(2*dim(a)[1],2*dim(a)[1],3*dim(a)[1],3*dim(a)[1],2*dim(a)[1]),dim(a)[1])]
 
-    d1 = cbind(e,f)
-    ee1 = rep(5,dim(a)[1])
+    d1 = cbind(x.coor,y.coor)
+    each.polygon = rep(5,dim(a)[1])
     col = rep(bar.col,each = sep.n)
-    bar.obj = list(d1 = d1,col = col,each = ee1)
+    bar.obj = list(d1 = d1,col = col,each = each.polygon)
 
 }
 
@@ -699,11 +707,11 @@ sClickOnZoom = function(ratio = 1/4,resize = FALSE)
     grid.polygon(s.obj$latlon[,1], s.obj$latlon[,2], 
              default.units = "native", id.length = s.obj$each,
              gp = gpar(col = '#B29980', fill  = s.obj$col))
-    drawing.option(bar.obj = bar.obj,
+    drawing.features(bar.obj = bar.obj,
                     latlon = latlon,cols = cols,
                     shade.each = shade.each,region.name = region.name ,
                     value = value ,name = name,
-                    center.x = center.x,center.y = center.y ,y.shift = ylim)  
+                    center.x = center.x,center.y = center.y)
     grid.rect(gp = gpar(fill = 'transparent'))
     
     inzshpobj$num <<- inzshpobj$num + 1
@@ -711,6 +719,14 @@ sClickOnZoom = function(ratio = 1/4,resize = FALSE)
     
 }
 
+
+##' change the zoom within the center point
+##'
+##' @title change the zoom within the center point
+##' @param zoom a numeric value between 0.1 to 0.9(minimum zoom to maximum zoom)
+##' @return NULL
+##' @author Jason
+##' @export
 srezoom = function(zoom)
 {
     if(zoom > 0.9 | zoom < 0.1)
@@ -721,7 +737,7 @@ srezoom = function(zoom)
 
 ##' a function for drawing bar char, display the value and/or region name
 ##'
-##' @title drawing option
+##' @title drawing features
 ##' @param bar.obj a bar object see \link{bar.coor}
 ##' @param latlon a n*2 numeric matrix the first column specifies the latitudes and the second column specifies the longitudes 
 ##' @param cols a color character strings vector
@@ -735,7 +751,7 @@ srezoom = function(zoom)
 ##' @return NULL
 ##' @author Jason
 ##' @export
-drawing.option = function(bar.obj,latlon,cols,shade.each,region.name,value,name,center.x,center.y,y.shift)
+drawing.features = function(bar.obj,latlon,cols,shade.each,region.name,value,name,center.x,center.y,y.shift = 0.5)
 {
     full.option = c('bar','r','v','b')
     switch(name,
@@ -747,7 +763,7 @@ drawing.option = function(bar.obj,latlon,cols,shade.each,region.name,value,name,
                         default.units = "native", id.length = bar.obj$each,
                         gp = gpar(col = '#B29980', fill  = bar.obj$col))
             out.str = countrycode(region.name, "country.name", "iso3c")
-            center.y = center.y - diff(y.shift) * 0.01            
+            center.y = center.y - y.shift
         },
         'r' = 
         {

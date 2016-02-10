@@ -4,7 +4,7 @@
 \alias{sClickOnZoom}
 \title{Zoom in/out}
 \usage{
-sClickOnZoom(ratio = 1/2)
+sClickOnZoom(ratio = 1/4, resize = FALSE)
 }
 \arguments{
 \item{ratio}{a numeric value, define the ratio of zomm in or out}

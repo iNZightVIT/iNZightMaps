@@ -2,7 +2,7 @@
 % Please edit documentation in R/shade.fun.r
 \name{order.match}
 \alias{order.match}
-\title{Plot an iNZight Map}
+\title{re-order the region name in shape file}
 \usage{
 order.match(shp.region, data.region)
 }
@@ -12,13 +12,10 @@ order.match(shp.region, data.region)
 \item{data.region}{a character vector.}
 }
 \value{
-an integer vector .
+an integer vector.
 }
 \description{
-draw a map by passing an iNZightPlot object.
-}
-\details{
-the function will also returns a global object which called global.objects.
+re-order the region name in shape file
 }
 \examples{
 los = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'

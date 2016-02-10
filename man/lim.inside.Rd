@@ -7,9 +7,9 @@
 lim.inside(x, lim)
 }
 \arguments{
-\item{x}{a numeric matrix with n*2 dimension.}
+\item{x}{a numeric matrix of n*2 dimension.}
 
-\item{lim}{a numeric vectro with length 4.}
+\item{lim}{a numeric vector of length 4.}
 }
 \value{
 a logical vector of length of n, indicates which row in x is within in the limit.
