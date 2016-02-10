@@ -54,8 +54,9 @@ plot.inzshapemap = function(obj, gen) {
     full.s.obj = obj$shape.object
     bbox = full.s.obj$bbox
     s.obj =full.s.obj
-    
+    a <<- gen
     name = obj$name
+    
     if(s.obj$full.map == FALSE)
     {
         ratio = s.obj$extend.ratio
@@ -80,10 +81,12 @@ plot.inzshapemap = function(obj, gen) {
         s.obj = subByLim(s.obj,lim)
     }else
     {
+        
         lim = win.ratio(s.obj$xylim[1:2],s.obj$xylim[3:4])
         xlim = lim[1:2]
         ylim = lim[3:4]
     }
+    
     
     latlon = s.obj$latlon
     cols = s.obj$col

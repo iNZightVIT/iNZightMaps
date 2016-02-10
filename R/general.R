@@ -331,25 +331,36 @@ is.google.map = function(lat,lon)
 ##' iNZightPlot(Longitude,Latitude,data = nzquakes,colby = Depth, plottype = 'map',plot.features = list(maptype = 'roadmap'))
 ##' ClickOnZoom(ratio = 1)
 ##' @export
-ClickOnZoom = function(ratio = 1/2)
+ClickOnZoom = function(ratio = 1/2,resize = FALSE,p.center = global.objects$maps$pf$click.points)
 {
     global.objects$maps$map.detail$num <<- global.objects$maps$map.detail$num + 1
-    
     xlim = global.objects$maps$map.detail$bbox[1:2]
     ylim = global.objects$maps$map.detail$bbox[3:4]
-    p.npc = grid.locator()
-    p.center = as.numeric(p.npc)
-    p.center = XY2LatLon(global.objects$maps$map,p.center[1],p.center[2])
-    p.center = c(p.center[2],p.center[1])
+    
+    if(resize == FALSE)
+    {
+        p.cen = as.numeric(grid.locator())
+        p.center = XY2LatLon(global.objects$maps$map,p.cen[1],p.cen[2])[2:1]
+    }else
+    {
+        p.center = global.objects$maps$pf$click.points
+        xlim = global.objects$maps$pf$bbox.record[1:2]
+        ylim = global.objects$maps$pf$bbox.record[3:4]
+    }
+
     plot.lim = global.objects$maps$map.detail$xylim
     new.xlim = rep(p.center[1],2) + c(-1,1) * diff(xlim) * ratio/2
     new.ylim = rep(p.center[2],2) + c(-1,1) * diff(ylim) * ratio/2
     
+    if(resize == FALSE)
+        global.objects$maps$pf$bbox.record <<- c(new.xlim,new.ylim)
+    
+    
     SCALE = global.objects$maps$map.detail$scale
     size = global.objects$maps$map$size
     type = global.objects$maps$map.detail$type
-    getNewMap(lat.lim = new.ylim, lon.lim = new.xlim, SCALE = SCALE, type = type,zoom = Get.map.size(new.ylim,new.xlim)$zoom)
     global.objects$maps$map.detail$bbox <<- c(new.xlim,new.ylim)
+    global.objects$maps$pf$click.points <<- p.center
     
     cex = global.objects$maps$pf$cex
     col = global.objects$maps$pf$col
@@ -359,22 +370,21 @@ ClickOnZoom = function(ratio = 1/2)
     opacity = global.objects$maps$pf$opacity
     pch = global.objects$maps$pf$pch
     
+    getNewMap(lat.lim = new.ylim, lon.lim = new.xlim, 
+                SCALE = SCALE, type = type,
+                zoom = Get.map.size(new.ylim,new.xlim)$zoom)
 
     grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)    
     tmp = map.xylim(new.ylim,new.xlim,SCALE = SCALE)$window.lim
     xl =tmp[1:2]
     yl = tmp[3:4]
-    
     vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
     pushViewport(vp)
     
     y = global.objects$maps$map.detail$points[,1]
     x = global.objects$maps$map.detail$points[,2]
-    
     dd = cbind(y,x)
     point = latlon.xy(dd,map = global.objects$maps$map)
-
-
     grid.points(point[[1]], point[[2]], pch = pch,
         gp =
             gpar(col = col,
@@ -382,7 +392,23 @@ ClickOnZoom = function(ratio = 1/2)
                 lwd = lwd, alpha = alpha * opacity,
                 fill = fill),
                 name = "SCATTERPOINTS")
-    
     invisible(NULL)
     
+}
+
+
+##' Zoom in/out on the center point of the map
+##'
+##' @title Zoom in/out
+##' @param zoom a numeric value
+##' @return NULL
+##' @author Jason
+##' @examples
+##' data("nzquakes")
+##' iNZightPlot(Longitude,Latitude,data = nzquakes,colby = Depth, plottype = 'map',plot.features = list(maptype = 'roadmap'))
+##' rezoom(zoom = 1.5)
+##' @export
+rezoom = function(zoom = 1.5)
+{
+    ClickOnZoom(ratio = zoom,resize = TRUE)
 }

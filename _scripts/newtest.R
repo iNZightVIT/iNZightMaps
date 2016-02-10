@@ -9,22 +9,13 @@ library(iNZightMaps)
 
 
 ll = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
-l2 = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/USA.rds'
-data.1 = read.csv('C:/Users/yeamin/Desktop/Gapminder-2008.csv',skip = 1)
-data.2 = data.1[data.1$Country %in% c('Algeria','Angola','Burkina Faso','Cameroon',
-                                      'Chad','Egypt','Libya','Mauritania','Niger',
-                                      'Nigeria','Sudan'),]
+l2 = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/AuCity.rds'
 
-
-data.3 = data.1[data.1$Country %in% c('New Zealand','Australia','Japan'),]
-data.4 = data.1[data.1$Country %in% c('Albania', 'Andorra', 'Austria', 'Belarus', 'Belgium', 
-                                      'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 
-                                      'Cyprus','Czech Republic'),]
 dataIn = data.1
-obj <- iNZightShapeMap(ll, data.region = 'Country', data = dataIn)
+obj = iNZightShapeMap(ll, data.region = 'Country', data = dataIn)
 var = c('BodyMassIndex_F','ChildrenPerWoman','Populationtotal','Populationdensity')
 bar.obj = bar.coor(obj = obj,var = var, data = dataIn, xmax = 1, ymax = 5)
-plot(obj, variable = ~Imports,
+system.time(plot(obj, variable = ~Imports,
                  region = ~Country,
                  data = dataIn,
                  col.fun = 'hue',
@@ -32,11 +23,11 @@ plot(obj, variable = ~Imports,
                  transform = 'linear',
                  na.fill = '#C0C0C0',
                  col.offset = 0,
-                 full.map = F,
+                 full.map = T,
                  extend.ratio = 1,
-                 name = 'v')
-sClickOnZoom(ratio = 2)
-
+                 name = 'r'))
+sClickOnZoom(ratio = 0.2)
+srezoom(zoom = 10)
 
 obj <- iNZightShapeMap(ll, data.region = 'Country', data = data.4)
 iNZightPlot(CO2Emissions, Country, data = data.4, plottype = 'shapemap',#g1 = Leap.Year,

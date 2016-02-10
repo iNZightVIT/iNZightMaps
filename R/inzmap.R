@@ -95,9 +95,6 @@ plot.inzmap <- function(obj, gen) {
 
     if (get.newmap)
         {
-        print(123)
-            if (debug) message(xlim)
-            if (debug) message(ylim)
             getNewMap(lat.lim = ylim, lon.lim = xlim, SCALE = SCALE, type = type,zoom = Get.map.size(ylim,xlim)$zoom)
             ## updating
             global.objects$maps$map.detail$window <<- c(win.width,win.height)
@@ -118,6 +115,8 @@ plot.inzmap <- function(obj, gen) {
     global.objects$maps$pf$opacity <<- opacity  
     global.objects$maps$pf$pch <<- obj$pch    
     global.objects$maps$map.detail$num <<- 1
+    global.objects$maps$pf$click.points <<- c(mean(xlim),mean(ylim))
+    global.objects$maps$pf$bbox.record <<- c(xlim,ylim)
     ## drawing~~~~
     grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)
     
@@ -154,4 +153,5 @@ plot.inzmap <- function(obj, gen) {
     ## not sure why the xyscale will change 
     vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
     pushViewport(vp)
+    
 }

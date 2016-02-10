@@ -1,12 +1,10 @@
-obj.location = 'C:/Users/yeamin/Desktop/world/ne_110m_admin_0_scale_rank.shp'
+obj.location = 'C:/Users/yeamin/Downloads/Alpine-fault-traces/AFPOLY.shp'
 obj = readShapeSpatial(obj.location)
-shp = shape.extract(obj,7)
+shp = shape.extract(obj,3)
+shp$center.region
 class(shp) <- c("inzightshapemap", class(shp))
-
-center = getSpPPolygonsLabptSlots(obj)
-
 saveRDS(shp,
-    'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds')
+    'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/NZ.rds')
 
 
 location = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/shpdata/New Zealand.rds'

@@ -7,20 +7,28 @@ library(countrycode)
 library(stringr)
 library(iNZightMaps)
 
+data.1 = read.csv('C:/Users/yeamin/Desktop/Gapminder-2008.csv',skip = 1)
+data.2 = data.1[data.1$Country %in% c('Algeria','Angola','Burkina Faso','Cameroon',
+                                      'Chad','Egypt','Libya','Mauritania','Niger',
+                                      'Nigeria','Sudan'),]
 
+
+data.3 = data.1[data.1$Country %in% c('New Zealand','Australia','Japan'),]
+data.4 = data.1[data.1$Country %in% c('Albania', 'Andorra', 'Austria', 'Belarus', 'Belgium', 
+                                      'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 
+                                      'Cyprus','Czech Republic'),]
 
 
 
 
 data("nzquakes")
-data.2 = nzquakes
-
-system.time(iNZightPlot(Longitude,Latitude,data = data.2,colby = Depth,
+system.time(iNZightPlot(Longitude,Latitude,data = nzquakes,colby = Depth,
                         plottype = 'map',plot.features = list(maptype = 'roadmap')))
 ClickOnZoom()
+rezoom(zoom =1.5)
+
 
 
 data("nzquakes")
-iNZightPlot(Longitude,Latitude,data = nzquakes,colby = Depth,
+iNZightPlot(Longitude,Latitude,data = nzquakes,g1 = Depth,
                         plottype = 'map',plot.features = list(maptype = 'roadmap'))
-ClickOnZoom(ratio = 2)

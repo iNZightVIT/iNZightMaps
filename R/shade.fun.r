@@ -405,7 +405,6 @@ subByLim = function(obj,lim)
     col.index.out = col.index[e.index]
     col.out = col[each.sub.index]
     lim.out = lim.sub
-    
     obj = list(latlon = latlon.out,each = each.out,
              col.index = col.index.out, region = region.out,
              xylim = lim.out,col = col.out,center.region = obj$center.region)
@@ -470,7 +469,8 @@ win.ratio = function(xlim,ylim)
     
     w = convertWidth(current.viewport()$width, "mm", TRUE)
     h = convertHeight(current.viewport()$height, "mm", TRUE)
-    
+
+
     if(h/w < y/x)
     {
         x.tmp = y/(h/w)
@@ -620,7 +620,7 @@ bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,bar.col = c('#E0FFFF','#FA
 
 ##' Zoom in/out when click the plot
 ##'
-##' @title Zoom in/out
+##' @title Zoom in/out 
 ##' @param ratio a numeric value, define the ratio of zomm in or out
 ##' @return NULL
 ##' @details if ratio < 1 then zoom in, if ratio > 1 then zoom out, if ratio = 1 then shift the plot.
@@ -644,7 +644,7 @@ bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,bar.col = c('#E0FFFF','#FA
 ##'                  extend.ratio = 1,
 ##'                  name = 'v')
 ##' sClickOnZoom()
-sClickOnZoom = function(ratio = 1/2)
+sClickOnZoom = function(ratio = 1/2,resize = FALSE)
 {
     s.obj = inzshpobj$s.obj
     bar.obj = inzshpobj$bar.obj
@@ -657,29 +657,40 @@ sClickOnZoom = function(ratio = 1/2)
     sbbox = inzshpobj$bbox
     ylim = c(-10,10)
     
+
     ox.lim = inzshpobj$s.obj$xylim
-    
     center.x = s.obj$center.region$lon.x
     center.y = s.obj$center.region$lat.y
     region.name = s.obj$center.region$i.region
-        
+
     if(inzshpobj$num == 1)
         seekViewport('VP:MAPSHAPES')
     
-
     
-        
-    xylim = c(current.viewport()$xscale,current.viewport()$yscale)
-    p.npc = grid.locator()
-    p.center = as.numeric(p.npc)
+    if(resize == FALSE)
+    {
+        p.center = as.numeric(grid.locator())
+        xylim = c(current.viewport()$xscale,current.viewport()$yscale)
+    }
+    else
+    {
+        p.center = inzshpobj$click.point
+        xylim = win.ratio(inzshpobj$bbox.record[1:2],inzshpobj$bbox.record[3:4])
+    }    
+    
     if(p.center[1] < sbbox[1] & p.center[1] > sbbox[2])
         stop('invalid location')
         
     if(p.center[2] < sbbox[3] & p.center[2] > sbbox[4])
         stop('invalid location')
+        
     nx.lim = rep(p.center[1],2) + c(-1,1) * diff(xylim[1:2]) * ratio * 1/2
     ny.lim = rep(p.center[2],2) + c(-1,1) * diff(xylim[3:4]) * ratio * 1/2
-    
+
+    if(resize == FALSE)
+        inzshpobj$bbox.record <<- c(nx.lim,ny.lim)
+
+    s.obj = subByLim(s.obj,c(nx.lim,ny.lim))
     if(ratio > 1){
         if(diff(range(nx.lim)) > diff(sbbox[1:2]) & diff(range(ny.lim)) > diff(sbbox[3:4]))
         {
@@ -688,10 +699,9 @@ sClickOnZoom = function(ratio = 1/2)
             ny.lim = lim[3:4]
         }
     }
-    
+
     vp = viewport(0.5,0.5,1,1,name = 'VP:map',xscale = nx.lim,yscale = ny.lim)
     pushViewport(vp)
-
 
     grid.polygon(c(-1000,1000,1000,-1000,-1000),c(1000,1000,-1000,-1000,1000),
                     default.units = "native",gp = gpar(col = '#B29980', fill  = '#F5F5F5'))
@@ -704,7 +714,15 @@ sClickOnZoom = function(ratio = 1/2)
                     value = value ,name = name,
                     center.x = center.x,center.y = center.y ,y.shift = ylim)  
     grid.rect(gp = gpar(fill = 'transparent'))
+    
     inzshpobj$num <<- inzshpobj$num + 1
+    inzshpobj$click.point <<- p.center
+    
+}
+
+srezoom = function(zoom)
+{
+    sClickOnZoom(ratio = zoom,resize = TRUE)
 }
 
 
