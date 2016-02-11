@@ -689,8 +689,8 @@ sClickOnZoom = function(ratio = 1/4,resize = FALSE)
     vp = viewport(0.5,0.5,1,1,name = 'VP:map',xscale = n.lim[1:2],yscale = n.lim[3:4])
     pushViewport(vp)
 
-    grid.polygon(c(-1000,1000,1000,-1000,-1000),c(1000,1000,-1000,-1000,1000),
-                    default.units = "native",gp = gpar(col = '#B29980', fill  = '#F5F5F5'))
+    grid.rect(gp = gpar(fill = '#F5F5F5'))
+    
     grid.polygon(s.obj$latlon[,1], s.obj$latlon[,2], 
              default.units = "native", id.length = s.obj$each,
              gp = gpar(col = '#B29980', fill  = s.obj$col))

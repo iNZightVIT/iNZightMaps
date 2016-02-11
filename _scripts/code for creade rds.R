@@ -1,10 +1,10 @@
-obj.location = 'C:/Users/yeamin/Downloads/Alpine-fault-traces/AFPOLY.shp'
+obj.location = 'C:/Users/yeamin/Desktop/america/Special_submarine_features.shp'
 obj = readShapeSpatial(obj.location)
-shp = shape.extract(obj,3)
-shp$center.region
+shp = shape.extract(obj,1)
+  shp$center.region
 class(shp) <- c("inzightshapemap", class(shp))
 saveRDS(shp,
-    'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/NZ.rds')
+    'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/SouthAmerica.rds')
 
 
 location = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/shpdata/New Zealand.rds'

@@ -99,14 +99,9 @@ plot.inzshapemap = function(obj, gen) {
     vp = viewport(0.5,0.5,width = 1, height = 1,name = 'VP:MAPSHAPES', xscale = lim[1:2],yscale = lim[3:4])
     pushViewport(vp)
     ## backagound
-    grid.polygon(c(-360,360,360,-360,-360),
-                c(360,360,-360,-360,360),
-                    default.units = "native",
-                    gp = gpar
-                    (
-                        col = '#B29980', fill  = '#F5F5F5'
-                    )
-                )
+    grid.rect(
+                gp = gpar(fill = '#F5F5F5')
+            )
     ## shp polygon
     grid.polygon(latlon[,1], latlon[,2], 
                 default.units = "native", id.length = shade.each,
