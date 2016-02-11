@@ -54,7 +54,6 @@ plot.inzshapemap = function(obj, gen) {
     full.s.obj = obj$shape.object
     bbox = full.s.obj$bbox
     s.obj =full.s.obj
-    a <<- gen
     name = obj$name
     
     if(s.obj$full.map == FALSE)

@@ -31,7 +31,6 @@ iNZightShapeMap <- function(location,shp.region,data.region, data) {
         
         )
         ext.read = c('RDS','SHP')
-        
         if(!(toupper(ext) %in% ext.read))
         {
             stop('location must be either shp or rds')

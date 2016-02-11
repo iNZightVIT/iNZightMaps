@@ -76,9 +76,7 @@ plot.inzmap <- function(obj, gen) {
     
     debug <- if (is.null(opts$debug)) FALSE else opts$debug
     
-    b <<- obj
-    ##I used the xylim within transformed data, instead of from inz.plot.....
-    ## should be re-write in the future
+
 	xlim <- current.viewport()$xscale
 	ylim <- current.viewport()$yscale
     

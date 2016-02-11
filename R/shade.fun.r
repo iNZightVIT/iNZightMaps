@@ -312,10 +312,10 @@ lim.inside = function(x,lim)
 ##' innerLim(obj,d.region)
 innerLim = function(obj,d.region)
 {
-    latlon <<- obj$latlon
-    each <<- obj$each
-    col.index <<- obj$col.index
-    region <<- obj$region
+    latlon = obj$latlon
+    each = obj$each
+    col.index = obj$col.index
+    region = obj$region
     bbox = obj$bbox
     
     logic = region %in% d.region
@@ -398,7 +398,7 @@ subByLim = function(obj,lim)
     latlon.sub = latlon[id %in% each.index,]
     lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
     region.id = rep(rep(region,col.index),each)
-    with.sub <<- lim.inside(latlon,lim.sub)
+    with.sub = lim.inside(latlon,lim.sub)
     
     latlon.out = latlon[id %in% id[with.sub],]
     each.sub.index = unique(id[with.sub])
@@ -547,7 +547,8 @@ region.bbox = function(obj,name,vector = FALSE)
 ##' @return NULL
 ##' @author Jason
 ##' @export
-bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,bar.col = c('#E0FFFF','#FAFAD2','#FFA07A','#C71585'))
+bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,
+                    bar.col = c('#E0FFFF','#FAFAD2','#FFA07A','#C71585','#DC143C','#B8860B','#00BFFF','#ADFF2F'))
 {
     region = obj$region
     col.index = obj$col.index
@@ -566,52 +567,38 @@ bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,bar.col = c('#E0FFFF','#FA
     bar.weight.tot = as.numeric(plot.num) * xmax
     s.length.x = ifelse(l[1,] > bar.weight.tot,xmax,l[1,]/as.numeric(plot.num))/2
     
-    switch(plot.num,
-       '1' = 
-       {
-            xl = x - s.length.x
-            xr = x + s.length.x
-       },
-       '2' = {
-            xl.1 = x - 2 * s.length.x
-            xr.1 = x
-            xl.2 = x
-            xr.2 = x + 2 * s.length.x
-            xl = c(xl.1,xl.2)
-            xr = c(xr.1,xr.2)
-         
-       },
-       '3' = {   
-            xl.1 = x - 3 * s.length.x
-            xr.1 = x - 1 * s.length.x
-            xl.2 = x - 1 * s.length.x
-            xr.2 = x + 1 * s.length.x
-            xl.3 = x + 1 * s.length.x
-            xr.3 = x + 3 * s.length.x   
-            xl = c(xl.1,xl.2,xl.3)
-            xr = c(xr.1,xr.2,xr.3)                
-       },
-       '4' = {
-            xl.1 = x - 4 * s.length.x
-            xr.1 = x - 2 * s.length.x
-            xl.2 = x - 2 * s.length.x
-            xr.2 = x
-            xl.3 = x
-            xr.3 = x + 2 * s.length.x 
-            xl.4 = x + 2 * s.length.x  
-            xr.4 = x + 4 * s.length.x 
-            xl = c(xl.1,xl.2,xl.3,xl.4)
-            xr = c(xr.1,xr.2,xr.3,xr.4)  
-       }
-    )
+    n = as.numeric(plot.num)
+    if(n%%2 != 0)
+    {
+        if(n == 1)
+            a = 1
+        else
+            a = c(n,rep(seq(n-2,1)[c(TRUE,FALSE)],each = 2))
+    }else
+    {
+        if(n == 2) 
+            a = c(2,0)
+        else
+            a = c(n,rep(((n-2):2)[c(T,F)],each = 2),0)
+    }
+    out = c(-a,a[length(a):1])
+    xtot = rep(x,length(out)) + rep(s.length.x,length(out)) * rep(out,each = length(x))
 
+    xl.sub = (1:length(x)) + rep(seq(0,n*2 - 1,2),each = length(x)) * length(x)
+    xr.sub = (1:length(x)) + rep(seq(1,n*2,2),each = length(x)) * length(x)
+    
+    rep(seq(0,(n - 1)*2,2),each = length(x)) * length(x)
+    
+    xl = xtot[xl.sub]
+    xr = xtot[xr.sub]
+    
     data.sub = data[which(data$Country %in% s.region),]
     data.in = data.sub[var]
     data.in[is.na(data.in)] = 0
     data.t = apply(data.in,2,data.trans)
     data.matrix = as.matrix(data.t)
     dim(data.matrix) = c(dim(data.matrix)[1] * dim(data.matrix)[2],1)
-    yt =  rep(y,length(var)) + data.matrix * ymax
+    yt = rep(y,length(var)) + data.matrix * ymax
     yb = y
     sep.n = nrow(data.in)
     a = cbind(xl,xr,yb,yt)
@@ -761,7 +748,7 @@ drawing.features = function(bar.obj,latlon,cols,shade.each,region.name,value,nam
             ymax = 0.1 * diff(range(latlon[,2]))
             grid.polygon(bar.obj$d1[,1],bar.obj$d1[,2],
                         default.units = "native", id.length = bar.obj$each,
-                        gp = gpar(col = '#B29980', fill  = bar.obj$col))
+                        gp = gpar(col = NA, fill  = bar.obj$col))
             out.str = countrycode(region.name, "country.name", "iso3c")
             center.y = center.y - y.shift
         },

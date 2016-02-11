@@ -10,23 +10,26 @@ library(iNZightMaps)
 
 ll = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
 l2 = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/AuCity.rds'
+l3 = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/Africa.rds'
 
-dataIn = data.2
+
+dataIn = data.1
 obj = iNZightShapeMap(ll, data.region = 'Country', data = dataIn)
-var = c('BodyMassIndex_F','ChildrenPerWoman','Populationtotal','Populationdensity')
-bar.obj = bar.coor(obj = obj,var = var, data = dataIn, xmax = 1, ymax = 5)
+var = c('BodyMassIndex_F','Cellphones','CO2Emissions',
+        'EnergyUsePerPerson','Imports','Inflation','Populationtotal')
+bar.obj = bar.coor(obj = obj,var = var, data = dataIn, xmax = 1, ymax = 3)
 system.time(plot(obj, variable = ~Imports,
                  region = ~Country,
                  data = dataIn,
-                 col.fun = 'hue',
-                 col = 'orange',
+                 col.fun = 'e',
+                 col = '#E0FFFF',
                  transform = 'linear',
                  na.fill = '#C0C0C0',
                  col.offset = 0,
                  full.map = T,
                  extend.ratio = 1,
                  name = 'bar'))
-sClickOnZoom(ratio = 0.1)
+sClickOnZoom(ratio = 0.2)
 srezoom(zoom = 0.1)
 
 obj <- iNZightShapeMap(ll, data.region = 'Country', data = data.4)
@@ -37,12 +40,14 @@ iNZightPlot(CO2Emissions, Country, data = data.4, plottype = 'shapemap',#g1 = Le
               col.offset = 0, 
               col = "blue",
               col.method = 'hue',
-              na.fill = 'White',
-              full.map = T,
+              na.fill = '#DEB887',
+              full.map = F,
               extend.ratio = 1,
-              name = TRUE
+              name = 'b'
             )
 )
+sClickOnZoom(ratio = 0.9)
+srezoom(zoom = 0.9)
 
 
 obj <- iNZightShapeMap(ll, data.region = 'Country', data = data.3)

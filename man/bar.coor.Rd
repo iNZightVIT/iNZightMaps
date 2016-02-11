@@ -5,7 +5,7 @@
 \title{create bar object}
 \usage{
 bar.coor(obj, var, data, xmax = 0.85, ymax = 2, bar.col = c("#E0FFFF",
-  "#FAFAD2", "#FFA07A", "#C71585"))
+  "#FAFAD2", "#FFA07A", "#C71585", "#DC143C", "#B8860B", "#00BFFF", "#ADFF2F"))
 }
 \arguments{
 \item{obj}{a inzightshapemap object}
