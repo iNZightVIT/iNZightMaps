@@ -8,6 +8,7 @@
 ##' @export
 create.inz.shapemapplot = function(obj) {
     df = obj$df
+    
     opts = obj$opts
     pf = opts$plot.features
     x.trans = data.trans(df$x, transform = pf$transform)
@@ -20,9 +21,7 @@ create.inz.shapemapplot = function(obj) {
     obj$extend.ratio = pf$extend.ratio
     obj$xylim = c(range(obj$latlon[,1]),range(obj$latlon[,2]))
     obj$full.map = pf$full.map
-    
 
-    ## cols = col.fun(pf$shape.object$col.fun, pf$shape.object$col.args)
     v = colnames(df)
     ## missing data
     missing = is.na(df$x)
@@ -56,6 +55,8 @@ plot.inzshapemap = function(obj, gen) {
     s.obj =full.s.obj
     name = obj$name
     
+    
+    
     if(s.obj$full.map == FALSE)
     {
         ratio = s.obj$extend.ratio
@@ -64,7 +65,7 @@ plot.inzshapemap = function(obj, gen) {
                     re.scale(inner.lim[3:4],ratio))
         
         if(all(lim.in >= bbox))
-            win.ratio(lim.in[1:2],lim.in[3:4])
+            lim = win.ratio(lim.in[1:2],lim.in[3:4])
         else
         {
             lim.out = outerLim(s.obj,lim.in)
@@ -93,7 +94,8 @@ plot.inzshapemap = function(obj, gen) {
     center.x = s.obj$center.region$lon.x
     center.y = s.obj$center.region$lat.y
     region.name = s.obj$center.region$i.region
-    order = match(region.name,df$y)
+    sd = name.match(df$y,region.name)
+    order = order.match(sd[[1]],sd[[2]])
     value = round(df$x[order],2)
     
     vp = viewport(0.5,0.5,width = 1, height = 1,name = 'VP:MAPSHAPES', xscale = lim[1:2],yscale = lim[3:4])
@@ -113,7 +115,7 @@ plot.inzshapemap = function(obj, gen) {
                 latlon = latlon,cols = cols,
                 shade.each = shade.each,region.name = region.name,
                 value = value ,name = name,
-                center.x = center.x,center.y = center.y)
+                center.x = center.x,center.y = center.y,data.region = df$y)
     
     grid.rect(gp = gpar(fill = 'transparent'))
     ## global object
@@ -121,6 +123,7 @@ plot.inzshapemap = function(obj, gen) {
                         name = name,value = value,
                         region.name = region.name,num = 1,
                         bbox = bbox, bbox.record = bbox,
-                        click.point = c(mean(lim[1:2]),mean(lim[3:4]))
+                        click.point = c(mean(lim[1:2]),mean(lim[3:4])),
+                        data.region = df$y
                         )
 }

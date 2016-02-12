@@ -738,8 +738,13 @@ srezoom = function(zoom)
 ##' @return NULL
 ##' @author Jason
 ##' @export
-drawing.features = function(bar.obj,latlon,cols,shade.each,region.name,value,name,center.x,center.y,y.shift = 0.5)
+drawing.features = function(bar.obj,latlon,cols,
+                            shade.each,region.name,
+                            data.region,value,name,
+                            center.x,center.y,
+                            y.shift = 0.5)
 {
+    
     full.option = c('bar','r','v','b')
     switch(name,
         'bar' = 
