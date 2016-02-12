@@ -58,10 +58,10 @@ shape.extract = function(shp,column.index = 2)
 ##' x = runif(100,1,100)
 ##' data.trans(x)
 ##' @export
-data.trans = function(x,transform = 'linear')
+data.trans = function(x,transform = 'linear',data.range)
 {
     a = x
-    b = a - min(a,na.rm = TRUE)
+    b = a - min(data.range,na.rm = TRUE)
     transform.option = c('linear','log','sqrt','exp','power','normal')
     impossible.number = 0.091823021983
     bio.color = c('bi.polar')
@@ -85,7 +85,7 @@ data.trans = function(x,transform = 'linear')
             b = b - min(b,na.rm = TRUE)
         },
     )
-    percent.data = b/diff(range(b,na.rm = TRUE))
+    percent.data = b/diff(data.range)
     if(length(a) > 1)
         percent.data
         else

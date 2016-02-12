@@ -7,11 +7,12 @@
 ##' @param shp.region a character value, the column name in the region/country column of the shp file
 ##' @param data.region a character value, the column name in the region/country column of the data set
 ##' @param data the data set
+##' @param the variable that display in the map
 ##' @return an iNZight Shape Map Object
 ##' @author Tom Elliott
 ##' @import maptools tools
 ##' @export
-iNZightShapeMap <- function(location,shp.region,data.region, data) {
+iNZightShapeMap <- function(location,shp.region,data.region,data,variable) {
 
     if (location == "world") {
       out <- world
@@ -51,16 +52,22 @@ iNZightShapeMap <- function(location,shp.region,data.region, data) {
     de.rows = as.numeric(rows[length(rows)])
     data = data[-de.rows,]
     
-    sd = name.match(data[,data.region],out$region)
-
-    out$ordered = order.match(sd[[1]],sd[[2]])
 
     out$bbox = c(range(out$latlon[,1]),range(out$latlon[,2]))
     bar.obj <<- NULL
 
     out$data = data
     out$region.name = data.region
-
+	if (inherits(variable, "formula"))
+    {
+        mf <- substitute(model.frame(variable, data = data, na.action = NULL))
+        x <- eval.parent(mf)[[1]]
+    } else {
+        x <- data.frame(variable)[[1]]
+    }
+	data.range = range(x,na.rm = TRUE)
+	out$range = data.range
+	
     class(out) <- c("inzightshapemap", class(out))
     out
 }

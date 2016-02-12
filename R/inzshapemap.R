@@ -8,10 +8,12 @@
 ##' @export
 create.inz.shapemapplot = function(obj) {
     df = obj$df
-    
+	
     opts = obj$opts
     pf = opts$plot.features
-    x.trans = data.trans(df$x, transform = pf$transform)
+	sd = name.match(df[,2],pf$shape.obj$region)
+    pf$shape.object$ordered = order.match(sd[[1]],sd[[2]])
+    x.trans = data.trans(df$x, transform = pf$transform,data.range = pf$shape.obj$range)
     x.ord = x.trans[pf$shape.object$ordered]
     col = col.fun(data = x.ord, color.index = pf$shape.object$col.index, 
                 display = pf$col.method,col = pf$col,
