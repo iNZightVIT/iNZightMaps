@@ -10,3 +10,6 @@ dev
 .Rbuildignore
 *.pdf
 *~
+
+R/shapemapobject.R
+*.R

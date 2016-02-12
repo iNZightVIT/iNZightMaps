@@ -54,8 +54,8 @@ iNZightShapeMap <- function(location,shp.region,data.region, data) {
     sd = name.match(data[,data.region],out$region)
     out$ordered = order.match(sd[[1]],sd[[2]])
     out$bbox = c(range(out$latlon[,1]),range(out$latlon[,2]))
-
     bar.obj <<- NULL
+
     out$data = data
     out$region.name = data.region
 
