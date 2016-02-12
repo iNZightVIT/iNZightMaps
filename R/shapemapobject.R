@@ -3,7 +3,7 @@
 ##' details ....
 ##'
 ##' @title Create an iNZight Shape Map Object
-##' @param location the location
+##' @param location the shape file
 ##' @param shp.region a character value, the column name in the region/country column of the shp file
 ##' @param data.region a character value, the column name in the region/country column of the data set
 ##' @param data the data set
@@ -13,22 +13,23 @@
 ##' @export
 iNZightShapeMap <- function(location,shp.region,data.region, data) {
 
-    ## file checking
-    if(!missing(location))
-    {
+    if (location == "world") {
+      out <- world
+    } else if (!missing(location))
+    { ## file checking
         ext = file_ext(location)
         switch(ext,
-            rds = 
+            rds =
             {
                 out = readRDS(location)
             },
-            
-            shp = 
+
+            shp =
             {
                 shp = readShapeSpatial(location)
-                out = shape.extract(shp,shp.region)   
+                out = shape.extract(shp,shp.region)
             }
-        
+
         )
         ext.read = c('RDS','SHP')
         if(!(toupper(ext) %in% ext.read))
@@ -37,20 +38,22 @@ iNZightShapeMap <- function(location,shp.region,data.region, data) {
         }
     }
     ## order matching
-    if (!missing(data))
-    {
-        if(missing(data.region))
+    if (missing(data)) stop("Data is missing")
+
+    if (missing(data.region))
             stop('require the column name of region in data set')
-        
-        
-        sd = name.match(data[,data.region],out$region)
-        order = order.match(sd[[1]],sd[[2]])
-        print(length(order))
-        out$ordered = order
-        out$bbox = c(range(out$latlon[,1]),range(out$latlon[,2]))
-    }else
-        stop('data is missing!')
+
+    sd = name.match(data[,data.region],out$region)
+    order = order.match(sd[[1]],sd[[2]])
+    print(length(order))
+    out$ordered = order
+    out$bbox = c(range(out$latlon[,1]),range(out$latlon[,2]))
+
     bar.obj <<- NULL
+
+    out$data = data
+    out$region.name = data.region
+
     class(out) <- c("inzightshapemap", class(out))
     out
 }
@@ -72,15 +75,17 @@ iNZightShapeMap <- function(location,shp.region,data.region, data) {
 ##' @author Tom Elliott
 ##' @import maptools
 ##' @export
-plot.inzightshapemap <- function(x, variable, region, data,
+plot.inzightshapemap <- function(x, variable,
                                  col.fun = "hue", transform = "linear",
                                  col.offset = 0.2, col = "red",na.fill = '#F4A460',
                                  full.map = TRUE,extend.ratio = 1,name = FALSE,
                                  ...) {
 
   ##  mc <- match.call(expand.dots = TRUE)
-       
+
     call <- list()
+
+    data <- x$data
 
     if (inherits(variable, "formula"))
     {
@@ -90,12 +95,12 @@ plot.inzightshapemap <- function(x, variable, region, data,
         call$x <- data.frame(variable)[[1]]
     }
 
-    if (inherits(region, "formula")) {
-        mf <- substitute(model.frame(region, data = data, na.action = NULL))
-        call$y <- eval.parent(mf)[[1]]
-    } else {
-        call$y <- data.frame(region)[[1]]
-    }
+    #if (inherits(region, "formula")) {
+    #    mf <- substitute(model.frame(region, data = data, na.action = NULL))
+    #    call$y <- eval.parent(mf)[[1]]
+    #} else {
+    call$y <- data[, x$region.name]  #data.frame(region)[[1]]
+    #}
     call$xlab <- ""
     call$ylab <- ""
 
@@ -107,8 +112,8 @@ plot.inzightshapemap <- function(x, variable, region, data,
     call$plottype <- "shapemap"
     call$plot.features <- list(
         shape.object = x,
-        transform = transform, 
-        col.method = col.fun, 
+        transform = transform,
+        col.method = col.fun,
         col.offset = col.offset,
         col = col,
         na.fill = na.fill,
@@ -116,12 +121,10 @@ plot.inzightshapemap <- function(x, variable, region, data,
         extend.ratio = extend.ratio,
         name = name
         )
-    
+
     #call <- c(call, list(...))
 
     do.call("iNZightPlot", call)
 
     invisible(call)
 }
-
-

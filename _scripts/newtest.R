@@ -37,8 +37,8 @@ obj <- iNZightShapeMap(ll, data.region = 'Country', data = data.4)
 iNZightPlot(CO2Emissions, Country, data = data.4, plottype = 'shapemap',#g1 = Leap.Year,
             plot.features =list(
               shape.object = obj,
-              transform = "power", 
-              col.offset = 0, 
+              transform = "power",
+              col.offset = 0,
               col = "blue",
               col.method = 'hue',
               na.fill = '#DEB887',
@@ -55,8 +55,8 @@ obj <- iNZightShapeMap(ll, data.region = 'Country', data = data.3)
 iNZightPlot(ChildrenPerWoman, Country, data = data.3, plottype = 'shapemap',g1 = Leap.Year,
             plot.features =list(
               shape.object = obj,
-              transform = "linear", 
-              col.offset =0.2, 
+              transform = "linear",
+              col.offset =0.2,
               col = "blue",
               col.method = 'rainbow',
               na.fill = 'White',
@@ -84,12 +84,11 @@ plot(obj, variable = ~population,g1 = year,
 iNZightPlot(population, area, data = data.1, plottype = 'shapemap',g1 = year,
             plot.features =list(
               shape.object = obj,
-              transform = "linear", 
-              col.offset =0.2, 
+              transform = "linear",
+              col.offset =0.2,
               col = "blue",
               col.method = 'r',
               na.fill = 'White',
               full.map = F,
               extend.ratio = 3)
 )
-

@@ -41,7 +41,7 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
 
     data$.latitude <- lat[[1]]
     data$.longitude <- lon[[1]]
-    
+
     class(data) <- c("inzightmap", class(data))
     data
 }
@@ -61,21 +61,21 @@ plot.inzightmap <- function(x,
                                   "mapmaker-roadmap", "mapmaker-hybrid"),
                             ...) {
     mc <- match.call()
-    
-    mc$data <- mc$x 
+
+    mc$data <- mc$x
     mc$x <- expression(.longitude)
     mc$y <- expression(.latitude)
     mc$plottype <- "map"
     mc$largesample <- FALSE
     mc$plot.features <- list(maptype = match.arg(type))
-    
+
     if (!missing(opacity)) {
         if (inherits(opacity, "formula")) {
             opacity <- as.character(opacity)[2]
         }
         mc$plot.features$opacity <- opacity
         mc$extra.vars <- opacity
-        
+
     }
 
     ## set the plot labels:
@@ -90,4 +90,3 @@ plot.inzightmap <- function(x,
 
     eval(mc)
 }
-

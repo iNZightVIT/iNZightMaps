@@ -13,9 +13,9 @@
 ##' getNewMap(r.bbox[1:2],r.bbox[3:4],2,zoom = 3)
 ##' latlon.xy(r.latlon,global.objects$maps$map)
 ##' @export
-latlon.xy = 
+latlon.xy =
 function(latlon,map)
-{	
+{
 	#data[,2] = lon.rescale(data[,2])
     zoom = map$zoom
     LatLon2XY.centered(map, latlon[,1], latlon[,2], zoom = zoom)
@@ -29,7 +29,7 @@ function(latlon,map)
 ##' @title Get an new map object
 ##' @param lat.lim the range of longitude
 ##' @param lon.lim the range of latitude
-##' @param SCALE variable from \link{GetMap}, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map 
+##' @param SCALE variable from \link{GetMap}, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map
 ##' @param variable from \link{GetMap}, type defines the type of map to construct. There are several possible maptype values, including satellite, terrain, hybrid, and mobile.
 ##' @param zoom variable from \link{GetMap}, Google maps zoom level.
 ##' @return a map object that assign as 'golbal.object'
@@ -38,9 +38,9 @@ function(latlon,map)
 ##' golbal.objects = list()
 ##' r.bbox = runif(4,-90,90)
 ##' getNewMap(r.bbox[1:2],r.bbox[3:4],2,zoom = 3)
-getNewMap <- function(lat.lim, lon.lim, SCALE, 
+getNewMap <- function(lat.lim, lon.lim, SCALE,
                         type = c("roadmap", "mobile", "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid")[1],zoom)
-{	
+{
 	lat.mean = mean(lat.lim)
 	lon.mean = mean(lon.lim)
 	center = c(lat.mean,lon.mean)
@@ -78,16 +78,16 @@ lon.rescale = function(lon)
 
 
 ####return TRUE if we something changed or firt plotting
-####FALSE if nothing is changed 
+####FALSE if nothing is changed
 ##' Do we need a new map or not
 ##'
 ##' A function for checking wheather we need to download a new map from google or not, it checks the input with the global inzight objects, if something if not matched, then return TRUE, otherwise FALSE.
 ##' @title Need New Map
 ##' @param bbox a numeric vector of length 4, the range of the pervious latitude and longitude
 ##' @param window a numeric vector of length 2, the size of the pervious window
-##' @param sized a numeric vector of length 2, the size of the pervious map 
-##' @param SCALE a numeric vector of length 1, the scale of the pervious map 
-##' @param type a character vector of length 1, type the type of the pervious map 
+##' @param sized a numeric vector of length 2, the size of the pervious map
+##' @param SCALE a numeric vector of length 1, the scale of the pervious map
+##' @param type a character vector of length 1, type the type of the pervious map
 ##' @return Logical value TRUE/FALSE TRUE = something are not matched, FALSE = the pervious map is ok for re-use.
 ##' @author Jason Wen
 ##' @examples
@@ -104,11 +104,10 @@ needNewMap <- function(bbox,window,size,SCALE,type)
     else
     {
         ##check if any null
-        if( is.null(global.objects$maps$map.detail$bbox) ||  is.null(global.objects$maps$map.detail$size) || 
-        is.null(global.objects$maps$map.detail$scale) || is.null(global.objects$maps$map.detail$type) || 
+        if( is.null(global.objects$maps$map.detail$bbox) ||  is.null(global.objects$maps$map.detail$size) ||
+        is.null(global.objects$maps$map.detail$scale) || is.null(global.objects$maps$map.detail$type) ||
         is.null(global.objects$maps$map.detail$window))
         {
-            print('something is null~~~~')	
             need = TRUE
         }else
         {
@@ -118,7 +117,7 @@ needNewMap <- function(bbox,window,size,SCALE,type)
             if(any(abs(a - b) != 0) )
             {
             global.objects$maps$map.detail$bbox = bbox
-            need[1] = TRUE					
+            need[1] = TRUE
             }else
             {
                 need[1] = FALSE
@@ -158,7 +157,7 @@ needNewMap <- function(bbox,window,size,SCALE,type)
             }
 			else
             {
-                need[5] = FALSE	
+                need[5] = FALSE
             }
             if(global.objects$maps$map.detail$num > 1)
             {
@@ -169,7 +168,7 @@ needNewMap <- function(bbox,window,size,SCALE,type)
                 need[6] = FALSE
             }
 
-			
+
         }
         any(need)
     }
@@ -177,17 +176,17 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 
 
 ###return the size of map that we request the map from google
-###get the range of latitude/longitude, then transform it into resolution unit, 
+###get the range of latitude/longitude, then transform it into resolution unit,
 ###then make it into the same ratio as the window's
 ###also make sure the size lie on the interval of [0,640]
 
 ##' compute the size and the zoom level that needs for request a new map.
 ##'
-##' since the size of the map should not greater than 640, the size and the zoom needs to be transform before pass to the getNewMap function. 
+##' since the size of the map should not greater than 640, the size and the zoom needs to be transform before pass to the getNewMap function.
 ##' @title Get the size of the map in pixels
 ##' @param latR a numeric vector of length 2, the range of Latitude
 ##' @param lonR a numeric vector of length 2, the range of Longitude
-##' @param SCALE variable from GetMap, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map 
+##' @param SCALE variable from GetMap, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map
 ##' @return a list that contain the size of the map(in pixels), and the zoom level
 ##' @author Jason Wen
 ##' @examples
@@ -202,7 +201,7 @@ Get.map.size = function(latR,lonR,SCALE)
         SCALE = global.objects$maps$map.detail$scale
     }
     win.size= c(
-        convertWidth(current.viewport()$width, "mm", TRUE), 
+        convertWidth(current.viewport()$width, "mm", TRUE),
         convertHeight(current.viewport()$height, "mm", TRUE)
     )
 
@@ -214,16 +213,16 @@ Get.map.size = function(latR,lonR,SCALE)
     {
         size.1 = round(c(640 * win.size[1] / win.size[2], 640))
     }
-    
+
 	lat.range = range(latR)
 	lon.range = range(lonR)
 	if(lon.range[1] < 0 & lon.range[2] > 0)
 	{
-		lon.range[1] = lon.range[1] + 360 
+		lon.range[1] = lon.range[1] + 360
 	}
 	zoom <- min(MaxZoom(lat.range, lon.range, size.1))
 
-	
+
     ll <- LatLon2XY(latR[1], lonR[1], zoom)
     ur <- LatLon2XY(latR[2], lonR[2], zoom)
     cr <- LatLon2XY(mean(latR), mean(lonR), zoom)
@@ -238,7 +237,7 @@ Get.map.size = function(latR,lonR,SCALE)
     if(win.size[1] > win.size[2])
     {
         size[1] = round(size[2]*(win.size[1]/win.size[2]),0)
-        size[2] = size[2]	
+        size[2] = size[2]
     }else
     {
         size[2] = round(size[1]*(win.size[2]/win.size[1]),0)
@@ -255,7 +254,7 @@ Get.map.size = function(latR,lonR,SCALE)
 	{
 		size.final = round(c(640 * win.size[1]/win.size[2],640))
 	}
-	
+
     ZoomSize = list(zoom = zoom, size = size.final)
     ZoomSize
     ###hence the we will get the map with this zoom and size
@@ -269,7 +268,7 @@ Get.map.size = function(latR,lonR,SCALE)
 ##' @param lonR a numeric vector of length 2
 ##' @param SCALE a numeric value
 ##' @title get the limit of x-axis and y-axis
-##' @return return a numeric of length 4 that contain the limit of x-axis and y-axis 
+##' @return return a numeric of length 4 that contain the limit of x-axis and y-axis
 ##' @author Jason Wen
 ##' @examples
 ##' r.center = runif(4,min = 0,max = 90)
@@ -277,7 +276,7 @@ Get.map.size = function(latR,lonR,SCALE)
 ##' SCALE = 2
 ##' map.xylim(r.center[1:2],r.center[3:4],SCALE)
 map.xylim = function(latR,lonR,SCALE)
-{	
+{
     ZoomSize = Get.map.size(latR = latR,lonR = lonR,SCALE = SCALE)
     scale = global.objects$maps$map$SCALE * 2
     size = global.objects$maps$map$size
@@ -304,7 +303,7 @@ map.xylim = function(latR,lonR,SCALE)
 ##' is.google.map(lat,lon)
 is.google.map = function(lat,lon)
 {
-    
+
     TRUE
     if(any(lat > 90)  || any(lat < -90))
     {
@@ -316,7 +315,7 @@ is.google.map = function(lat,lon)
         warning('longitudes are not in the range of [-180,180]')
         FALSE
     }
-    
+
 }
 
 ##' Zoom in/out when click the plot
@@ -336,7 +335,7 @@ ClickOnZoom = function(ratio = 1/2,resize = FALSE,p.center = global.objects$maps
     global.objects$maps$map.detail$num <<- global.objects$maps$map.detail$num + 1
     xlim = global.objects$maps$map.detail$bbox[1:2]
     ylim = global.objects$maps$map.detail$bbox[3:4]
-    
+
     if(resize == FALSE)
     {
         p.cen = as.numeric(grid.locator())
@@ -351,37 +350,37 @@ ClickOnZoom = function(ratio = 1/2,resize = FALSE,p.center = global.objects$maps
     plot.lim = global.objects$maps$map.detail$xylim
     new.xlim = rep(p.center[1],2) + c(-1,1) * diff(xlim) * ratio
     new.ylim = rep(p.center[2],2) + c(-1,1) * diff(ylim) * ratio
-    
+
     if(resize == FALSE)
         global.objects$maps$pf$bbox.record <<- c(new.xlim,new.ylim)
-    
-    
+
+
 
     global.objects$maps$map.detail$bbox <<- c(new.xlim,new.ylim)
     global.objects$maps$pf$click.points <<- p.center
-    
+
     SCALE = global.objects$maps$map.detail$scale
     size = global.objects$maps$map$size
     type = global.objects$maps$map.detail$type
     cex = global.objects$maps$pf$cex
     col = global.objects$maps$pf$col
-    lwd = global.objects$maps$pf$lwd 
+    lwd = global.objects$maps$pf$lwd
     alpha = global.objects$maps$pf$alpha
     fill = global.objects$maps$pf$fill
     opacity = global.objects$maps$pf$opacity
     pch = global.objects$maps$pf$pch
-    
-    getNewMap(lat.lim = new.ylim, lon.lim = new.xlim, 
+
+    getNewMap(lat.lim = new.ylim, lon.lim = new.xlim,
                 SCALE = SCALE, type = type,
                 zoom = Get.map.size(new.ylim,new.xlim)$zoom)
 
-    grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)    
+    grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)
     tmp = map.xylim(new.ylim,new.xlim,SCALE = SCALE)$window.lim
     xl =tmp[1:2]
     yl = tmp[3:4]
     vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
     pushViewport(vp)
-    
+
     y = global.objects$maps$map.detail$points[,1]
     x = global.objects$maps$map.detail$points[,2]
     dd = cbind(y,x)
@@ -394,7 +393,7 @@ ClickOnZoom = function(ratio = 1/2,resize = FALSE,p.center = global.objects$maps
                 fill = fill),
                 name = "SCATTERPOINTS")
     invisible(NULL)
-    
+
 }
 
 
