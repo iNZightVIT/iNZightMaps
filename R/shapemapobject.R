@@ -65,8 +65,13 @@ iNZightShapeMap <- function(location,shp.region,data.region,data,variable) {
     } else {
         x <- data.frame(variable)[[1]]
     }
+	
 	data.range = range(x,na.rm = TRUE)
-	out$range = data.range
+	out$maths$range = data.range
+	out$maths$mean = mean(x,na.rm = TRUE)
+	out$maths$sd = sd(x,na.rm = TRUE)
+	out$maths$prob = max(dnorm((x-out$maths$mean)/out$maths$sd,0,1),na.rm = TRUE)
+	print(out$maths$prob)
 	
     class(out) <- c("inzightshapemap", class(out))
     out

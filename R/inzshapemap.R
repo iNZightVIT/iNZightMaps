@@ -13,7 +13,11 @@ create.inz.shapemapplot = function(obj) {
     pf = opts$plot.features
 	sd = name.match(df[,2],pf$shape.obj$region)
     pf$shape.object$ordered = order.match(sd[[1]],sd[[2]])
-    x.trans = data.trans(df$x, transform = pf$transform,data.range = pf$shape.obj$range)
+    x.trans = data.trans(df$x, transform = pf$transform,
+						data.range = pf$shape.obj$maths$range,
+						mean = pf$shape.obj$maths$mean, 
+						sd = pf$shape.obj$maths$sd,
+						max.prob = pf$shape.obj$maths$prob)
     x.ord = x.trans[pf$shape.object$ordered]
     col = col.fun(data = x.ord, color.index = pf$shape.object$col.index, 
                 display = pf$col.method,col = pf$col,

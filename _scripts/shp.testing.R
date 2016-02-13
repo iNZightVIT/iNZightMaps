@@ -1,5 +1,5 @@
 dataIn = data.1
-obj = iNZightShapeMap(l1, data.region = 'Country', data = dataIn,CO2Emissions)
+obj = iNZightShapeMap(l1, data.region = 'Country', data = dataIn,variable = ~ChildrenPerWoman)
 var = c('BodyMassIndex_F','Cellphones','CO2Emissions',
         'EnergyUsePerPerson','Imports','Inflation','Populationtotal')
 bar.obj = bar.coor(obj = obj,var = var, data = dataIn, xmax = 1, ymax = 3)
@@ -19,12 +19,12 @@ obj = iNZightShapeMap(l1, data.region = 'Country', data = dataIn,variable = ~Chi
 iNZightPlot(ChildrenPerWoman, Country, data = dataIn, plottype = 'shapemap',g1 = Region,
             plot.features =list(
               shape.object = obj,
-              transform = "linear", 
+              transform = "normal", 
               col.offset = 0, 
               col = "blue",
               col.method = 'hue',
-              na.fill = 'White',
-              full.map = T,
+              na.fill = 'gray',
+              full.map = F,
               extend.ratio = 1,
               name = 'v'
             )

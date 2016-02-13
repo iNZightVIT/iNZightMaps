@@ -58,8 +58,9 @@ shape.extract = function(shp,column.index = 2)
 ##' x = runif(100,1,100)
 ##' data.trans(x)
 ##' @export
-data.trans = function(x,transform = 'linear',data.range)
+data.trans = function(x,transform = 'linear',data.range,mean,sd,max.prob)
 {
+	
     a = x
     b = a - min(data.range,na.rm = TRUE)
     transform.option = c('linear','log','sqrt','exp','power','normal')
@@ -73,19 +74,42 @@ data.trans = function(x,transform = 'linear',data.range)
     
     
     switch(transform,
-        linear = {b = b},
-        log = {b = log(b + 1)},
-        sqrt = {b = sqrt(b)},
-        exp = {b = exp(b)},
-        power = {b = b^2},
+        linear = 
+		{
+			b = b
+			data.length = diff(data.range)
+		},
+        log = 
+		{
+			b = log(b + 1)
+			data.length = log(max(data.range))
+		},
+        sqrt = 
+		{
+			b = sqrt(b)
+			data.length = sqrt(max(data.range))
+		},
+        exp = 
+		{
+			b = exp(b)
+			data.length = exp(max(data.range))
+			
+			},
+        power = 
+		{
+			b = b^2
+			data.length = max(data.range)^2
+		},
         normal = 
         {
-            x = (a - mean(a,na.rm = TRUE))/sd(a,na.rm = TRUE)
+            x = (a - mean)/sd
+			print(x)
             b = dnorm(x,0,1)
-            b = b - min(b,na.rm = TRUE)
+			data.length = max.prob
         },
     )
-    percent.data = b/diff(data.range)
+	
+    percent.data = b/data.length
     if(length(a) > 1)
         percent.data
         else
