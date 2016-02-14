@@ -12,7 +12,7 @@
 ##' @author Tom Elliott
 ##' @import maptools tools
 ##' @export
-iNZightShapeMap <- function(location,shp.region,data.region,data,variable) {
+iNZightShapeMap <- function(location,shp.region,data.region,data) {
 
     if (location == "world") {
       out <- world
@@ -58,20 +58,7 @@ iNZightShapeMap <- function(location,shp.region,data.region,data,variable) {
 
     out$data = data
     out$region.name = data.region
-	if (inherits(variable, "formula"))
-    {
-        mf <- substitute(model.frame(variable, data = data, na.action = NULL))
-        x <- eval.parent(mf)[[1]]
-    } else {
-        x <- data.frame(variable)[[1]]
-    }
-	
-	data.range = range(x,na.rm = TRUE)
-	out$maths$range = data.range
-	out$maths$mean = mean(x,na.rm = TRUE)
-	out$maths$sd = sd(x,na.rm = TRUE)
-	out$maths$prob = max(dnorm((x-out$maths$mean)/out$maths$sd,0,1),na.rm = TRUE)
-	print(out$maths$prob)
+    
 	
     class(out) <- c("inzightshapemap", class(out))
     out
@@ -111,7 +98,14 @@ plot.inzightshapemap <- function(x, variable,
     } else {
         call$x <- data.frame(variable)[[1]]
     }
-
+    
+    ## variable range ...
+    data.range = range(call$x,na.rm = TRUE)
+    x$maths$range = data.range
+    x$maths$mean = mean(call$x,na.rm = TRUE)
+    x$maths$sd = sd(call$x,na.rm = TRUE)
+    x$maths$prob = max(dnorm((call$x-x$maths$mean)/x$maths$sd,0,1),na.rm = TRUE)
+    
     call$y <- data[, x$region.name]
 
     call$xlab <- ""
@@ -119,7 +113,7 @@ plot.inzightshapemap <- function(x, variable,
 
     ## set variable names:
     call$varnames <- list(x = as.character(variable)[2],
-                          y = as.character(variable)[2])
+                          y = x$region.name)
 
     call$data <- data
     call$plottype <- "shapemap"
@@ -137,12 +131,31 @@ plot.inzightshapemap <- function(x, variable,
 
     dots <- list(...)
     if ("g1" %in% names(dots)) {
-        call$varnames$g1 <- dots$g1
-        dots$g1 <- parse(text = dots$g1)
+        
+        if (is.character(dots$g1)) {
+            call$varnames$g1 <- dots$g1
+            dots$g1 <- data[[dots$g1]]
+        } else {
+            #warning("Please specify g1 as a character name.")
+            #dots$g2 <- NULL
+        }
+        
     }
     if ("g2" %in% names(dots)) {
-        call$varnames$g2 <- dots$g2
-        dots$g2 <- parse(text = dots$g1)
+        
+        if (is.character(dots$g2)) {
+            call$varnames$g2 <- dots$g2
+            dots$g2 <- data[[dots$g2]]
+        } else {
+            #warning("Please specify g2 as a character name.")
+            #dots$g2 <- NULL
+        }
+        
+    }
+    if ("varnames" %in% names(dots)) {
+        ## Use the user-specified names over autogen ones
+        call$varnames <- modifyList(call$varnames, dots$varnames)
+        dots$varnames <- NULL
     }
 
     call <- c(call, dots)
