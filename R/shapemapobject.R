@@ -100,8 +100,6 @@ plot.inzightshapemap <- function(x, variable,
                                  full.map = TRUE,extend.ratio = 1,name = FALSE,
                                  ...) {
 
-  ##  mc <- match.call(expand.dots = TRUE)
-
     call <- list()
 
     data <- x$data
@@ -114,12 +112,8 @@ plot.inzightshapemap <- function(x, variable,
         call$x <- data.frame(variable)[[1]]
     }
 
-    #if (inherits(region, "formula")) {
-    #    mf <- substitute(model.frame(region, data = data, na.action = NULL))
-    #    call$y <- eval.parent(mf)[[1]]
-    #} else {
-    call$y <- data[, x$region.name]  #data.frame(region)[[1]]
-    #}
+    call$y <- data[, x$region.name]
+
     call$xlab <- ""
     call$ylab <- ""
 
@@ -141,7 +135,17 @@ plot.inzightshapemap <- function(x, variable,
         name = name
         )
 
-    #call <- c(call, list(...))
+    dots <- list(...)
+    if ("g1" %in% names(dots)) {
+        call$varnames$g1 <- dots$g1
+        dots$g1 <- parse(text = dots$g1)
+    }
+    if ("g2" %in% names(dots)) {
+        call$varnames$g2 <- dots$g2
+        dots$g2 <- parse(text = dots$g1)
+    }
+
+    call <- c(call, dots)
 
     do.call("iNZightPlot", call)
 
