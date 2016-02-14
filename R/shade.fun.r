@@ -684,10 +684,16 @@ sClickOnZoom = function(ratio = 1/4,resize = FALSE)
 
     if(inzshpobj$num == 1)
         seekViewport('VP:MAPSHAPES')
+
     
     
     if(resize == FALSE)
     {
+        pushViewport(viewport(0.5, unit(1, "char"), 1, unit(2, "char")))
+        grid::grid.rect(gp = gpar(fill = "red"))
+        grid::grid.text("Click a point on the map to zoom", x = 0.5, y = 0.5, default.units = "native",
+                        gp = gpar(col = "white"))
+        popViewport()
         p.center = as.numeric(grid.locator())
         xylim = c(current.viewport()$xscale,current.viewport()$yscale)
     }
