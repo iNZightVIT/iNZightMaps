@@ -75,7 +75,11 @@ plot.inzightmap <- function(x,
         }
         mc$plot.features$opacity <- opacity
         mc$extra.vars <- opacity
-
+        attr(mc$extra.vars, "fun") <- structure(list(
+            function(x, r = 0.2) {
+                ## value between min and max -> 0 and 1 -> 0.1 and 1 (* overall opacity)
+                (x - min(x, na.rm = TRUE)) / diff(range(x, na.rm = TRUE)) * (1 - r) + r
+            }), .Names = opacity)
     }
 
     ## set the plot labels:

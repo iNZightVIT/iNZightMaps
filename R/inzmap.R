@@ -32,12 +32,8 @@ create.inz.mapplot <- function(obj) {
     
     ## sort out opacity
     if (!is.null(features$opacity)) {
-        opacity.var <- obj$df[[features$opacity]]
-        ratio <- 0.7
-        abs.opacity.var <- abs(opacity.var)
-        opacity.var.transformed <- abs.opacity.var / max(abs.opacity.var) * ratio + (1 - ratio)
-        out$opacity <- opacity.var.transformed
-        
+        ## Move the computation to: function_def - plot.inzightmap; function_eval - iNZightPlots
+        out$opacity <- obj$df[[features$opacity]]
         if (any(out$opacity < 1 ))
             out$pch = rep(19, length(out$pch))
     }
