@@ -4,7 +4,7 @@
 \alias{data.trans}
 \title{data transformation}
 \usage{
-data.trans(x, transform = "linear")
+data.trans(x, transform = "linear", data.range, mean, sd, max.prob)
 }
 \arguments{
 \item{x}{a numeric value or vector.}
