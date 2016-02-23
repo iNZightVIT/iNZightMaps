@@ -1,19 +1,19 @@
 dataIn = data.1
-obj = iNZightShapeMap(l1, data.region = 'Country', data = dataIn,variable = ~ChildrenPerWoman)
+obj = iNZightShapeMap(l1, data.region = 'Country', data = dataIn)
 var = c('BodyMassIndex_F','Cellphones','CO2Emissions',
         'EnergyUsePerPerson','Imports','Inflation','Populationtotal')
-bar.obj = bar.coor(obj = obj,var = var, data = dataIn, xmax = 1, ymax = 3)
-system.time(plot(obj, variable = ~ChildrenPerWoman,
+#bar.obj = bar.coor(obj = obj,var = var, data = dataIn, xmax = 1, ymax = 3)
+system.time(plot(obj, variable = ~GDPpercapita,zoom = 0.5,#zoom.center = c(0,0),
                  col.fun = 'hue',
                  col = 'red',
                  transform = 'linear',
                  na.fill = '#C0C0C0',
                  col.offset = 0,
-                 full.map = T,
+                 full.map = F,
                  extend.ratio = 1,
                  name = 'b'))
-sClickOnZoom(ratio = 0.1)
-srezoom(zoom = 0.8)
+sClickOnZoom(ratio = 1)
+srezoom(zoom = 2)
 
 obj = iNZightShapeMap(l1, data.region = 'Country', data = dataIn,variable = ~ChildrenPerWoman)
 iNZightPlot(ChildrenPerWoman, Country, data = dataIn, plottype = 'shapemap',g1 = Region,

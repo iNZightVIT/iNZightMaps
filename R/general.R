@@ -330,7 +330,7 @@ is.google.map = function(lat,lon)
 ##' iNZightPlot(Longitude,Latitude,data = nzquakes,colby = Depth, plottype = 'map',plot.features = list(maptype = 'roadmap'))
 ##' ClickOnZoom(ratio = 1)
 ##' @export
-ClickOnZoom = function(ratio = 1/2,resize = FALSE,p.center = global.objects$maps$pf$click.points)
+ClickOnZoom = function(ratio = 1,resize = FALSE,p.center = global.objects$maps$pf$click.points)
 {
     global.objects$maps$map.detail$num <<- global.objects$maps$map.detail$num + 1
     xlim = global.objects$maps$map.detail$bbox[1:2]
@@ -357,8 +357,8 @@ ClickOnZoom = function(ratio = 1/2,resize = FALSE,p.center = global.objects$maps
     }
 
     plot.lim = global.objects$maps$map.detail$xylim
-    new.xlim = rep(p.center[1],2) + c(-1,1) * diff(xlim) * ratio
-    new.ylim = rep(p.center[2],2) + c(-1,1) * diff(ylim) * ratio
+    new.xlim = rep(p.center[1],2) + c(-1,1) * diff(xlim) * ratio/2
+    new.ylim = rep(p.center[2],2) + c(-1,1) * diff(ylim) * ratio/2
 
     if(resize == FALSE)
         global.objects$maps$pf$bbox.record <<- c(new.xlim,new.ylim)
@@ -415,7 +415,7 @@ ClickOnZoom = function(ratio = 1/2,resize = FALSE,p.center = global.objects$maps
 ##' @export
 rezoom = function(zoom)
 {
-    if(zoom > 0.9 | zoom < 0.1)
+    if(zoom > 2| zoom < 0.1)
         stop('invalid zoom')
     ClickOnZoom(ratio = zoom,resize = TRUE)
 }

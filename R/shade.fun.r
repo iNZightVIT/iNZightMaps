@@ -663,7 +663,7 @@ bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,
 ##'                  extend.ratio = 1,
 ##'                  name = 'v')
 ##' sClickOnZoom()
-sClickOnZoom = function(ratio = 1/4,resize = FALSE)
+sClickOnZoom = function(ratio = 1/2,resize = FALSE)
 {
     s.obj = inzshpobj$s.obj
     bar.obj = inzshpobj$bar.obj
@@ -703,15 +703,15 @@ sClickOnZoom = function(ratio = 1/4,resize = FALSE)
         xylim = win.ratio(inzshpobj$bbox.record[1:2],inzshpobj$bbox.record[3:4])
     }    
         
-    nx.lim = rep(p.center[1],2) + c(-1,1) * diff(xylim[1:2]) * ratio
-    ny.lim = rep(p.center[2],2) + c(-1,1) * diff(xylim[3:4]) * ratio
+    nx.lim = rep(p.center[1],2) + c(-1,1) * diff(xylim[1:2]) * ratio/2
+    ny.lim = rep(p.center[2],2) + c(-1,1) * diff(xylim[3:4]) * ratio/2
     n.lim = c(nx.lim,ny.lim)
 
     if(resize == FALSE)
         inzshpobj$bbox.record <<- c(nx.lim,ny.lim)
 
     s.obj = subByLim(s.obj,c(nx.lim,ny.lim))
-    if(ratio > 0.5){
+    if(ratio > 1){
         if(diff(range(nx.lim)) > diff(sbbox[1:2]) & diff(range(ny.lim)) > diff(sbbox[3:4]))
             n.lim = win.ratio(sbbox[1:2],sbbox[3:4])
     }
@@ -746,7 +746,7 @@ sClickOnZoom = function(ratio = 1/4,resize = FALSE)
 ##' @export
 srezoom = function(zoom)
 {
-    if(zoom > 0.9 | zoom < 0.1)
+    if(zoom > 2 | zoom < 0.1)
         stop('invalid zoom')
     sClickOnZoom(ratio = zoom,resize = TRUE)
 }

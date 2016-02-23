@@ -17,7 +17,8 @@ iNZightShapeMap <- function(location,shp.region,data.region,data) {
     if (location == "world") {
       out <- world
     } else if (!missing(location))
-    { ## file checking
+    { 
+		## file checking
         ext = file_ext(location)
         switch(ext,
             rds =
@@ -84,9 +85,9 @@ iNZightShapeMap <- function(location,shp.region,data.region,data) {
 plot.inzightshapemap <- function(x, variable,
                                  col.fun = "hue", transform = "linear",
                                  col.offset = 0.2, col = "red",na.fill = '#F4A460',
-                                 full.map = TRUE,extend.ratio = 1,name = FALSE,
+                                 full.map = TRUE,extend.ratio = 1,name = FALSE,zoom = 1,zoom.center = c(NA,NA),
                                  ...) {
-
+	
     call <- list()
 
     data <- x$data
@@ -101,6 +102,7 @@ plot.inzightshapemap <- function(x, variable,
     
     ## variable range ...
     data.range = range(call$x,na.rm = TRUE)
+	print(data.range)
     x$maths$range = data.range
     x$maths$mean = mean(call$x,na.rm = TRUE)
     x$maths$sd = sd(call$x,na.rm = TRUE)
@@ -126,7 +128,9 @@ plot.inzightshapemap <- function(x, variable,
         na.fill = na.fill,
         full.map = full.map,
         extend.ratio = extend.ratio,
-        name = name
+        name = name,
+		zoom = zoom,
+		zoom.center = zoom.center
         )
 
     dots <- list(...)

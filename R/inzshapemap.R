@@ -8,6 +8,19 @@
 ##' @export
 create.inz.shapemapplot = function(obj) {
     df = obj$df
+	a <<- df
+	data.region = df$y
+	
+	## warning message
+	unique.length = length(unique(df$y))
+	total.length = length(df$y)
+	if(unique.length != total.length)
+	{
+		tt = tapply(df$x,df$y,mean,na.rm = TRUE)
+		df = data.frame(x = as.numeric(tt),y = rownames(tt))
+		warning("Multiple matches found, using the mean.")
+	}
+	
 	
     opts = obj$opts
     pf = opts$plot.features
@@ -38,7 +51,7 @@ create.inz.shapemapplot = function(obj) {
     ylim = obj$xylim[3:4]
 
     out = list(x = xlim, y = ylim,colby = obj$col,n.missing = n.missing,
-                xlim = xlim, ylim = ylim,shape.object = obj,df = df,name = pf$name)
+                xlim = xlim, ylim = ylim,shape.object = obj,df = df,name = pf$name,zoom = pf$zoom,zoom.center = pf$zoom.center)
     class(out) = c("inzshapemap", "inzmap", "inzscatter")
     out$draw.axes = FALSE
     out
@@ -60,9 +73,10 @@ plot.inzshapemap = function(obj, gen) {
     bbox = full.s.obj$bbox
     s.obj =full.s.obj
     name = obj$name
+	zoom = obj$zoom
+	zoom.center = obj$zoom.center
     
-    
-    
+
     if(s.obj$full.map == FALSE)
     {
         ratio = s.obj$extend.ratio
@@ -104,7 +118,25 @@ plot.inzshapemap = function(obj, gen) {
     order = order.match(sd[[1]],sd[[2]])
     value = round(df$x[order],2)
     
-    vp = viewport(0.5,0.5,width = 1, height = 1,name = 'VP:MAPSHAPES', xscale = lim[1:2],yscale = lim[3:4])
+	if(any(is.na(zoom.center)))
+	{
+		print(lim)
+		zoom.center = c(mean(lim[1:2]),mean(lim[3:4]))
+	}
+	xlim = rep(zoom.center[1],2) + c(-1,1) * diff(lim[1:2]) * zoom/2
+	ylim = rep(zoom.center[2],2) + c(-1,1) * diff(lim[3:4]) * zoom/2
+	zoom.lim = c(xlim,ylim)
+	print(zoom.lim)
+	
+	## if lim > bbox then using bbox instead of lim
+	if(zoom > 1)
+	{
+		if(diff(range(zoom.lim)) > diff(lim[1:2]) & diff(range(zoom.lim)) > diff(lim[3:4]))
+			zoom.lim = lim
+    }
+	
+	
+    vp = viewport(0.5,0.5,width = 1, height = 1,name = 'VP:MAPSHAPES', xscale = zoom.lim[1:2],yscale = zoom.lim[3:4])
     pushViewport(vp)
     ## backagound
     grid.rect(

@@ -27,3 +27,5 @@ data.3 = data.1[data.1$Country %in% c('New Zealand','Australia','Japan'),]
 data.4 = data.1[data.1$Country %in% c('Albania', 'Andorra', 'Austria', 'Belarus', 'Belgium', 
                                       'Bosnia and Herzegovina', 'Bulgaria', 'Croatia', 
                                       'Cyprus','Czech Republic'),]
+
+da.1 = read.csv('C:/Users/yeamin/Desktop/iNZightMaps-dev-integrateplots/data/Gapminder-2008.csv',skip = 1)
