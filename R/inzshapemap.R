@@ -149,7 +149,7 @@ plot.inzshapemap = function(obj, gen) {
                      data.region = df$y)
     
     grid.rect(gp = gpar(fill = 'transparent'))
-    popViewport()
+    upViewport()
     
     ## global object
     inzshpobj <<- list(s.obj = full.s.obj, bar.obj = bar.obj,
