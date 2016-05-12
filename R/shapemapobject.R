@@ -17,7 +17,7 @@ iNZightShapeMap <- function(location,shp.region,data.region,data) {
     if (location == "world") {
       out <- world
     } else if (!missing(location))
-    { 
+    {
 		## file checking
         ext = file_ext(location)
         switch(ext,
@@ -44,7 +44,7 @@ iNZightShapeMap <- function(location,shp.region,data.region,data) {
 
     if (missing(data.region))
             stop('require the column name of region in data set')
-            
+
     ## data checking
     iso3c = countrycode(data[,data.region],'country.name','iso3c')
     a = table(iso3c)
@@ -52,15 +52,15 @@ iNZightShapeMap <- function(location,shp.region,data.region,data) {
     rows = rownames(data[iso3c %in% mul.region,])
     de.rows = as.numeric(rows[length(rows)])
     data = data[-de.rows,]
-    
+
 
     out$bbox = c(range(out$latlon[,1]),range(out$latlon[,2]))
     bar.obj <<- NULL
 
     out$data = data
     out$region.name = data.region
-    
-	
+
+
     class(out) <- c("inzightshapemap", class(out))
     out
 }
@@ -87,7 +87,7 @@ plot.inzightshapemap <- function(x, variable,
                                  col.offset = 0.2, col = "red",na.fill = '#F4A460',
                                  full.map = TRUE,extend.ratio = 1,name = FALSE,zoom = 1,zoom.center = c(NA,NA),
                                  ...) {
-	
+
     call <- list()
 
     data <- x$data
@@ -99,15 +99,14 @@ plot.inzightshapemap <- function(x, variable,
     } else {
         call$x <- data.frame(variable)[[1]]
     }
-    
+
     ## variable range ...
     data.range = range(call$x,na.rm = TRUE)
-	print(data.range)
     x$maths$range = data.range
     x$maths$mean = mean(call$x,na.rm = TRUE)
     x$maths$sd = sd(call$x,na.rm = TRUE)
     x$maths$prob = max(dnorm((call$x-x$maths$mean)/x$maths$sd,0,1),na.rm = TRUE)
-    
+
     call$y <- data[, x$region.name]
 
     call$xlab <- ""
@@ -135,7 +134,7 @@ plot.inzightshapemap <- function(x, variable,
 
     dots <- list(...)
     if ("g1" %in% names(dots)) {
-        
+
         if (is.character(dots$g1)) {
             call$varnames$g1 <- dots$g1
             dots$g1 <- data[[dots$g1]]
@@ -143,10 +142,10 @@ plot.inzightshapemap <- function(x, variable,
             #warning("Please specify g1 as a character name.")
             #dots$g2 <- NULL
         }
-        
+
     }
     if ("g2" %in% names(dots)) {
-        
+
         if (is.character(dots$g2)) {
             call$varnames$g2 <- dots$g2
             dots$g2 <- data[[dots$g2]]
@@ -154,7 +153,7 @@ plot.inzightshapemap <- function(x, variable,
             #warning("Please specify g2 as a character name.")
             #dots$g2 <- NULL
         }
-        
+
     }
     if ("varnames" %in% names(dots)) {
         ## Use the user-specified names over autogen ones

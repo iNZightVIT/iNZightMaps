@@ -28,12 +28,12 @@ shape.extract = function(shp,column.index = 2)
             polygon.data[j] = list(shp@polygons[[i]]@Polygons[[ii]]@coords)
             index[j] = dim(polygon.data[[j]])[1]
         }
-        
+
     }
     latlon = do.call(rbind,polygon.data)
     latlon.data = data.frame(latlon = latlon)
 	colnames(latlon.data) = c('lon.x','lat.y')
-	region = shp[[column.index]]	
+	region = shp[[column.index]]
     cents = coordinates(shp)
     area = sapply(slot(shp, "polygons"), slot, "area")
     max.area = tapply(area,region,max)
@@ -48,9 +48,9 @@ shape.extract = function(shp,column.index = 2)
 
 ##' Transform the data into the range of [0,1].
 ##'
-##' 
+##'
 ##' @title data transformation
-##' @param x a numeric value or vector. 
+##' @param x a numeric value or vector.
 ##' @param transform the method for transformation, can be linear,log,sqrt,exp,power and normal.
 ##' @return a transformed numeric vector.
 ##' @author Jason Wen
@@ -60,7 +60,7 @@ shape.extract = function(shp,column.index = 2)
 ##' @export
 data.trans = function(x,transform = 'linear',data.range,mean,sd,max.prob)
 {
-	
+
     a = x
     b = a - min(data.range,na.rm = TRUE)
     transform.option = c('linear','log','sqrt','exp','power','normal')
@@ -71,44 +71,43 @@ data.trans = function(x,transform = 'linear',data.range,mean,sd,max.prob)
         stop("Invaild transform method,please select one method from:
             'linear','log','sqrt','exp','power','normal'")
     }
-    
-    
+
+
     switch(transform,
-        linear = 
+        linear =
 		{
 			b = b
 			data.length = diff(data.range)
 		},
-        log = 
+        log =
 		{
 			b = log(b + 1)
 			data.length = log(max(data.range))
 		},
-        sqrt = 
+        sqrt =
 		{
 			b = sqrt(b)
 			data.length = sqrt(max(data.range))
 		},
-        exp = 
+        exp =
 		{
 			b = exp(b)
 			data.length = exp(max(data.range))
-			
+
 			},
-        power = 
+        power =
 		{
 			b = b^2
 			data.length = max(data.range)^2
 		},
-        normal = 
+        normal =
         {
             x = (a - mean)/sd
-			print(x)
             b = dnorm(x,0,1)
 			data.length = max.prob
         },
     )
-	
+
     percent.data = b/data.length
     if(length(a) > 1)
         percent.data
@@ -122,7 +121,7 @@ data.trans = function(x,transform = 'linear',data.range,mean,sd,max.prob)
 ##' @title re-order the region name in shape file
 ##' @param shp.region a character vector.
 ##' @param data.region a character vector.
-##' @return an integer vector.  
+##' @return an integer vector.
 ##' @author Jason Wen
 ##' @examples
 ##' los = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
@@ -168,7 +167,7 @@ col.fun = function(data,color.index,
         stop("display method not found,please select one method from:
             'hcl','hue','heat','cm','rainbow','terrain','topo','cm','bi.polar','r','n','grat','e' ")
     }
-    
+
     data = round(data,2)
     if(display %in% bio.color)
     {
@@ -180,59 +179,59 @@ col.fun = function(data,color.index,
     ###the color can not be offset if it is bio-color
     ###display transform
     switch(display,
-    
-        hcl = 
+
+        hcl =
 		{
 			fill.col = hcl(as.numeric(fill.float)*100,l = 85)
 		},
-        
-        hue = 
+
+        hue =
         {
             char.col.trans = col2rgb(col)/255
             fill.col =rgb(char.col.trans[1],char.col.trans[2],char.col.trans[3],fill.float)
         },
-        
-        heat = 
+
+        heat =
         {
             over.col = heat.colors(length(color.index) * 100 + 1)
             orderd.col = over.col[length(over.col):1]
             id = fill.float * length(color.index) * 100 + 1
             fill.col = orderd.col[id]
         },
-        
-        rainbow = 
+
+        rainbow =
         {
             over.col = rainbow(length(color.index) * 100 + 1)
             orderd.col = over.col
             id = fill.float * length(color.index) * 100 + 1
-            fill.col = orderd.col[id]            
+            fill.col = orderd.col[id]
         },
-        
-        terrain = 
+
+        terrain =
         {
             over.col = terrain.colors(length(color.index) * 100 + 1)
             orderd.col = over.col
             id = fill.float * length(color.index) * 100 + 1
-            fill.col = orderd.col[id]	            
+            fill.col = orderd.col[id]
         },
-        
-        topo = 
+
+        topo =
         {
             over.col = topo.colors(length(color.index) * 100 + 1)
             orderd.col = over.col
             id = fill.float * length(color.index) * 100 + 1
             fill.col = orderd.col[id]
         },
-        
-        cm = 
+
+        cm =
         {
             over.col = cm.colors(length(color.index) * 100 + 1)
             orderd.col = over.col
             id = fill.float * length(color.index) * 100 + 1
             fill.col = orderd.col[id]
         },
-        
-        bi.polar = 
+
+        bi.polar =
         {
             col.center = mean(fill.float)
             fill = ''
@@ -246,37 +245,37 @@ col.fun = function(data,color.index,
                              rgb(0,0,1,alpha = alpha)
                           )
         },
-        
-        gray =  
+
+        gray =
         {
             fill.col = gray(round(1 - as.numeric(fill.float),5))
         },
-        
-        r = 
+
+        r =
         {
             r = ifelse(fill.float == impossible.number, impossible.number,runif(fill.float))
             g = ifelse(fill.float == impossible.number, impossible.number,runif(fill.float))
             b = ifelse(fill.float == impossible.number, impossible.number,runif(fill.float))
-            fill.col = rgb(r,g,b)	
+            fill.col = rgb(r,g,b)
         },
-        
-        n = 
+
+        n =
         {
             r = runif(length(fill.float))
             g = runif(length(fill.float))
             b = runif(length(fill.float))
             na.fill = rgb(r,g,b)
-            fill.col = rgb(r,g,b)	
+            fill.col = rgb(r,g,b)
         },
-        e = 
+        e =
         {
             char.col.trans = col2rgb(col)/255
             fill.col =rgb(char.col.trans[1],char.col.trans[2],char.col.trans[3],1)
         }
-        
+
     )
     color.each = ifelse(fill.float== impossible.number, na.fill, fill.col)
-    color.out = rep(color.each,color.index)	
+    color.out = rep(color.each,color.index)
     color.out
 }
 
@@ -299,7 +298,7 @@ re.scale = function(x,ratio)
   l = diff(x)/2
   l.r = l * ratio
   c(mid - l.r, mid + l.r)
-  
+
 }
 
 ##' is the latitude and longitude within the limit?
@@ -315,7 +314,7 @@ re.scale = function(x,ratio)
 ##' lim.inside(x,lim)
 lim.inside = function(x,lim)
 {
-    (x[,1] > lim[1] & x[,1] < lim[2]) & 
+    (x[,1] > lim[1] & x[,1] < lim[2]) &
     (x[,2] > lim[3] & x[,2] < lim[4])
 }
 
@@ -341,13 +340,13 @@ innerLim = function(obj,d.region)
     col.index = obj$col.index
     region = obj$region
     bbox = obj$bbox
-    
+
     logic = region %in% d.region
     if(all(logic == FALSE))
         lim.sub = bbox
     else
     {
-        polygon.index.fill = rep(logic,col.index)  
+        polygon.index.fill = rep(logic,col.index)
         each.sub = each[rep(logic,col.index)]
         latlon.sub = latlon[rep(rep(logic,col.index),each),]
         lim.sub = c(range(latlon.sub[,1],na.rm = TRUE),
@@ -374,12 +373,12 @@ innerLim = function(obj,d.region)
 ##' lim = c(-40,40,-40,40)
 ##' outerLim(obj,lim)
 outerLim = function(obj,lim,ignore.region = c('Russia','Antarctica'))
-{    
+{
     latlon = obj$latlon
     each = obj$each
     col.index = obj$col.index
     region = obj$region
-    
+
     with = lim.inside(latlon,lim)
     id = rep(1:length(each),each)
     each.index = unique(id[with])
@@ -413,7 +412,7 @@ subByLim = function(obj,lim)
     col.index = obj$col.index
     col = obj$col
     region = obj$region
-    
+
     with = lim.inside(latlon,lim)
     id.index = 1:length(each)
     id = rep(id.index,each)
@@ -423,15 +422,15 @@ subByLim = function(obj,lim)
     lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
     region.id = rep(rep(region,col.index),each)
     with.sub = lim.inside(latlon,lim.sub)
-    
+
     latlon.out = latlon[id %in% id[with.sub],]
     each.sub.index = unique(id[with.sub])
     each.out = each[each.sub.index]
-    
+
     ## some regions have multiple length
     e = rep(rep(1:length(region),col.index),each)
     e.index = unique(e[with.sub])
-    
+
     ## out
     region.out = region[e.index]
     col.index.out = col.index[e.index]
@@ -497,8 +496,8 @@ name.match = function(shp.region,data.region)
 win.ratio = function(xlim,ylim)
 {
     x = diff(xlim)
-    y = diff(ylim) 
-    
+    y = diff(ylim)
+
     w = convertWidth(current.viewport()$width, "mm", TRUE)
     h = convertHeight(current.viewport()$height, "mm", TRUE)
 
@@ -590,7 +589,7 @@ bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,
     plot.num = as.character(length(var))
     bar.weight.tot = as.numeric(plot.num) * xmax
     s.length.x = ifelse(l[1,] > bar.weight.tot,xmax,l[1,]/as.numeric(plot.num))/2
-    
+
     n = as.numeric(plot.num)
     if(n%%2 != 0)
     {
@@ -600,7 +599,7 @@ bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,
             a = c(n,rep(seq(n-2,1)[c(TRUE,FALSE)],each = 2))
     }else
     {
-        if(n == 2) 
+        if(n == 2)
             a = c(2,0)
         else
             a = c(n,rep(((n-2):2)[c(T,F)],each = 2),0)
@@ -610,12 +609,12 @@ bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,
 
     xl.sub = (1:length(x)) + rep(seq(0,n*2 - 1,2),each = length(x)) * length(x)
     xr.sub = (1:length(x)) + rep(seq(1,n*2,2),each = length(x)) * length(x)
-    
+
     rep(seq(0,(n - 1)*2,2),each = length(x)) * length(x)
-    
+
     xl = xtot[xl.sub]
     xr = xtot[xr.sub]
-    
+
     data.sub = data[which(data$Country %in% s.region),]
     data.in = data.sub[var]
     data.in[is.na(data.in)] = 0
@@ -639,7 +638,7 @@ bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,
 
 ##' Zoom in/out when click the plot
 ##'
-##' @title Zoom in/out 
+##' @title Zoom in/out
 ##' @param ratio a numeric value, define the ratio of zomm in or out
 ##' @return NULL
 ##' @details if ratio < 1 then zoom in, if ratio > 1 then zoom out, if ratio = 1 then shift the plot.
@@ -667,7 +666,7 @@ sClickOnZoom = function(ratio = 1/2,resize = FALSE)
 {
     s.obj = inzshpobj$s.obj
     bar.obj = inzshpobj$bar.obj
-    name = inzshpobj$name    
+    name = inzshpobj$name
     latlon = s.obj$latlon
     cols = s.obj$col
     shade.each = s.obj$each
@@ -675,7 +674,7 @@ sClickOnZoom = function(ratio = 1/2,resize = FALSE)
     value = inzshpobj$value
     sbbox = inzshpobj$bbox
     ylim = c(-10,10)
-    
+
 
     ox.lim = inzshpobj$s.obj$xylim
     center.x = s.obj$center.region$lon.x
@@ -685,8 +684,8 @@ sClickOnZoom = function(ratio = 1/2,resize = FALSE)
     if(inzshpobj$num == 1)
         seekViewport('VP:MAPSHAPES')
 
-    
-    
+
+
     if(resize == FALSE)
     {
         pushViewport(viewport(0.5, unit(1, "char"), 1, unit(2, "char")))
@@ -701,8 +700,8 @@ sClickOnZoom = function(ratio = 1/2,resize = FALSE)
     {
         p.center = inzshpobj$click.point
         xylim = win.ratio(inzshpobj$bbox.record[1:2],inzshpobj$bbox.record[3:4])
-    }    
-        
+    }
+
     nx.lim = rep(p.center[1],2) + c(-1,1) * diff(xylim[1:2]) * ratio/2
     ny.lim = rep(p.center[2],2) + c(-1,1) * diff(xylim[3:4]) * ratio/2
     n.lim = c(nx.lim,ny.lim)
@@ -720,8 +719,8 @@ sClickOnZoom = function(ratio = 1/2,resize = FALSE)
     pushViewport(vp)
 
     grid.rect(gp = gpar(fill = '#F5F5F5'))
-    
-    grid.polygon(s.obj$latlon[,1], s.obj$latlon[,2], 
+
+    grid.polygon(s.obj$latlon[,1], s.obj$latlon[,2],
              default.units = "native", id.length = s.obj$each,
              gp = gpar(col = '#B29980', fill  = s.obj$col))
     drawing.features(bar.obj = bar.obj,
@@ -730,10 +729,10 @@ sClickOnZoom = function(ratio = 1/2,resize = FALSE)
                     value = value ,name = name,
                     center.x = center.x,center.y = center.y)
     grid.rect(gp = gpar(fill = 'transparent'))
-    
+
     inzshpobj$num <<- inzshpobj$num + 1
     inzshpobj$click.point <<- p.center
-    
+
 }
 
 
@@ -756,10 +755,10 @@ srezoom = function(zoom)
 ##'
 ##' @title drawing features
 ##' @param bar.obj a bar object see \link{bar.coor}
-##' @param latlon a n*2 numeric matrix the first column specifies the latitudes and the second column specifies the longitudes 
+##' @param latlon a n*2 numeric matrix the first column specifies the latitudes and the second column specifies the longitudes
 ##' @param cols a color character strings vector
 ##' @param shade.each a numeric vector
-##' @param region.name a character vector 
+##' @param region.name a character vector
 ##' @param value a numeric vector
 ##' @param name a character vector
 ##' @param center.x a numeric value
@@ -774,10 +773,10 @@ drawing.features = function(bar.obj,latlon,cols,
                             center.x,center.y,
                             y.shift = 0.5)
 {
-    
+
     full.option = c('bar','r','v','b')
     switch(name,
-        'bar' = 
+        'bar' =
         {
             xmax = 0.004 * diff(range(latlon[,1]))
             ymax = 0.1 * diff(range(latlon[,2]))
@@ -787,17 +786,17 @@ drawing.features = function(bar.obj,latlon,cols,
             out.str = countrycode(region.name, "country.name", "iso3c")
             center.y = center.y - y.shift
         },
-        'r' = 
+        'r' =
         {
             out.str = region.name
         },
-        'v' = 
+        'v' =
         {
             center.x = center.x[!is.na(value)]
             center.y = center.y[!is.na(value)]
             out.str = value[!is.na(value)]
         },
-        'b' = 
+        'b' =
         {
             value[is.na(value)] = ''
             out.str = ifelse(value == '',paste(region.name),paste(region.name,value,sep = '\n'))
@@ -809,4 +808,3 @@ drawing.features = function(bar.obj,latlon,cols,
                 gp=gpar(fontsize=9), check=TRUE)
     }
 }
-    
