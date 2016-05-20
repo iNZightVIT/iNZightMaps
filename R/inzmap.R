@@ -141,11 +141,14 @@ plot.inzmap <- function(obj, gen) {
                 cex = obj$propsize,
               lwd = opts$lwd.pt, alpha = opts$alpha * opacity,
               fill = obj$fill.pt),
-              name = "SCATTERPOINTS")
+        name = "SCATTERPOINTS")
+
+    upViewport()
+    
     invisible(NULL)
     
     ## not sure why the xyscale will change 
-    vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
-    pushViewport(vp)
+    ##vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
+    ##pushViewport(vp)
     
 }
