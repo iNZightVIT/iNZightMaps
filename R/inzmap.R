@@ -138,15 +138,16 @@ plot.inzmap <- function(obj, gen) {
 
     ## Connect by dots if they want it ...
     if (opts$join) {
-        if (length(unique(obj$colby)) == 1 | !opts$lines.by) {
-            grid.lines(obj$x, obj$y, default.units = "native",
+        print(obj$colby)
+        if (length(unique(obj$colby)) <= 1 | !opts$lines.by) {
+            grid.lines(point[[1]], point[[2]], default.units = "native",
                        gp =
-                       gpar(lwd = opts$lwd, lty = opts$lty,
-                            col = opts$col.line))
+                           gpar(lwd = opts$lwd, lty = opts$lty,
+                                col = opts$col.line))
         } else {
             byy <- as.factor(obj$colby)  # pseudo-by-variable
-            xtmp <- lapply(levels(byy), function(c) subset(obj$x, obj$colby == c))
-            ytmp <- lapply(levels(byy), function(c) subset(obj$y, obj$colby == c))
+            xtmp <- lapply(levels(byy), function(c) subset(point[[1]], obj$colby == c))
+            ytmp <- lapply(levels(byy), function(c) subset(point[[2]], obj$colby == c))
 
             for (b in 1:length(levels(byy)))
                 grid.lines(xtmp[[b]], ytmp[[b]], default.units = "native",
