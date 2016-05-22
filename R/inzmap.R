@@ -56,48 +56,42 @@ create.inz.mapplot <- function(obj) {
 ##' @import RgoogleMaps
 ##' @export
 plot.inzmap <- function(obj, gen) {
-
     opts <- gen$opts
     mcex <- gen$mcex
     col.args <- gen$col.args
-    plot.shp = opts$plot.features$plot.shp
-    if(is.null(obj$opacity))
-        {
-            opacity = 1
-            
-    }else
-        {
-            opacity = obj$opacity
-        }
+    plot.shp <- opts$plot.features$plot.shp
+    if (is.null(obj$opacity)) {
+        opacity <- 1            
+    } else {
+        opacity <- obj$opacity
+    }
     
     debug <- if (is.null(opts$debug)) FALSE else opts$debug
     
-
-	xlim <- current.viewport()$xscale
-	ylim <- current.viewport()$yscale
+    xlim <- current.viewport()$xscale
+    ylim <- current.viewport()$yscale
     
     win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
     win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
     SCALE  <-  2
-    size = global.objects$maps$map$size
-    type = obj$map.type
+    size <- global.objects$maps$map$size
+    type <- obj$map.type
     
-
     get.newmap <- needNewMap(bbox = c(xlim,ylim),size = size,SCALE = SCALE,type = type,window = c(win.width,win.height))
     if (debug)
         message(paste('get.newmap:',get.newmap))
 
-    if (get.newmap)
-        {
-            getNewMap(lat.lim = ylim, lon.lim = xlim, SCALE = SCALE, type = type,zoom = Get.map.size(ylim,xlim)$zoom)
-            ## updating
-            global.objects$maps$map.detail$window <<- c(win.width,win.height)
-            global.objects$maps$map.detail$bbox <<- c(xlim,ylim)
-            global.objects$maps$map.detail$size <<- global.objects$maps$map$size
-            global.objects$maps$map.detail$scale <<- global.objects$maps$map$SCALE
-            global.objects$maps$map.detail$type <<- type
-            global.objects$maps$map.detail$points <<- cbind(obj$y,obj$x)
-        }
+    ## need to come up with a better way of doing this!!
+    if (get.newmap) {
+        getNewMap(lat.lim = ylim, lon.lim = xlim, SCALE = SCALE, type = type,zoom = Get.map.size(ylim,xlim)$zoom)
+        ## updating
+        global.objects$maps$map.detail$window <<- c(win.width,win.height)
+        global.objects$maps$map.detail$bbox <<- c(xlim,ylim)
+        global.objects$maps$map.detail$size <<- global.objects$maps$map$size
+        global.objects$maps$map.detail$scale <<- global.objects$maps$map$SCALE
+        global.objects$maps$map.detail$type <<- type
+        global.objects$maps$map.detail$points <<- cbind(obj$y,obj$x)
+    }
         
     ptCols <- iNZightPlots:::colourPoints(obj$colby, col.args, opts)
     ## passing the details inorder to redraw.
@@ -115,20 +109,18 @@ plot.inzmap <- function(obj, gen) {
     grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)
     
     ## define the limit
-    tmp = map.xylim(ylim,xlim,SCALE = SCALE)$window.lim
-    xl =tmp[1:2]
-    yl = tmp[3:4]
+    tmp <- map.xylim(ylim,xlim,SCALE = SCALE)$window.lim
+    xl <- tmp[1:2]
+    yl <- tmp[3:4]
     
     ## setting the viewport
-    vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
+    vp <- viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
     pushViewport(vp)
     
-    
-
     ## transform the points
-    dd = cbind(obj$y,obj$x)
-    point = latlon.xy(dd,map = global.objects$maps$map)
-
+    dd <- cbind(obj$y,obj$x)
+    point <- latlon.xy(dd,map = global.objects$maps$map)
+    
     ## other scatter plot things
     if (length(obj$x) == 0)
         return()
@@ -136,19 +128,34 @@ plot.inzmap <- function(obj, gen) {
     NotInView <- obj$x < min(xlim) | obj$x > max(xlim) | obj$y < min(ylim) | obj$y > max(ylim)
     obj$pch[NotInView] <- NA
     grid.points(point[[1]], point[[2]], pch = obj$pch,
-        gp =
-            gpar(col = ptCols,
-                cex = obj$propsize,
-              lwd = opts$lwd.pt, alpha = opts$alpha * opacity,
-              fill = obj$fill.pt),
-        name = "SCATTERPOINTS")
+                gp =
+                    gpar(col = ptCols,
+                         cex = obj$propsize,
+                         lwd = opts$lwd.pt, alpha = opts$alpha * opacity,
+                         fill = if (obj$fill.pt == "fill") ptCols else obj$fill.pt),
+                name = "SCATTERPOINTS")
+    
 
+    ## Connect by dots if they want it ...
+    if (opts$join) {
+        if (length(unique(obj$colby)) == 1 | !opts$lines.by) {
+            grid.lines(obj$x, obj$y, default.units = "native",
+                       gp =
+                       gpar(lwd = opts$lwd, lty = opts$lty,
+                            col = opts$col.line))
+        } else {
+            byy <- as.factor(obj$colby)  # pseudo-by-variable
+            xtmp <- lapply(levels(byy), function(c) subset(obj$x, obj$colby == c))
+            ytmp <- lapply(levels(byy), function(c) subset(obj$y, obj$colby == c))
+
+            for (b in 1:length(levels(byy)))
+                grid.lines(xtmp[[b]], ytmp[[b]], default.units = "native",
+                           gp =
+                           gpar(lwd = opts$lwd, lty = opts$lty,
+                                col = col.args$f.cols[b]))
+        }
+    }
+        
     upViewport()
-    
     invisible(NULL)
-    
-    ## not sure why the xyscale will change 
-    ##vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
-    ##pushViewport(vp)
-    
 }
