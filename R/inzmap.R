@@ -138,7 +138,6 @@ plot.inzmap <- function(obj, gen) {
 
     ## Connect by dots if they want it ...
     if (opts$join) {
-        print(obj$colby)
         if (length(unique(obj$colby)) <= 1 | !opts$lines.by) {
             grid.lines(point[[1]], point[[2]], default.units = "native",
                        gp =
