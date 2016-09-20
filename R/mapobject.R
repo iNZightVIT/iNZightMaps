@@ -59,7 +59,7 @@ plot.inzightmap <- function(x,
                             type =
                                 c("roadmap", "mobile", "satellite", "terrain", "hybrid",
                                   "mapmaker-roadmap", "mapmaker-hybrid"),
-                            ...) {
+                            ..., env = parent.frame(n = 1)) {
     mc <- match.call()
 
     mc$data <- mc$x
@@ -91,6 +91,5 @@ plot.inzightmap <- function(x,
         mc$ylab <- ""
 
     mc[1] <- expression(iNZightPlot)
-
-    eval(mc)
+    eval(mc, envir = env)
 }
