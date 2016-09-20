@@ -1,3 +1,12 @@
+# Version x.y.z
+__Release date__: tba
+
+## Bug Fixes
+
+- pass the current environment to `iNZightPlot` so `data=` works
+
+
+***
 # Version 1.1
 __Release date__: 11 July, 2016
 
