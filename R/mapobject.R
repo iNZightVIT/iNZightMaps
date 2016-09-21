@@ -59,7 +59,7 @@ plot.inzightmap <- function(x,
                             type =
                                 c("roadmap", "mobile", "satellite", "terrain", "hybrid",
                                   "mapmaker-roadmap", "mapmaker-hybrid"),
-                            ..., env = parent.frame(n = 1)) {
+                            ..., env = parent.frame()) {
     mc <- match.call()
 
     mc$data <- mc$x
