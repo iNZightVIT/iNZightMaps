@@ -1,12 +1,3 @@
-# Version x.y.z
-__Release date__: tba
-
-## Bug Fixes
-
-- pass the current environment to `iNZightPlot` so `data=` works
-
-
-***
 # Version 1.1
 __Release date__: 11 July, 2016
 
@@ -15,6 +6,12 @@ __Release date__: 11 July, 2016
 - Integrated all graphics with the iNZightPlots package
 - Faster drawing of maps, and include subset-by variables
 - Add shape methods for colouring regions of a map
+
+## Patches
+
+### Version 1.1-1 - 30/09/2016
+
+- pass the current environment to `iNZightPlot` so `data=` works
 
 
 ***
