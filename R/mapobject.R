@@ -90,6 +90,8 @@ plot.inzightmap <- function(x,
     if (is.null(mc$ylab))
         mc$ylab <- ""
 
-    mc[1] <- expression(iNZightPlot)
+
+
+    mc[1] <- expression(iNZightPlots::iNZightPlot)
     eval(mc, envir = env)
 }
