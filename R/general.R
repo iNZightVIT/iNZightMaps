@@ -39,13 +39,15 @@ function(latlon,map)
 ##' r.bbox = runif(4,-90,90)
 ##' getNewMap(r.bbox[1:2],r.bbox[3:4],2,zoom = 3)
 getNewMap <- function(lat.lim, lon.lim, SCALE,
-                        type = c("roadmap", "mobile", "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid")[1],zoom)
-{
-	lat.mean = mean(lat.lim)
-	lon.mean = mean(lon.lim)
-	center = c(lat.mean,lon.mean)
-    map <<- GetMap(center = center, size = Get.map.size(lat.lim,lon.lim)$size,zoom = zoom,maptype = type,SCALE =SCALE)
-    global.objects$maps$map= map
+                      type = c("roadmap", "mobile", "satellite", "terrain", "hybrid",
+                               "mapmaker-roadmap", "mapmaker-hybrid"), zoom) {
+    type <- match.arg(type)
+    lat.mean <- mean(lat.lim)
+    lon.mean <- mean(lon.lim)
+    center <- c(lat.mean,lon.mean)
+    map <<- GetMap(center = center, size = Get.map.size(lat.lim,lon.lim)$size,
+                   zoom = zoom,maptype = type,SCALE = SCALE)
+    global.objects$maps$map = map
     assign("global.objects", global.objects, envir = .GlobalEnv)
 }
 
@@ -61,19 +63,17 @@ getNewMap <- function(lat.lim, lon.lim, SCALE,
 ##' @examples
 ##' lon = runif(100,-360,360)
 ##' lon.rescale(lon)
-lon.rescale = function(lon)
-{
-	lon.range = range(lon,na.rm = TRUE)
-	if(lon.range[1] < 0 & lon.range[2] > 0)
-	{
-		lon = ifelse(lon < -135,lon + 360,lon)
-	}
-	mean.lon = mean(lon)
-	if(mean.lon > 180)
-	{
-		lon = lon - 360
-	}
-	lon
+lon.rescale <- function(lon) {
+    r1 <- range(lon, na.rm = TRUE)
+    r2 <- range((360 + lon) %% 360, na.rm = TRUE)
+    if (diff(r2) < diff(r1)) {
+        lon <- (360 + lon) %% 360
+    } else {
+        r3 <- range(ifelse(lon > 180, lon - 360, lon), na.rm = TRUE)
+        if (diff(r3) < diff(r1)) lon <- ifelse(lon > 180, lon - 360, lon)
+    }
+    print(range(lon))
+    lon
 }
 
 
@@ -255,7 +255,7 @@ Get.map.size = function(latR,lonR,SCALE)
 		size.final = round(c(640 * win.size[1]/win.size[2],640))
 	}
 
-    ZoomSize = list(zoom = zoom, size = size.final)
+    ZoomSize = list(zoom = zoom, size = pmin(640, size.final))
     ZoomSize
     ###hence the we will get the map with this zoom and size
 
