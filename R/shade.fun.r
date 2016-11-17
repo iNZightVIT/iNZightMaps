@@ -135,7 +135,6 @@ order.match = function(shp.region,data.region)
     order = match(shp.region,data.region)
     orderd.data = order
     na.data = shp.region[is.na(orderd.data)]
-#    print(paste('number of unmatch region:',length(na.data)))
     orderd.data
 }
 

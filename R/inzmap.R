@@ -69,8 +69,6 @@ plot.inzmap <- function(obj, gen) {
     
     xlim <- current.viewport()$xscale
     ylim <- current.viewport()$yscale
-
-    print(ylim)
     
     win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
     win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
