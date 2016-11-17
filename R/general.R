@@ -13,11 +13,8 @@
 ##' getNewMap(r.bbox[1:2],r.bbox[3:4],2,zoom = 3)
 ##' latlon.xy(r.latlon,global.objects$maps$map)
 ##' @export
-latlon.xy =
-function(latlon,map)
-{
-	#data[,2] = lon.rescale(data[,2])
-    zoom = map$zoom
+latlon.xy <- function(latlon,map) {
+    zoom <- map$zoom
     LatLon2XY.centered(map, latlon[,1], latlon[,2], zoom = zoom)
 }
 
@@ -45,8 +42,8 @@ getNewMap <- function(lat.lim, lon.lim, SCALE,
     lat.mean <- mean(lat.lim)
     lon.mean <- mean(lon.lim)
     center <- c(lat.mean,lon.mean)
-    map <<- GetMap(center = center, size = Get.map.size(lat.lim,lon.lim)$size,
-                   zoom = zoom,maptype = type,SCALE = SCALE)
+    map <<- GetMap(center = center, size = Get.map.size(lat.lim, lon.lim)$size,
+                   zoom = zoom, maptype = type, SCALE = SCALE)
     global.objects$maps$map = map
     assign("global.objects", global.objects, envir = .GlobalEnv)
 }
@@ -72,7 +69,6 @@ lon.rescale <- function(lon) {
         r3 <- range(ifelse(lon > 180, lon - 360, lon), na.rm = TRUE)
         if (diff(r3) < diff(r1)) lon <- ifelse(lon > 180, lon - 360, lon)
     }
-    print(range(lon))
     lon
 }
 
@@ -92,84 +88,67 @@ lon.rescale <- function(lon) {
 ##' @author Jason Wen
 ##' @examples
 ##' needNewMap()
-needNewMap <- function(bbox,window,size,SCALE,type)
-{
-    need = FALSE
-    map.odd = global.objects$maps$map
+needNewMap <- function(bbox, window, size, SCALE, type) {
+    need <- FALSE
+    map.odd <- global.objects$maps$map
+    
     ##check for the map object
-    if(any(map.odd == NULL))
-    {
-        need = TRUE
-    }
-    else
-    {
-        ##check if any null
-        if( is.null(global.objects$maps$map.detail$bbox) ||  is.null(global.objects$maps$map.detail$size) ||
-        is.null(global.objects$maps$map.detail$scale) || is.null(global.objects$maps$map.detail$type) ||
-        is.null(global.objects$maps$map.detail$window))
-        {
-            need = TRUE
-        }else
-        {
-            ##individual checking
-            a = global.objects$maps$map.detail$bbox
-            b = bbox
-            if(any(abs(a - b) != 0) )
-            {
-            global.objects$maps$map.detail$bbox = bbox
-            need[1] = TRUE
-            }else
-            {
-                need[1] = FALSE
+    if (any(map.odd == NULL)) {
+        need <- TRUE
+    } else {
+        ## check if any null
+        if ( is.null(global.objects$maps$map.detail$bbox) ||
+             is.null(global.objects$maps$map.detail$size) ||
+             is.null(global.objects$maps$map.detail$scale) ||
+             is.null(global.objects$maps$map.detail$type) ||
+             is.null(global.objects$maps$map.detail$window)) {
+            need <- TRUE
+        } else {
+            ## individual checking
+            a <- global.objects$maps$map.detail$bbox
+            b <- bbox
+            if (any(abs(a - b) != 0) ) {
+                global.objects$maps$map.detail$bbox <- bbox
+                need[1] <- TRUE
+            } else {
+                need[1] <- FALSE
             }
 
-            if(any(global.objects$maps$map.detail$size != size))
-            {
-                global.objects$maps$map.detail$size = size
-                need[2] = TRUE
-
-            }else
-            {
-                need[2] = FALSE
+            if (any(global.objects$maps$map.detail$size != size)) {
+                global.objects$maps$map.detail$size <- size
+                need[2] <- TRUE
+            } else {
+                need[2] <- FALSE
             }
-            if(global.objects$maps$map.detail$scale != SCALE)
-            {
-                global.objects$maps$map.detail$scale = SCALE
-                need[3] = TRUE
-
-            }else
-            {
-                need[3] = FALSE
+            
+            if (global.objects$maps$map.detail$scale != SCALE) {
+                global.objects$maps$map.detail$scale <- SCALE
+                need[3] <- TRUE
+            } else {
+                need[3] <- FALSE
             }
-            if(type != global.objects$maps$map.detail$type)
-            {
-                global.objects$maps$map.detail$type = type
-                need[4] = TRUE
-            }else
-            {
-                need[4] = FALSE
+            
+            if (type != global.objects$maps$map.detail$type) {
+                global.objects$maps$map.detail$type <- type
+                need[4] <- TRUE
+            } else {
+                need[4] <- FALSE
             }
 
-            if(any(global.objects$maps$map.detail$window != window))
-            {
-                global.objects$maps$map.detail$window = window
-                need[5] = TRUE
+            if (any(global.objects$maps$map.detail$window != window)) {
+                global.objects$maps$map.detail$window <- window
+                need[5] <- TRUE
+            } else {
+                need[5] <- FALSE
             }
-			else
-            {
-                need[5] = FALSE
+            
+            if (global.objects$maps$map.detail$num > 1) {
+                need[6] <- TRUE
+            } else {
+                need[6] <- FALSE
             }
-            if(global.objects$maps$map.detail$num > 1)
-            {
-                need[6] = TRUE
-            }
-            else
-            {
-                need[6] = FALSE
-            }
-
-
         }
+
         any(need)
     }
 }
@@ -193,72 +172,59 @@ needNewMap <- function(bbox,window,size,SCALE,type)
 ##' r.center = runif(4,min = -90,max = 90)
 ##' SCALE = 2
 ##' Get.map.size(r.center[1:2],r.center[3:4],SCALE)
-Get.map.size = function(latR,lonR,SCALE)
-{
-
-    if(missing(SCALE))
-    {
-        SCALE = global.objects$maps$map.detail$scale
+Get.map.size <- function(latR, lonR, SCALE) {
+    if (missing(SCALE)) {
+        SCALE <- global.objects$maps$map.detail$scale
     }
-    win.size= c(
-        convertWidth(current.viewport()$width, "mm", TRUE),
-        convertHeight(current.viewport()$height, "mm", TRUE)
-    )
+    
+    win.size <- c(convertWidth(current.viewport()$width, "mm", TRUE),
+                  convertHeight(current.viewport()$height, "mm", TRUE))
 
-    ###give an origin size that helps to compute the zoom
-    if(win.size[1] > win.size[2])
-    {
-        size.1 = round(c(640 ,640 * win.size[2] / win.size[1]))
-    }else
-    {
-        size.1 = round(c(640 * win.size[1] / win.size[2], 640))
+    ## give an origin size that helps to compute the zoom
+    if (win.size[1] > win.size[2]) {
+        size.1 <- round(c(640 ,640 * win.size[2] / win.size[1]))
+    } else {
+        size.1 <- round(c(640 * win.size[1] / win.size[2], 640))
     }
 
-	lat.range = range(latR)
-	lon.range = range(lonR)
-	if(lon.range[1] < 0 & lon.range[2] > 0)
-	{
-		lon.range[1] = lon.range[1] + 360
-	}
-	zoom <- min(MaxZoom(lat.range, lon.range, size.1))
+    lat.range <- range(latR)
+    lon.range <- range(lonR)
+    zoom <- min(MaxZoom(lat.range, lon.range, size.1))
 
-
+    
     ll <- LatLon2XY(latR[1], lonR[1], zoom)
     ur <- LatLon2XY(latR[2], lonR[2], zoom)
     cr <- LatLon2XY(mean(latR), mean(lonR), zoom)
     ll.Rcoords <- Tile2R(ll, cr)
     ur.Rcoords <- Tile2R(ur, cr)
-    size = 0
+    size <- 0
     size[1] <- 2 * max(c(ceiling(abs(ll.Rcoords$X)), ceiling(abs(ur.Rcoords$X))))
     size[2] <- 2 * max(c(ceiling(abs(ll.Rcoords$Y)), ceiling(abs(ur.Rcoords$Y))))
-    ###first get a square with the maximum length
-    size = c(max(size),max(size))
-    ###transform the size ratio to be the same as window.size's ratio
-    if(win.size[1] > win.size[2])
-    {
-        size[1] = round(size[2]*(win.size[1]/win.size[2]),0)
-        size[2] = size[2]
-    }else
-    {
-        size[2] = round(size[1]*(win.size[2]/win.size[1]),0)
-        size[1] = size[1]
+    
+    ## first get a square with the maximum length
+    size <- c(max(size), max(size))
+    
+    ## transform the size ratio to be the same as window.size's ratio
+    if (win.size[1] > win.size[2]) {
+        size[1] <- round(size[2] * (win.size[1] / win.size[2]), 0)
+        size[2] <- size[2]
+    } else {
+        size[2] <- round(size[1] * (win.size[2] / win.size[1]), 0)
+        size[1] <- size[1]
     }
 
-    ##rearrange the ratio if any > 640
-    size.final = size
+    ## rearrange the ratio if any > 640
+    size.final <- size
 
-	if(size[1] > size[2])
-	{
-		size.final = round(c(640,640 * win.size[2]/win.size[1]))
-	}else
-	{
-		size.final = round(c(640 * win.size[1]/win.size[2],640))
-	}
+    if (size[1] > size[2]) {
+        size.final <- round(c(640, 640 * win.size[2] / win.size[1]))
+    } else {
+        size.final <- round(c(640 * win.size[1] / win.size[2], 640))
+    }
 
-    ZoomSize = list(zoom = zoom, size = pmin(640, size.final))
+    ZoomSize <- list(zoom = zoom, size = pmin(640, size.final))
+    ## hence the we will get the map with this zoom and size
     ZoomSize
-    ###hence the we will get the map with this zoom and size
-
 }
 
 ##' return the limit of x-axis and y-axis of the plot.
@@ -275,16 +241,16 @@ Get.map.size = function(latR,lonR,SCALE)
 ##' r.center = runif(4,min = -90,max = 90)
 ##' SCALE = 2
 ##' map.xylim(r.center[1:2],r.center[3:4],SCALE)
-map.xylim = function(latR,lonR,SCALE)
-{
-    ZoomSize = Get.map.size(latR = latR,lonR = lonR,SCALE = SCALE)
-    scale = global.objects$maps$map$SCALE * 2
-    size = global.objects$maps$map$size
-    offset = 1
-    window.xlim = c(-size[1] + offset, size[1] - offset)/(scale)
-    window.ylim = c(-size[2] + offset, size[2] - offset)/(scale)
-    window.lim = c(window.xlim,window.ylim)
-    global.objects$maps$map.detail$xylim = window.lim
+map.xylim <- function(latR, lonR, SCALE) {
+    ZoomSize <- Get.map.size(latR = latR, lonR = lonR, SCALE = SCALE)
+    scale <- global.objects$maps$map$SCALE * 2
+    size <- global.objects$maps$map$size
+    offset <- 1
+    window.xlim <- c(-size[1] + offset, size[1] - offset) / (scale)
+    window.ylim <- c(-size[2] + offset, size[2] - offset) / (scale)
+    window.lim <- c(window.xlim, window.ylim)
+    global.objects$maps$map.detail$xylim <- window.lim
+    
     assign("global.objects", global.objects, envir = .GlobalEnv)
     list(window.lim = window.lim)
 }
@@ -301,21 +267,18 @@ map.xylim = function(latR,lonR,SCALE)
 ##' lat = runif(100,min = -180,max = 180)
 ##' lon = runif(100,min = -180,max = 180)
 ##' is.google.map(lat,lon)
-is.google.map = function(lat,lon)
-{
-
+is.google.map <- function(lat,lon) {
     TRUE
-    if(any(lat > 90)  || any(lat < -90))
-    {
+    
+    if (any(lat > 90)  || any(lat < -90)) {
         warning('latitudes are not in the range of [-90,90]')
         FALSE
     }
-    if(any(lon > 180)  || any(lon < -180))
-    {
+    
+    if(any(lon > 180)  || any(lon < -180)) {
         warning('longitudes are not in the range of [-180,180]')
         FALSE
     }
-
 }
 
 ##' Zoom in/out when click the plot
@@ -330,79 +293,72 @@ is.google.map = function(lat,lon)
 ##' iNZightPlot(Longitude,Latitude,data = nzquakes,colby = Depth, plottype = 'map',plot.features = list(maptype = 'roadmap'))
 ##' ClickOnZoom(ratio = 1)
 ##' @export
-ClickOnZoom = function(ratio = 1,resize = FALSE,p.center = global.objects$maps$pf$click.points)
-{
+ClickOnZoom <- function(ratio = 1, resize = FALSE, p.center = global.objects$maps$pf$click.points) {
     global.objects$maps$map.detail$num <<- global.objects$maps$map.detail$num + 1
-    xlim = global.objects$maps$map.detail$bbox[1:2]
-    ylim = global.objects$maps$map.detail$bbox[3:4]
+    xlim <- global.objects$maps$map.detail$bbox[1:2]
+    ylim <- global.objects$maps$map.detail$bbox[3:4]
 
-    if (!resize) {
-        
-    }
 
-    if(resize == FALSE)
-    {
+    if (resize == FALSE) {
         pushViewport(viewport(0.5, unit(1, "char"), 1, unit(2, "char")))
         grid::grid.rect(gp = gpar(fill = "red"))
         grid::grid.text("Click a point on the map to zoom", x = 0.5, y = 0.5, default.units = "native",
                         gp = gpar(col = "white"))
         popViewport()
-        p.cen = as.numeric(grid.locator())
-        p.center = XY2LatLon(global.objects$maps$map,p.cen[1],p.cen[2])[2:1]
-    }else
-    {
-        p.center = global.objects$maps$pf$click.points
-        xlim = global.objects$maps$pf$bbox.record[1:2]
-        ylim = global.objects$maps$pf$bbox.record[3:4]
+        p.cen <- as.numeric(grid.locator())
+        p.center <- XY2LatLon(global.objects$maps$map, p.cen[1], p.cen[2])[2:1]
+    } else {
+        p.center <- global.objects$maps$pf$click.points
+        xlim <- global.objects$maps$pf$bbox.record[1:2]
+        ylim <- global.objects$maps$pf$bbox.record[3:4]
     }
 
-    plot.lim = global.objects$maps$map.detail$xylim
-    new.xlim = rep(p.center[1],2) + c(-1,1) * diff(xlim) * ratio/2
-    new.ylim = rep(p.center[2],2) + c(-1,1) * diff(ylim) * ratio/2
+    plot.lim <- global.objects$maps$map.detail$xylim
+    new.xlim <- rep(p.center[1],2) + c(-1,1) * diff(xlim) * ratio/ 2
+    new.ylim <- rep(p.center[2],2) + c(-1,1) * diff(ylim) * ratio/ 2
 
-    if(resize == FALSE)
+    if (resize == FALSE)
         global.objects$maps$pf$bbox.record <<- c(new.xlim,new.ylim)
 
-
-
+    
+    
     global.objects$maps$map.detail$bbox <<- c(new.xlim,new.ylim)
     global.objects$maps$pf$click.points <<- p.center
-
-    SCALE = global.objects$maps$map.detail$scale
-    size = global.objects$maps$map$size
-    type = global.objects$maps$map.detail$type
-    cex = global.objects$maps$pf$cex
-    col = global.objects$maps$pf$col
-    lwd = global.objects$maps$pf$lwd
-    alpha = global.objects$maps$pf$alpha
-    fill = global.objects$maps$pf$fill
-    opacity = global.objects$maps$pf$opacity
-    pch = global.objects$maps$pf$pch
+    
+    SCALE <- global.objects$maps$map.detail$scale
+    size <- global.objects$maps$map$size
+    type <- global.objects$maps$map.detail$type
+    cex <- global.objects$maps$pf$cex
+    col <- global.objects$maps$pf$col
+    lwd <- global.objects$maps$pf$lwd
+    alpha <- global.objects$maps$pf$alpha
+    fill <- global.objects$maps$pf$fill
+    opacity <- global.objects$maps$pf$opacity
+    pch <- global.objects$maps$pf$pch
 
     getNewMap(lat.lim = new.ylim, lon.lim = new.xlim,
-                SCALE = SCALE, type = type,
-                zoom = Get.map.size(new.ylim,new.xlim)$zoom)
+              SCALE = SCALE, type = type,
+              zoom = Get.map.size(new.ylim, new.xlim)$zoom)
 
-    grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)
-    tmp = map.xylim(new.ylim,new.xlim,SCALE = SCALE)$window.lim
-    xl =tmp[1:2]
-    yl = tmp[3:4]
-    vp = viewport(0.5,0.5,1,1,name = 'VP:PLOTlayout',xscale = xl, yscale = yl)
+    grid.raster(global.objects$maps$map$myTile, 0.5, 0.5, 1, 1)
+    tmp <- map.xylim(new.ylim, new.xlim, SCALE = SCALE)$window.lim
+    xl <- tmp[1:2]
+    yl <- tmp[3:4]
+    vp <- viewport(0.5, 0.5, 1, 1,name = 'VP:PLOTlayout', xscale = xl, yscale = yl)
     pushViewport(vp)
 
-    y = global.objects$maps$map.detail$points[,1]
-    x = global.objects$maps$map.detail$points[,2]
-    dd = cbind(y,x)
-    point = latlon.xy(dd,map = global.objects$maps$map)
+    y <- global.objects$maps$map.detail$points[,1]
+    x <- global.objects$maps$map.detail$points[,2]
+    dd <- cbind(y,x)
+    point <- latlon.xy(dd, map = global.objects$maps$map)
     grid.points(point[[1]], point[[2]], pch = pch,
-        gp =
-            gpar(col = col,
-                cex = cex,
-                lwd = lwd, alpha = alpha * opacity,
-                fill = fill),
+                gp =
+                    gpar(col = col,
+                         cex = cex,
+                         lwd = lwd, alpha = alpha * opacity,
+                         fill = fill),
                 name = "SCATTERPOINTS")
     invisible(NULL)
-
 }
 
 
@@ -413,9 +369,8 @@ ClickOnZoom = function(ratio = 1,resize = FALSE,p.center = global.objects$maps$p
 ##' @return NULL
 ##' @author Jason
 ##' @export
-rezoom = function(zoom)
-{
+rezoom <- function(zoom) {
     if(zoom > 2| zoom < 0.1)
         stop('invalid zoom')
-    ClickOnZoom(ratio = zoom,resize = TRUE)
+    ClickOnZoom(ratio = zoom, resize = TRUE)
 }

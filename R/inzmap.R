@@ -25,10 +25,8 @@ create.inz.mapplot <- function(obj) {
     ##should be re-write in the future
     is.google.map(out$y,out$x)
     
-    
     out$x = lon.rescale(out$x)
     out$xlim = range(out$x)
-    
     
     ## sort out opacity
     if (!is.null(features$opacity)) {
@@ -60,6 +58,7 @@ plot.inzmap <- function(obj, gen) {
     mcex <- gen$mcex
     col.args <- gen$col.args
     plot.shp <- opts$plot.features$plot.shp
+    
     if (is.null(obj$opacity)) {
         opacity <- 1            
     } else {
@@ -70,6 +69,8 @@ plot.inzmap <- function(obj, gen) {
     
     xlim <- current.viewport()$xscale
     ylim <- current.viewport()$yscale
+
+    print(ylim)
     
     win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
     win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
@@ -77,20 +78,21 @@ plot.inzmap <- function(obj, gen) {
     size <- global.objects$maps$map$size
     type <- obj$map.type
     
-    get.newmap <- needNewMap(bbox = c(xlim,ylim),size = size,SCALE = SCALE,type = type,window = c(win.width,win.height))
-    if (debug)
-        message(paste('get.newmap:',get.newmap))
+    get.newmap <- needNewMap(bbox = c(xlim, ylim), size = size, SCALE = SCALE,
+                             type = type, window = c(win.width, win.height))
 
+    
     ## need to come up with a better way of doing this!!
     if (get.newmap) {
-        getNewMap(lat.lim = ylim, lon.lim = xlim, SCALE = SCALE, type = type,zoom = Get.map.size(ylim,xlim)$zoom)
+        getNewMap(lat.lim = ylim, lon.lim = xlim, SCALE = SCALE, type = type,
+                  zoom = Get.map.size(ylim, xlim)$zoom)
         ## updating
-        global.objects$maps$map.detail$window <<- c(win.width,win.height)
-        global.objects$maps$map.detail$bbox <<- c(xlim,ylim)
+        global.objects$maps$map.detail$window <<- c(win.width, win.height)
+        global.objects$maps$map.detail$bbox <<- c(xlim, ylim)
         global.objects$maps$map.detail$size <<- global.objects$maps$map$size
         global.objects$maps$map.detail$scale <<- global.objects$maps$map$SCALE
         global.objects$maps$map.detail$type <<- type
-        global.objects$maps$map.detail$points <<- cbind(obj$y,obj$x)
+        global.objects$maps$map.detail$points <<- cbind(obj$y, obj$x)
     }
         
     ptCols <- iNZightPlots:::colourPoints(obj$colby, col.args, opts)
@@ -105,6 +107,7 @@ plot.inzmap <- function(obj, gen) {
     global.objects$maps$map.detail$num <<- 1
     global.objects$maps$pf$click.points <<- c(mean(xlim),mean(ylim))
     global.objects$maps$pf$bbox.record <<- c(xlim,ylim)
+    
     ## drawing~~~~
     grid.raster(global.objects$maps$map$myTile,0.5,0.5,1,1)
     
