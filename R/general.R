@@ -39,13 +39,17 @@ function(latlon,map)
 ##' r.bbox = runif(4,-90,90)
 ##' getNewMap(r.bbox[1:2],r.bbox[3:4],2,zoom = 3)
 getNewMap <- function(lat.lim, lon.lim, SCALE,
-                        type = c("roadmap", "mobile", "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid")[1],zoom)
-{
-	lat.mean = mean(lat.lim)
-	lon.mean = mean(lon.lim)
-	center = c(lat.mean,lon.mean)
-    map <<- GetMap(center = center, size = Get.map.size(lat.lim,lon.lim)$size,zoom = zoom,maptype = type,SCALE =SCALE)
-    global.objects$maps$map= map
+                      type = c("roadmap", "mobile", "satellite", "terrain", "hybrid",
+                               "mapmaker-roadmap", "mapmaker-hybrid")[1],
+                      zoom) {
+    lat.mean = mean(lat.lim)
+    lon.mean = mean(lon.lim)
+    center = c(lat.mean,lon.mean)
+    map <<- GetMap(center = center,
+                   size = Get.map.size(lat.lim, lon.lim)$size,
+                   zoom = zoom, maptype = type,
+                   SCALE = SCALE)
+    global.objects$maps$map <- map
     assign("global.objects", global.objects, envir = .GlobalEnv)
 }
 
