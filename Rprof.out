@@ -1,8 +1,0 @@
-sample.interval=20000
-"apply" "iNZightPlot" "do.call" "plot.inzightshapemap" "plot" "standardGeneric" "plot" 
-"grid.newpage" "iNZightPlot" "do.call" "plot.inzightshapemap" "plot" "standardGeneric" "plot" 
-"grob" "rectGrob" "grid.rect" "iNZightPlot" "do.call" "plot.inzightshapemap" "plot" "standardGeneric" "plot" 
-"as.character" "factor" "table" "rownames" "subByLim" "plot.inzshapemap" "plot" "standardGeneric" "plot" "iNZightPlot" "do.call" "plot.inzightshapemap" "plot" "standardGeneric" "plot" 
-"grid.Call.graphics" "drawDetails.polygon" "drawDetails" "drawGrob" "recordGraphics" "grid.draw.grob" "grid.draw" "grid.polygon" "plot.inzshapemap" "plot" "standardGeneric" "plot" "iNZightPlot" "do.call" "plot.inzightshapemap" "plot" "standardGeneric" "plot" 
-"grid.Call.graphics" "drawDetails.polygon" "drawDetails" "drawGrob" "recordGraphics" "grid.draw.grob" "grid.draw" "grid.polygon" "plot.inzshapemap" "plot" "standardGeneric" "plot" "iNZightPlot" "do.call" "plot.inzightshapemap" "plot" "standardGeneric" "plot" 
-"grid.Call.graphics" "drawDetails.polygon" "drawDetails" "drawGrob" "recordGraphics" "grid.draw.grob" "grid.draw" "grid.polygon" "plot.inzshapemap" "plot" "standardGeneric" "plot" "iNZightPlot" "do.call" "plot.inzightshapemap" "plot" "standardGeneric" "plot" 
