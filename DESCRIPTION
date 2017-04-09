@@ -1,8 +1,8 @@
 Package: iNZightMaps
 Type: Package
 Title: iNZightMaps
-Version: 1.1-2
-Date: 2016-11-19
+Version: 1.1-3
+Date: 2017-04-10
 Authors@R: c(person("Eric", "Lim", role = c("aut"),
                     email = "jlim062@aucklanduni.ac.nz"),
              person("Jason", "Wen", role = "aut",

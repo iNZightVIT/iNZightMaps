@@ -63,7 +63,7 @@ getNewMap <- function(lat.lim, lon.lim, SCALE,
 lon.rescale <- function(lon) {
     r1 <- range(lon, na.rm = TRUE)
     r2 <- range((360 + lon) %% 360, na.rm = TRUE)
-    if (diff(r2) < diff(r1)) {
+    if (round(diff(r2) - diff(r1), 10) < 0) {
         lon <- (360 + lon) %% 360
     } else {
         r3 <- range(ifelse(lon > 180, lon - 360, lon), na.rm = TRUE)
@@ -91,7 +91,7 @@ lon.rescale <- function(lon) {
 needNewMap <- function(bbox, window, size, SCALE, type) {
     need <- FALSE
     map.odd <- global.objects$maps$map
-    
+
     ##check for the map object
     if (any(map.odd == NULL)) {
         need <- TRUE
@@ -120,14 +120,14 @@ needNewMap <- function(bbox, window, size, SCALE, type) {
             } else {
                 need[2] <- FALSE
             }
-            
+
             if (global.objects$maps$map.detail$scale != SCALE) {
                 global.objects$maps$map.detail$scale <- SCALE
                 need[3] <- TRUE
             } else {
                 need[3] <- FALSE
             }
-            
+
             if (type != global.objects$maps$map.detail$type) {
                 global.objects$maps$map.detail$type <- type
                 need[4] <- TRUE
@@ -141,7 +141,7 @@ needNewMap <- function(bbox, window, size, SCALE, type) {
             } else {
                 need[5] <- FALSE
             }
-            
+
             if (global.objects$maps$map.detail$num > 1) {
                 need[6] <- TRUE
             } else {
@@ -176,7 +176,7 @@ Get.map.size <- function(latR, lonR, SCALE) {
     if (missing(SCALE)) {
         SCALE <- global.objects$maps$map.detail$scale
     }
-    
+
     win.size <- c(convertWidth(current.viewport()$width, "mm", TRUE),
                   convertHeight(current.viewport()$height, "mm", TRUE))
 
@@ -191,7 +191,7 @@ Get.map.size <- function(latR, lonR, SCALE) {
     lon.range <- range(lonR)
     zoom <- min(MaxZoom(lat.range, lon.range, size.1))
 
-    
+
     ll <- LatLon2XY(latR[1], lonR[1], zoom)
     ur <- LatLon2XY(latR[2], lonR[2], zoom)
     cr <- LatLon2XY(mean(latR), mean(lonR), zoom)
@@ -200,10 +200,10 @@ Get.map.size <- function(latR, lonR, SCALE) {
     size <- 0
     size[1] <- 2 * max(c(ceiling(abs(ll.Rcoords$X)), ceiling(abs(ur.Rcoords$X))))
     size[2] <- 2 * max(c(ceiling(abs(ll.Rcoords$Y)), ceiling(abs(ur.Rcoords$Y))))
-    
+
     ## first get a square with the maximum length
     size <- c(max(size), max(size))
-    
+
     ## transform the size ratio to be the same as window.size's ratio
     if (win.size[1] > win.size[2]) {
         size[1] <- round(size[2] * (win.size[1] / win.size[2]), 0)
@@ -250,7 +250,7 @@ map.xylim <- function(latR, lonR, SCALE) {
     window.ylim <- c(-size[2] + offset, size[2] - offset) / (scale)
     window.lim <- c(window.xlim, window.ylim)
     global.objects$maps$map.detail$xylim <- window.lim
-    
+
     assign("global.objects", global.objects, envir = .GlobalEnv)
     list(window.lim = window.lim)
 }
@@ -269,12 +269,12 @@ map.xylim <- function(latR, lonR, SCALE) {
 ##' is.google.map(lat,lon)
 is.google.map <- function(lat,lon) {
     TRUE
-    
+
     if (any(lat > 90)  || any(lat < -90)) {
         warning('latitudes are not in the range of [-90,90]')
         FALSE
     }
-    
+
     if(any(lon > 180)  || any(lon < -180)) {
         warning('longitudes are not in the range of [-180,180]')
         FALSE
@@ -320,11 +320,11 @@ ClickOnZoom <- function(ratio = 1, resize = FALSE, p.center = global.objects$map
     if (resize == FALSE)
         global.objects$maps$pf$bbox.record <<- c(new.xlim,new.ylim)
 
-    
-    
+
+
     global.objects$maps$map.detail$bbox <<- c(new.xlim,new.ylim)
     global.objects$maps$pf$click.points <<- p.center
-    
+
     SCALE <- global.objects$maps$map.detail$scale
     size <- global.objects$maps$map$size
     type <- global.objects$maps$map.detail$type
