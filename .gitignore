@@ -1,15 +1,6 @@
 .Rproj.user
 .Rhistory
 .RData
-ggmapTemp.png
-testing.R
 iNZightMaps.Rproj
-Examples
-notes
-dev
-.Rbuildignore
-*.pdf
 *~
 
-R/shapemapobject.R
-*.R
