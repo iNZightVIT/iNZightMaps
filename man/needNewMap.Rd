@@ -32,4 +32,3 @@ needNewMap()
 \author{
 Jason Wen
 }
-

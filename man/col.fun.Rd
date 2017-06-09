@@ -38,4 +38,3 @@ col.fun(p.data,color.index)
 \author{
 Jason Wen
 }
-

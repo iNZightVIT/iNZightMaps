@@ -37,4 +37,3 @@ sClickOnZoom()
 \author{
 Jason
 }
-

@@ -28,4 +28,3 @@ order.match(shp.region,data$Country)
 \author{
 Jason Wen
 }
-

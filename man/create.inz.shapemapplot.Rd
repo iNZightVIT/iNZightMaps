@@ -18,4 +18,3 @@ details...
 \author{
 Tom Elliott
 }
-

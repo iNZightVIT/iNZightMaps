@@ -25,4 +25,3 @@ lon.rescale(lon)
 \author{
 Jason Wen
 }
-

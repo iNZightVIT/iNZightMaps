@@ -30,4 +30,3 @@ latlon.xy(r.latlon,global.objects$maps$map)
 \author{
 Jason Wen
 }
-

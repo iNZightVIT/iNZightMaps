@@ -25,4 +25,3 @@ re.scale(x,ratio)
 \author{
 Jason Wen
 }
-

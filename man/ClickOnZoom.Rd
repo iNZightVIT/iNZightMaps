@@ -24,4 +24,3 @@ ClickOnZoom(ratio = 1)
 \author{
 Jason
 }
-

@@ -35,4 +35,3 @@ getNewMap(r.bbox[1:2],r.bbox[3:4],2,zoom = 3)
 \author{
 Jason Wen
 }
-

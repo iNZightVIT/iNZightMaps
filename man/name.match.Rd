@@ -28,4 +28,3 @@ name.match(shp.region,data$Country)
 \author{
 Jason
 }
-

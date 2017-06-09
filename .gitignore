@@ -3,4 +3,6 @@
 .RData
 iNZightMaps.Rproj
 *~
-
+*.Rcheck
+*.tar.gz
+revdep

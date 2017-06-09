@@ -15,4 +15,3 @@ Object
 \author{
 Tom Elliott
 }
-

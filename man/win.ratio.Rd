@@ -26,4 +26,3 @@ win.ratio(xlim,ylim)
 \author{
 Jason
 }
-

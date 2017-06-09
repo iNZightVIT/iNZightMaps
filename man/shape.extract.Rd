@@ -25,4 +25,3 @@ shape.extract(location)
 \author{
 Jason Wen
 }
-

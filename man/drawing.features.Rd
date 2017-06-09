@@ -34,4 +34,3 @@ a function for drawing bar char, display the value and/or region name
 \author{
 Jason
 }
-

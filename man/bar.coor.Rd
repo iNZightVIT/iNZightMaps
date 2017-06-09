@@ -26,4 +26,3 @@ a function for create a bar object
 \author{
 Jason
 }
-

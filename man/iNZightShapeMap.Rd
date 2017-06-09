@@ -29,4 +29,3 @@ details ....
 \author{
 Tom Elliott
 }
-

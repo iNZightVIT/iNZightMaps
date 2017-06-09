@@ -25,4 +25,3 @@ is.google.map(lat,lon)
 \author{
 Jason Wen
 }
-

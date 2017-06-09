@@ -25,4 +25,3 @@ lim.inside(x,lim)
 \author{
 Jason Wen
 }
-

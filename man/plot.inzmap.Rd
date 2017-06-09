@@ -20,4 +20,3 @@ the function will also returns a global object which called global.objects
 \author{
 Jason Wen
 }
-

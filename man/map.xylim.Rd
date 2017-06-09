@@ -31,4 +31,3 @@ map.xylim(r.center[1:2],r.center[3:4],SCALE)
 \author{
 Jason Wen
 }
-

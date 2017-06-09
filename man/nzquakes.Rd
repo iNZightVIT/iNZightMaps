@@ -18,4 +18,3 @@ A dataset containing locations and measurements of earthquakes in the
 New Zealand region.
 }
 \keyword{datasets}
-

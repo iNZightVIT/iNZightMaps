@@ -42,6 +42,7 @@ the fixed zoom levels provided by Google's Static Maps API.
 \itemize{
 \item \code{plot}: Plot an \code{inzightmap} object
 }}
+
 \examples{
 data(nzquakes)
 mapobj <- iNZightMap(lat = ~Latitude, lon = ~Longitude, data = nzquakes)
@@ -51,4 +52,3 @@ plot(mapobj, opacity = ~Depth, colby = Felt, sizeby = Magnitude, type = "terrain
 \author{
 Tom Elliott
 }
-
