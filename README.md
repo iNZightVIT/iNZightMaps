@@ -1,20 +1,14 @@
 # iNZightMaps
-[![Travis-CI Build Status](https://travis-ci.org/iNZightVIT/iNZightMaps.svg?branch=master)](https://travis-ci.org/iNZightVIT/iNZightMaps)
+
+|master|dev|
+|:---|:---|
+| [![Travis-CI Build Status](https://travis-ci.org/iNZightVIT/iNZightMaps.svg?branch=master)](https://travis-ci.org/iNZightVIT/iNZightMaps)|[![Travis-CI Build Status](https://travis-ci.org/iNZightVIT/iNZightMaps.svg?branch=dev)](https://travis-ci.org/iNZightVIT/iNZightMaps)|
 
 
 A package for interacting with and visualising geographic data.
 =======
 
 
-## Installation
-
-Currently the package is only available on Github in beta. However, it has dependencies that are hosted at http://docker.stat.auckland.ac.nz/R.
-```{r}
-devtools::install_github("iNZightVIT/iNZightPlots@dev-plotmethods",
-      repos = c("http://docker.stat.auckland.ac.nz/R", "http://cran.stat.auckland.ac.nz"))
-devtools::install_github("iNZightVIT/iNZightMaps@dev-intergrateplots",
-      repos = "http://cran.stat.auckland.ac.nz")
-```
 
 ## Basic Usage
 
