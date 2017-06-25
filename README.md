@@ -29,4 +29,3 @@ To get a satellite image and scale opacity by `Depth`:
 plot(quakes.obj, sizeby = Magnitude, colby = Felt, extra.vars = "Depth",
      plot.features = list(maptype = "satellite", opacity = "Depth"))
 ```
->>>>>>> origin/dev-integrateplots
