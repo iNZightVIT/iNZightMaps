@@ -10,6 +10,12 @@
 #'
 #' @examples
 #' 
+#' library(gapminder)
+#' data(gapminder)
+#' testmap <- sf::st_as_sf(maps::map("world", ".", plot = FALSE, fill = TRUE))
+#' 
+#' test.region <- iNZightMapPlot(testdata.region, testmap, type = "region", by.data = "country", by.map = "ID")
+#' plot(test.region)
 
 iNZightMapPlot <- function(data, map, type, ...) {
   switch(type,
