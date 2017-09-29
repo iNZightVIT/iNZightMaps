@@ -1,14 +1,34 @@
-
-## Adds a layer into an iNZightMapPlot object
+#' Add a ggplot layer to an iNZightMapPlot object
+#'
+#' @param mapplot.obj An iNZightMapPlot object.
+#' @param layer.set Which set of layers to add to --- \code{"map"} or \code{"region"}. 
+#' @param layer.name Name to give to the added layer.
+#' @param layer.obj The layer object to add.
+#'
+#' @return An iNZightMapPlot object with \code{layer.obj} stored within it.
 #' @export
+#'
+#' @examples
+#' 
+
 addLayer.iNZightMapPlot <- function(mapplot.obj, layer.set, layer.name, layer.obj) {
   layer.set <- layersetHelper(layer.set)
   mapplot.obj[[layer.set]][[layer.name]] <- layer.obj
   mapplot.obj
 }
 
-## Removes a layer into an iNZightMapPlot object
+#' Remove a ggplot layer from an iNZightMapPlot object
+#'
+#' @param mapplot.obj An iNZightMapPlot object.
+#' @param layer.set Which set of layers the layer is contained in --- \code{"map"} or \code{"region"}.
+#' @param layer.name Name of the layer to be removed.
+#'
+#' @return
 #' @export
+#'
+#' @examples
+#' 
+
 removeLayer.iNZightMapPlot <- function(mapplot.obj, layer.set, layer.name) {
   layer.set <- layersetHelper(layer.set)
   mapplot.obj[[layer.set]][[layer.name]] <- NULL
@@ -21,14 +41,28 @@ layersetHelper <- function(layer.set) {
          point = "point.layers")
 }
 
-## Modifies a mapping of a layer already contained in an iNZightMapPlot object.
-## Since this function replaces the original mapping, this has two benefits:
-## - the iNZightMapPlot object remains smaller in memory
-## - the iNZightMapPlot object remains fast to plot, as only the required layers are present
-
-## The layer given by layer.name MUST be a geom_sf() - it CANNOT be another
-## type of layer (but the modification is simple)
+#' Set an aesthetic mapping to a layer in an iNZightMapPlot object
+#' 
+#' This function modifies an aesthetic mapping to an already existing ggplot
+#' layer in an iNZightMapPlot object. By replacing the existing layer within the
+#' iNZightMapPlot object with a new layer that is identical aside from the new
+#' mapping, multiple mapping adjustments will not inflate the iNZightMapPlot
+#' object size nor leave unnecessary layers that would slow down plotting.
+#' 
+#' @param mapplot.obj An iNZightMapPlot object.
+#' @param layer.set Which set of layers the layer is contained in ---
+#'   \code{"map"} or \code{"region"}.
+#' @param layer.name Name of the layer to be modified. Must be a
+#'   \code{geom_sf()} layer.
+#' @param aes.name The name of the aesthetic to set
+#' @param aes.var The variable to map to the aesthetic
+#'   
+#' @return An iNZightMapPlot object with the desired changes to
+#'   \code{layer.name}.
 #' @export
+#' 
+#' @example
+
 setMapping.iNZightMapPlot <- function(mapplot.obj, 
                                       layer.set, layer.name = "baselayer", 
                                       aes.name, aes.var) {
