@@ -1,5 +1,6 @@
 
 ## Adds a layer into an iNZightMapPlot object
+#' @export
 addLayer.iNZightMapPlot <- function(mapplot.obj, layer.set, layer.name, layer.obj) {
   layer.set <- layersetHelper(layer.set)
   mapplot.obj[[layer.set]][[layer.name]] <- layer.obj
@@ -7,6 +8,7 @@ addLayer.iNZightMapPlot <- function(mapplot.obj, layer.set, layer.name, layer.ob
 }
 
 ## Removes a layer into an iNZightMapPlot object
+#' @export
 removeLayer.iNZightMapPlot <- function(mapplot.obj, layer.set, layer.name) {
   layer.set <- layersetHelper(layer.set)
   mapplot.obj[[layer.set]][[layer.name]] <- NULL
@@ -26,6 +28,7 @@ layersetHelper <- function(layer.set) {
 
 ## The layer given by layer.name MUST be a geom_sf() - it CANNOT be another
 ## type of layer (but the modification is simple)
+#' @export
 setMapping.iNZightMapPlot <- function(mapplot.obj, 
                                       layer.set, layer.name = "baselayer", 
                                       aes.name, aes.var) {

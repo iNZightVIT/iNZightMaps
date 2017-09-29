@@ -1,3 +1,16 @@
+#' Constructing an iNZightMapPlot object
+#'
+#' @param data Data values for each coordinate or region.
+#' @param map A map to use with the values in \code{data}.
+#' @param type Either \code{"region"} or \code{"point"} depending on the data.
+#' @param ... Any further required arguments for the type being constructed.
+#'
+#' @return An iNZightMapPlot object.
+#' @export
+#'
+#' @examples
+#' 
+
 iNZightMapPlot <- function(data, map, type, ...) {
   switch(type,
          region = iNZightMapPlotRegion(data, map, ...),
@@ -5,12 +18,13 @@ iNZightMapPlot <- function(data, map, type, ...) {
          stop("Invalid type argument"))
 }
 
-## Merges .data to .map using the arguments by.data, by.map
+#' @describeIn iNZightMapPlot Constructs a iNZightMapPlot using region values.
+
 iNZightMapPlotRegion <- function(.data, .map, by.data, by.map) {
   by.vect <- c(by.data)
   names(by.vect) <- by.map
   
-  .mapdata <- left_join(.map, .data, by = by.vect)
+  .mapdata <- dplyr::left_join(.map, .data, by = by.vect)
   
   map.layers <- list(baselayer = ggplot2::geom_sf(data = .mapdata))
   
@@ -24,7 +38,8 @@ iNZightMapPlotRegion <- function(.data, .map, by.data, by.map) {
   mapplot.obj
 }
 
-## Stores both the background map and the points
+#' @describeIn iNZightMapPlot Constructs a iNZightMapPlot using point values.
+
 iNZightMapPlotPoint <- function(.data, .map, coord = c("lon", "lat"), crs = 4326) {
   .datasf <- sf::st_as_sf(.data, coords = coord, crs = crs)
   
@@ -41,6 +56,15 @@ iNZightMapPlotPoint <- function(.data, .map, coord = c("lon", "lat"), crs = 4326
   mapplot.obj
 }
 
+#' Plot an iNZightMapPlot object
+#'
+#' @param obj An iNZightMapPlot object of any type.
+#'
+#' @export
+#'
+#' @examples
+#' 
+
 plot.iNZightMapPlot <- function(obj) {
   to.plot <- Reduce(`+`, 
                     x = obj$map.layers, 
@@ -56,6 +80,15 @@ plot.iNZightMapPlot <- function(obj) {
   
   plot(to.plot)
 }
+
+#' Summarise an iNZightMapPlot object
+#'
+#' @param obj An iNZightMapPlot object of any type.
+#'
+#' @export
+#'
+#' @examples
+#' 
 
 summary.iNZightMapPlot <- function(obj) {
   cat(paste0("iNZightMapPlot of type '", obj$type, "': \n"))
