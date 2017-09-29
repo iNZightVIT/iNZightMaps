@@ -9,13 +9,24 @@
 #' @export
 #'
 #' @examples
-#' 
+#' ## Region Data
 #' library(gapminder)
 #' data(gapminder)
-#' testmap <- sf::st_as_sf(maps::map("world", ".", plot = FALSE, fill = TRUE))
+#' map.world <- sf::st_as_sf(maps::map("world", ".", plot = FALSE, fill = TRUE))
 #' 
-#' test.region <- iNZightMapPlot(testdata.region, testmap, type = "region", by.data = "country", by.map = "ID")
-#' plot(test.region)
+#' world.mapplot <- iNZightMapPlot(gapminder, map.world, type = "region", 
+#'                                 by.data = "country", by.map = "ID")
+#' 
+#' plot(world.mapplot)
+#' 
+#' ## Point Data
+#' data(nzquakes)
+#' map.nz <- sf::st_as_sf(maps::map("nz", ".", plot = FALSE, fill = TRUE))
+#' 
+#' nzquake.mapplot <- iNZightMapPlot(nzquakes, map.nz, type = "point", 
+#'                                   coord = c("Longitude", "Latitude"))
+#' 
+#' plot(nzquake.mapplot)
 
 iNZightMapPlot <- function(data, map, type, ...) {
   switch(type,
