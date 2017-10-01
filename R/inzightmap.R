@@ -124,3 +124,8 @@ summary.iNZightMapPlot <- function(obj) {
   cat(obj$crs$proj4string)
   cat("\n")
 }
+
+
+fetchMap <- function(map.name = "world", region = ".") {
+  sf::st_as_sf(maps::map(map.name, region, plot = FALSE, fill = TRUE))
+}
