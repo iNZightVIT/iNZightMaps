@@ -129,3 +129,7 @@ summary.iNZightMapPlot <- function(obj) {
 fetchMap <- function(map.name = "world", region = ".") {
   sf::st_as_sf(maps::map(map.name, region, plot = FALSE, fill = TRUE))
 }
+
+simplifyMap <- function(map, level) {
+  sf::st_simplify(map, preserveTopology = TRUE, dTolerance = 0.05)
+}
