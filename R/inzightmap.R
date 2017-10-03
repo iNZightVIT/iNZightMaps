@@ -59,6 +59,7 @@ iNZightMapPlotRegion <- function(.data, .map, by.data, by.map) {
 
 iNZightMapPlotPoint <- function(.data, .map, coord = c("lon", "lat"), crs = 4326) {
   .datasf <- sf::st_as_sf(.data, coords = coord, crs = crs)
+  .datasf <- sf::st_transform(.datasf, crs = st_crs(.map))
   
   map.layers <- list(baselayer = ggplot2::geom_sf(data = .map))
   point.layers <- list(baselayer = ggplot2::geom_sf(data = .datasf))
@@ -126,9 +127,44 @@ summary.iNZightMapPlot <- function(obj) {
 }
 
 
-fetchMap <- function(map.name = "world", region = ".") {
-  sf::st_as_sf(maps::map(map.name, region, plot = FALSE, fill = TRUE))
+#' Fetch map from `maps` package
+#'
+#' @param map.name Which map to take
+#' @param region Which regions inside that map to extract
+#'
+#' This function is a wrapper around the \link[maps]{map} function that creates an `sf' object from the map returned by that function.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+fetchMap <- function(database = "world", region = ".", crs = 4326) {
+  map.data <- sf::st_as_sf(maps::map(database, region, plot = FALSE, fill = TRUE))
+  
+  map.data <- sf::st_transform(map.data, crs = crs)
+  
+  map.data
 }
+
+#' Simplify Map Polygons
+#'
+#' @param map 
+#' @param level 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' 
+#' nzquake.mapplot <- iNZightMapPlot(nzquakes, map.nz, type = "point",
+#' coord = c("Longitude", "Latitude"))
+#' system.time(plot(nzquake.mapplot))
+#'
+#' map.nz2 <- simplifyMap(map.nz, level = "country")
+#' nzquake.mapplot2 <- iNZightMapPlot(nzquakes, map.nz2, type = "point",
+#' coord = c("Longitude", "Latitude"))
+#'
+#' system.time(plot(nzquake.mapplot2))
 
 simplifyMap <- function(map, level) {
   sf::st_simplify(map, preserveTopology = TRUE, dTolerance = 0.05)
