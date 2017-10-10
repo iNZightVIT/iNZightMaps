@@ -73,10 +73,11 @@ setMapping.iNZightMapPlot <- function(mapplot.obj,
   orig.mapping <- as.character(orig.geom[[1]]$mapping)
   
   # Add in the new aesthetic (or replace an old one)
-  if(!is.null(aes.var)) {
-    orig.mapping[aes.name] <- aes.var
-  } else {
+  if(is.null(aes.var) || aes.var == "") {
     orig.mapping <- orig.mapping[names(orig.mapping) != aes.name]
+  } else {
+    orig.mapping[aes.name] <- aes.var
+    
   }
   
   # Construct the new mapping based on the modified original
@@ -96,4 +97,17 @@ regionPoints.iNZightMapPlot <- function(mapplot.obj) {
 
 regionLabels.iNZightMapPlot <- function(mapplot.obj) {
   addLayer.iNZightMapPlot(mapplot.obj, "point.layers", "regionlabels", geom_t)
+}
+
+
+addFacet <- function(mapplot.obj, facet.var) {
+  where.to.store <- if(mapplot.obj$type == "region") "map" else "point"
+  return.map <- addLayer.iNZightMapPlot(mapplot.obj, 
+                                        layer.set = where.to.store, 
+                                        layer.name = "facet", 
+                                        ggplot2::facet_wrap(as.formula(paste0("~", facet.var))))
+  
+  return.map$facet.var <- facet.var
+  
+  return.map
 }
