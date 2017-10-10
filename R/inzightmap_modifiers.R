@@ -100,15 +100,16 @@ regionLabels.iNZightMapPlot <- function(mapplot.obj) {
 }
 
 
-#' Title
+#' Add a facet layer to an iNZightMapPlot object
 #'
-#' @param mapplot.obj 
-#' @param facet.var 
+#' @param mapplot.obj An iNZightMapPlot object.
+#' @param facet.var Which variable to facet over.
 #'
-#' @return
+#' @return An iNZightMapPlot object with a \code{facet} layer added to it
 #' @export
 #'
 #' @examples
+
 addFacet <- function(mapplot.obj, facet.var) {
   where.to.store <- if(mapplot.obj$type == "region") "map" else "point"
   return.map <- addLayer.iNZightMapPlot(mapplot.obj, 
