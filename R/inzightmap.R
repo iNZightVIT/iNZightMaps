@@ -100,8 +100,8 @@ plot.iNZightMapPlot <- function(obj, facet = NULL) {
     if(facet == "_MULTI") {
       plot(to.plot)
     } else {
-      require(gtable)
-      plot.grob <- ggplotGrob(to.plot)
+      # require(gtable)
+      plot.grob <- ggplot2::ggplotGrob(to.plot)
       
       panel.cols <- plot.grob$layout[grepl("^panel-", plot.grob$layout$name), c("l")] * (-1)
       
