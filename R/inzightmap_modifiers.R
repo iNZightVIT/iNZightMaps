@@ -87,3 +87,13 @@ setMapping.iNZightMapPlot <- function(mapplot.obj,
   
   mapplot.obj
 }
+
+regionPoints.iNZightMapPlot <- function(mapplot.obj) {
+  region.centres <- sf::st_centroid(sf::st_as_sf(mapplot.obj$map.data))
+  
+  addLayer.iNZightMapPlot(mapplot.obj, "point", "regioncentres", geom_sf(data = region.centres))
+}
+
+regionLabels.iNZightMapPlot <- function(mapplot.obj) {
+  addLayer.iNZightMapPlot(mapplot.obj, "point.layers", "regionlabels", geom_t)
+}
