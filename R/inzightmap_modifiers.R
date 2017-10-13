@@ -10,7 +10,6 @@
 #'
 #' @examples
 #' 
-
 addLayer.iNZightMapPlot <- function(mapplot.obj, layer.set, layer.name, layer.obj) {
   layer.set <- layersetHelper(layer.set)
   mapplot.obj[[layer.set]][[layer.name]] <- layer.obj
@@ -28,7 +27,6 @@ addLayer.iNZightMapPlot <- function(mapplot.obj, layer.set, layer.name, layer.ob
 #'
 #' @examples
 #' 
-
 removeLayer.iNZightMapPlot <- function(mapplot.obj, layer.set, layer.name) {
   layer.set <- layersetHelper(layer.set)
   mapplot.obj[[layer.set]][[layer.name]] <- NULL
@@ -62,7 +60,6 @@ layersetHelper <- function(layer.set) {
 #' @export
 #' 
 #' @example
-
 setMapping.iNZightMapPlot <- function(mapplot.obj, 
                                       layer.set, layer.name = "baselayer", 
                                       aes.name, aes.var) {
@@ -99,7 +96,6 @@ regionLabels.iNZightMapPlot <- function(mapplot.obj) {
   addLayer.iNZightMapPlot(mapplot.obj, "point.layers", "regionlabels", geom_t)
 }
 
-
 #' Add a facet layer to an iNZightMapPlot object
 #'
 #' @param mapplot.obj An iNZightMapPlot object.
@@ -109,9 +105,12 @@ regionLabels.iNZightMapPlot <- function(mapplot.obj) {
 #' @export
 #'
 #' @examples
-
 addFacet <- function(mapplot.obj, facet.var) {
   where.to.store <- if(mapplot.obj$type == "region") "map" else "point"
+
+  if(!is.null(mapplot.obj[[where.to.store]]$facet)) {
+    mapplot.obj <- removeLayer.iNZightMapPlot(mapplot.obj, where.to.store, "facet")
+  }
   return.map <- addLayer.iNZightMapPlot(mapplot.obj, 
                                         layer.set = where.to.store, 
                                         layer.name = "facet", 
@@ -120,4 +119,8 @@ addFacet <- function(mapplot.obj, facet.var) {
   return.map$facet.var <- facet.var
   
   return.map
+}
+
+changeZoom <- function(mapplot.obj, zoom.level) {
+  
 }
