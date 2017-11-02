@@ -94,7 +94,9 @@ plot.iNZightMapPlot <- function(obj, facet = NULL) {
                       init = to.plot)
 #    }
 
-  to.plot <- to.plot + ggplot2::coord_sf(crs = obj$crs)
+  if(!any(c(names(obj$map.layers), names(obj$point.layers)) == "coordlims")) {
+    to.plot <- to.plot + ggplot2::coord_sf(crs = obj$crs)
+  }
 
   if(!is.null(facet)) {
     if(facet == "_MULTI") {
