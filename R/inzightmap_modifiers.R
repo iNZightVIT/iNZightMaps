@@ -80,8 +80,29 @@ setMapping.iNZightMapPlot <- function(mapplot.obj,
   # Construct the new mapping based on the modified original
   new.aes <- eval(parse(text = paste0("ggplot2::aes_(", paste0(names(orig.mapping), " = ~", orig.mapping, collapse = ", "), ")")))
   
+  arg.list <- c(list(data = orig.geom[[1]]$data, 
+                     mapping = new.aes),
+                orig.geom[[1]]$aes_params)
+  
   # Overwrite the original layer with a newly constructed one with the new mapping
-  mapplot.obj[[layer.set]][[layer.name]] <- ggplot2::geom_sf(data = orig.geom[[1]]$data, mapping = new.aes)
+  mapplot.obj[[layer.set]][[layer.name]] <- do.call(ggplot2::geom_sf, arg.list)
+  
+  mapplot.obj
+}
+
+setConstant.iNZightMapPlot <- function(mapplot.obj,
+                                       layer.set, layer.name = "baselayer",
+                                       aes.name, aes.val) {
+  layer.set <- layersetHelper(layer.set)
+  orig.geom <- mapplot.obj[[layer.set]][[layer.name]]
+  orig.mapping <- orig.geom[[1]]$mapping
+  
+  arg.list <- c(list(data = orig.geom[[1]]$data, 
+                     mapping = orig.mapping),
+                orig.geom[[1]]$aes_params)
+  arg.list[[aes.name]] <- aes.val
+
+  mapplot.obj[[layer.set]][[layer.name]] <- do.call(ggplot2::geom_sf, arg.list)
   
   mapplot.obj
 }
