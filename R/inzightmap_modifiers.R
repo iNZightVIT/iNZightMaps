@@ -76,9 +76,11 @@ setMapping.iNZightMapPlot <- function(mapplot.obj,
     orig.mapping[aes.name] <- aes.var
     
   }
+
+ new.aes <- eval(parse(text = paste0("ggplot2::aes_(", paste0(names(orig.mapping), " = ~", orig.mapping, collapse = ", "), ")")))
   
   # Construct the new mapping based on the modified original
-  new.aes <- eval(parse(text = paste0("ggplot2::aes_(", paste0(names(orig.mapping), " = ~", orig.mapping, collapse = ", "), ")")))
+ 
   
   arg.list <- c(list(data = orig.geom[[1]]$data, 
                      mapping = new.aes),
@@ -90,9 +92,22 @@ setMapping.iNZightMapPlot <- function(mapplot.obj,
   mapplot.obj
 }
 
+#' Title
+#'
+#' @param mapplot.obj 
+#' @param layer.set 
+#' @param layer.name 
+#' @param aes.name 
+#' @param aes.val 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 setConstant.iNZightMapPlot <- function(mapplot.obj,
                                        layer.set, layer.name = "baselayer",
                                        aes.name, aes.val) {
+  if(!is.null(aes.val) && aes.val == "") aes.val = NULL
   layer.set <- layersetHelper(layer.set)
   orig.geom <- mapplot.obj[[layer.set]][[layer.name]]
   orig.mapping <- orig.geom[[1]]$mapping

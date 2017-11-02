@@ -41,7 +41,8 @@ iNZightMapPlotRegion <- function(.data, .map, by.data, by.map) {
   by.vect <- c(by.data)
   names(by.vect) <- by.map
 
-  .mapdata <- dplyr::left_join(.map, .data, by = by.vect)
+  .mapdata <- sf::st_as_sf(dplyr::left_join(.map, .data, by = by.vect))
+  ## .mapdata <- .mapdata[!is.na(sf::st_dimension(.mapdata)), ]
 
   map.layers <- list(baselayer = ggplot2::geom_sf(data = .mapdata))
 
@@ -94,7 +95,7 @@ plot.iNZightMapPlot <- function(obj, facet = NULL) {
                       init = to.plot)
 #    }
 
-  if(!any(c(names(obj$map.layers), names(obj$point.layers)) == "coordlims")) {
+  if(!any(c(names(obj$map.layers), names(obj$point.layers)) == "coordlims") && !is.null(obj$crs)) {
     to.plot <- to.plot + ggplot2::coord_sf(crs = obj$crs)
   }
 
@@ -102,17 +103,17 @@ plot.iNZightMapPlot <- function(obj, facet = NULL) {
     if(facet == "_MULTI") {
       plot(to.plot)
     } else {
-      # require(gtable)
       plot.grob <- ggplot2::ggplotGrob(to.plot)
       
       panel.cols <- plot.grob$layout[grepl("^panel-", plot.grob$layout$name), c("l")] * (-1)
+      spacer.rows <- which(plot.grob$layout$name == "spacer") * (-1)
       
       facet.var <- obj$facet.var
       
       col.to.keep <- which(levels(obj[[layersetHelper(obj$type)]]$baselayer[[1]]$data[[facet.var]]) == facet)
       panel.cols <- panel.cols[-col.to.keep]
       
-      to.plot <- plot.grob[, panel.cols]
+      to.plot <- plot.grob[spacer.rows, panel.cols]
     }
 
   }
