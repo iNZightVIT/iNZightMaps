@@ -107,10 +107,33 @@ setConstant.iNZightMapPlot <- function(mapplot.obj,
   mapplot.obj
 }
 
+#' Title
+#'
+#' @param mapplot.obj 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 regionPoints.iNZightMapPlot <- function(mapplot.obj) {
-  region.centres <- sf::st_centroid(sf::st_as_sf(mapplot.obj$map.data))
-  
-  addLayer.iNZightMapPlot(mapplot.obj, "point", "regioncentres", geom_sf(data = region.centres))
+  orig.data <- sf::st_as_sf(mapplot.obj[["map.layers"]][["baselayer"]][[1]]$data)
+  orig.data <- orig.data[!is.na(sf::st_dimension(orig.data)), ]
+
+  region.centres <- sf::st_centroid(orig.data)
+
+  region.mapping <- as.character(mapplot.obj$map.layers$baselayer[[1]]$mapping[-1])["fill"]
+
+  reg.mapplot <- addLayer.iNZightMapPlot(mapplot.obj,
+                                         "point",
+                                         "baselayer",
+                                         ggplot2::geom_sf(data = region.centres,
+                                                          mapping = ggplot2::aes_string(colour = region.mapping)))
+
+  reg.mapplot <- setMapping.iNZightMapPlot(reg.mapplot,
+                                           "map", "baselayer",
+                                           "fill", NULL)
+  reg.mapplot$type <- "point"
+  reg.mapplot
 }
 
 regionLabels.iNZightMapPlot <- function(mapplot.obj) {
