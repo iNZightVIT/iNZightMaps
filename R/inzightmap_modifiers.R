@@ -92,6 +92,51 @@ setMapping.iNZightMapPlot <- function(mapplot.obj,
   mapplot.obj
 }
 
+#' @export
+setMapping2.iNZightMapPlot <- function(mapplot.obj, layer.set, layer.name, aes.name, aes.var) {
+  layer.set <- layersetHelper(layer.set)
+  orig.geom <- mapplot.obj[[layer.set]][[layer.name]]
+  
+  # Extract the mapping that is already there
+  orig.mapping <- as.character(orig.geom[[1]]$mapping)
+  
+  # Add in the new aesthetic (or replace an old one)
+  if(is.null(aes.var) || aes.var == "") {
+    orig.mapping <- orig.mapping[names(orig.mapping) != aes.name]
+  } else {
+    orig.mapping[aes.name] <- aes.var
+    
+  }
+
+ new.aes <- eval(parse(text = paste0("ggplot2::aes_(", paste0(names(orig.mapping), " = ~", orig.mapping, collapse = ", "), ")")))
+  
+  # Construct the new mapping based on the modified original
+ 
+  
+  arg.list <- c(list(data = orig.geom[[1]]$data, 
+                     mapping = new.aes),
+                orig.geom[[1]]$aes_params)
+  
+  do.call(ggplot2::geom_sf, arg.list)
+}
+
+#' @export
+setConstant2.iNZightMapPlot <- function(mapplot.obj,
+                                       layer.set, layer.name = "baselayer",
+                                       aes.name, aes.val) {
+  if(!is.null(aes.val) && aes.val == "") aes.val = NULL
+  layer.set <- layersetHelper(layer.set)
+  orig.geom <- mapplot.obj[[layer.set]][[layer.name]]
+  orig.mapping <- orig.geom[[1]]$mapping
+  
+  arg.list <- c(list(data = orig.geom[[1]]$data, 
+                     mapping = orig.mapping),
+                orig.geom[[1]]$aes_params)
+  arg.list[[aes.name]] <- aes.val
+
+  do.call(ggplot2::geom_sf, arg.list)
+}
+
 #' Title
 #'
 #' @param mapplot.obj 
@@ -131,6 +176,28 @@ setConstant.iNZightMapPlot <- function(mapplot.obj,
 #'
 #' @examples
 regionPoints.iNZightMapPlot <- function(mapplot.obj) {
+  orig.data <- sf::st_as_sf(mapplot.obj[["map.layers"]][["baselayer"]][[1]]$data)
+  orig.data <- orig.data[!is.na(sf::st_dimension(orig.data)), ]
+
+  region.centres <- sf::st_centroid(orig.data)
+
+  region.mapping <- as.character(mapplot.obj$map.layers$baselayer[[1]]$mapping[-1])["fill"]
+
+  reg.mapplot <- addLayer.iNZightMapPlot(mapplot.obj,
+                                         "point",
+                                         "baselayer",
+                                         ggplot2::geom_sf(data = region.centres,
+                                                          mapping = ggplot2::aes_string(colour = region.mapping)))
+
+  reg.mapplot <- setMapping.iNZightMapPlot(reg.mapplot,
+                                           "map", "baselayer",
+                                           "fill", NULL)
+  reg.mapplot$type <- "point"
+  reg.mapplot
+}
+
+#' @export
+regionPoints2.iNZightMapPlot <- function(map) {
   orig.data <- sf::st_as_sf(mapplot.obj[["map.layers"]][["baselayer"]][[1]]$data)
   orig.data <- orig.data[!is.na(sf::st_dimension(orig.data)), ]
 
