@@ -88,41 +88,77 @@ iNZightMapPlotPoint <- function(.data, .map, coord = c("lon", "lat"), crs = 4326
 #' @examples
 #'
 
-plot.iNZightMapPlot <- function(obj, facet = NULL) {
-  to.plot <- Reduce(`+`,
-                    x = obj$map.layers,
-                    init = ggplot2::ggplot())
-
-#   if(obj$type == "point") {
-    to.plot <- Reduce(`+`,
-                      x = obj$point.layers,
-                      init = to.plot)
-#    }
-
-  if(!any(c(names(obj$map.layers), names(obj$point.layers)) == "coordlims") && !is.null(obj$crs)) {
-    to.plot <- to.plot + ggplot2::coord_sf(crs = obj$crs)
-  }
-
-  if(!is.null(facet)) {
-    if(facet == "_MULTI") {
-      plot(to.plot)
+plot.iNZightMapPlot <- function(obj, fill.var = NULL, colour.var = NULL, size.var = NULL, alpha.var = NULL,
+                                fill.const = NULL, colour.const = NULL, size.const = NULL, alpha.const = NULL,
+                                facet = NULL, multiple.vars = FALSE,
+                                main = NULL, xlab = "Longitude", ylab = "Latitude", axis.labels = TRUE,
+                                datum.lines = TRUE, theme = NULL, projection = NULL) {
+    if(multiple.vars) {
+        args <- names(as.list(args(plot.iNZightMapPlot)))
+        args <- args[-length(args)]
+        args <- args[args != "fill.var"]
+        args <- args[args != "multiple.vars"]
+        args <- args[args != "main"]
+        arg.call <- paste(args, sep = " = ", args, collapse = ", ")
+        
+        plots <- invisible(lapply(fill.var, function(x) {
+            func.call <- paste0("plot(", arg.call,
+                                ", fill.var = '", x, "'",
+                                ", main = '", x, "', multiple.vars = FALSE)")
+            eval(parse(text = func.call))
+        }))
+        
+        plot.grid <- do.call(gridExtra::arrangeGrob, list(grobs = plots, nrow = 1, top = main))
+        return(plot.grid)
     } else {
-      plot.grob <- ggplot2::ggplotGrob(to.plot)
-      
-      panel.cols <- plot.grob$layout[grepl("^panel-", plot.grob$layout$name), c("l")] * (-1)
-      spacer.rows <- which(plot.grob$layout$name == "spacer") * (-1)
-      
-      facet.var <- obj$facet.var
-      
-      col.to.keep <- which(levels(obj[[layersetHelper(obj$type)]]$baselayer[[1]]$data[[facet.var]]) == facet)
-      panel.cols <- panel.cols[-col.to.keep]
-      
-      to.plot <- plot.grob[spacer.rows, panel.cols]
+        obj[["map.layers"]][["baselayer"]] <- setMapping2.iNZightMapPlot(obj,
+                                                                         "map", "baselayer",
+                                                                         "fill", fill.var)
+        
+        obj[["map.layers"]][["map.title"]] <- ggplot2::labs(title = main)
+        
+        if(axis.labels) {
+            obj[["map.layers"]][["map.axistitles"]] <- ggplot2::labs(x = xlab, y = ylab)
+        }
+        
+        if(datum.lines) {
+            obj[["map.layers"]][["map.projection"]] <- ggplot2::coord_sf(crs = projection)
+        } else {
+            obj[["map.layers"]][["map.projection"]] <- ggplot2::coord_sf(crs = projection, datum = NA)
+        }
+        
+        to.plot <- Reduce(`+`,
+                          x = obj$map.layers,
+                          init = ggplot2::ggplot())
+        
+        if(obj$type == "point") {
+            to.plot <- Reduce(`+`,
+                              x = obj$point.layers,
+                              init = to.plot)
+        }
+        
+        
+        if(!is.null(facet)) {
+            if(facet == "_MULTI") {
+                plot(to.plot)
+            } else {
+                plot.grob <- ggplot2::ggplotGrob(to.plot)
+                
+                panel.cols <- plot.grob$layout[grepl("^panel-", plot.grob$layout$name), c("l")] * (-1)
+                spacer.rows <- which(plot.grob$layout$name == "spacer") * (-1)
+                
+                facet.var <- obj$facet.var
+                
+                col.to.keep <- which(levels(obj[[layersetHelper(obj$type)]]$baselayer[[1]]$data[[facet.var]]) == facet)
+                panel.cols <- panel.cols[-col.to.keep]
+                
+                to.plot <- plot.grob[spacer.rows, panel.cols]
+            }
+            
+        }
+        
+        to.plot
     }
-
-  }
-
-  plot(to.plot)
 }
 
 #' Summarise an iNZightMapPlot object
