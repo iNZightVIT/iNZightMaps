@@ -37,19 +37,23 @@ iNZightMapPlot <- function(data, map, type, ...) {
 
 #' @describeIn iNZightMapPlot Constructs a iNZightMapPlot using region values.
 
-iNZightMapPlotRegion <- function(.data, .map, by.data, by.map) {
+iNZightMapPlotRegion <- function(data, map, by.data, by.map) {
   by.vect <- c(by.data)
   names(by.vect) <- by.map
 
-  .mapdata <- sf::st_as_sf(dplyr::left_join(.map, .data, by = by.vect))
-  ## .mapdata <- .mapdata[!is.na(sf::st_dimension(.mapdata)), ]
+  ## orig.data <- orig.data[!is.na(sf::st_dimension(orig.data)), ]
 
-  map.layers <- list(baselayer = ggplot2::geom_sf(data = .mapdata))
+  mapdata <- sf::st_as_sf(dplyr::left_join(map, data, by = by.vect))
+
+  map.layers <- list(baselayer = ggplot2::geom_sf(data = mapdata))
+
+  map.centroids <- sf::st_centroid(mapdata)
+
+  point.layers <- list(baselayer = ggplot2::geom_sf(data = map.centroids))
 
   mapplot.obj <- list(map.layers = map.layers,
-                      point.layers = NULL,
-                      type = "region",
-                      crs = sf::st_crs(.map))
+                      point.layers = point.layers,
+                      type = "region")
 
   class(mapplot.obj) <- c("iNZightMapPlot", "list")
 
