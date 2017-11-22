@@ -149,10 +149,12 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             obj[["map.layers"]][["map.axistitles"]] <- ggplot2::labs(x = xlab, y = ylab)
         }
         
+        which.set <- ifelse(obj$type == "region", "map.layers", "point.layers")
+        projection <- sf::st_crs(projection)
         if(datum.lines) {
-            obj[["map.layers"]][["map.projection"]] <- ggplot2::coord_sf(crs = projection)
+            obj[[which.set]][["map.projection"]] <- ggplot2::coord_sf(crs = projection)
         } else {
-            obj[["map.layers"]][["map.projection"]] <- ggplot2::coord_sf(crs = projection, datum = NA)
+            obj[[which.set]][["map.projection"]] <- ggplot2::coord_sf(crs = projection, datum = NA)
         }
         
         to.plot <- Reduce(`+`,
