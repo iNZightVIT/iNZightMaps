@@ -97,32 +97,51 @@ iNZightMapPlotPoint <- function(.data, .map, coord = c("lon", "lat"), crs = 4326
 #' @examples
 #'
 
-plot.iNZightMapPlot <- function(obj, fill.var = NULL, colour.var = NULL, size.var = NULL, alpha.var = NULL,
+plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.var = NULL,
                                 fill.const = NULL, colour.const = NULL, size.const = NULL, alpha.const = NULL,
                                 facet = NULL, multiple.vars = FALSE,
                                 main = NULL, xlab = "Longitude", ylab = "Latitude", axis.labels = TRUE,
-                                datum.lines = TRUE, theme = NULL, projection = NULL) {
+                                datum.lines = TRUE, theme = NULL, projection = NULL,
+                                label.title = "") {
     if(multiple.vars) {
         args <- names(as.list(args(plot.iNZightMapPlot)))
         args <- args[-length(args)]
-        args <- args[args != "fill.var"]
+        args <- args[args != "colour.var"]
         args <- args[args != "multiple.vars"]
         args <- args[args != "main"]
         arg.call <- paste(args, sep = " = ", args, collapse = ", ")
         
-        plots <- invisible(lapply(fill.var, function(x) {
+        plots <- invisible(lapply(colour.var, function(x) {
             func.call <- paste0("plot(", arg.call,
-                                ", fill.var = '", x, "'",
+                                ", colour.var = '", x, "'",
                                 ", main = '", x, "', multiple.vars = FALSE)")
             eval(parse(text = func.call))
         }))
         
-        plot.grid <- do.call(gridExtra::arrangeGrob, list(grobs = plots, nrow = 1, top = main))
+        plot.grid <- do.call(gridExtra::arrangeGrob, list(grobs = plots, top = main, as.table = FALSE))
         return(plot.grid)
     } else {
-        obj[["map.layers"]][["baselayer"]] <- setMapping2.iNZightMapPlot(obj,
-                                                                         "map", "baselayer",
-                                                                         "fill", fill.var)
+        if(obj$type == "region") {
+            obj[["map.layers"]][["baselayer"]] <- setMapping2.iNZightMapPlot(obj,
+                                                                             "map", "baselayer",
+                                                                             "fill", colour.var)
+            obj[["map.layers"]][["baselayer"]] <- setConstant2.iNZightMapPlot(obj,
+                                                                             "map", "baselayer",
+                                                                             "shape", 21)
+            obj[["map.layers"]][["baselayer"]] <- setConstant2.iNZightMapPlot(obj,
+                                                                             "map", "baselayer",
+                                                                             "stroke", 1)
+        } else if (obj$type == "point") {
+            obj[["point.layers"]][["baselayer"]] <- setMapping2.iNZightMapPlot(obj,
+                                                                             "point", "baselayer",
+                                                                             "colour", colour.var)
+            obj[["point.layers"]][["baselayer"]] <- setMapping2.iNZightMapPlot(obj,
+                                                                             "point", "baselayer",
+                                                                             "fill", colour.var)
+            obj[["point.layers"]][["baselayer"]] <- setMapping2.iNZightMapPlot(obj,
+                                                                             "point", "baselayer",
+                                                                             "size", size.var)
+        }
         
         obj[["map.layers"]][["map.title"]] <- ggplot2::labs(title = main)
         
