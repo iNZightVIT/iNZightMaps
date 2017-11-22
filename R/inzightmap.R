@@ -37,23 +37,32 @@ iNZightMapPlot <- function(data, map, type, ...) {
 
 #' @describeIn iNZightMapPlot Constructs a iNZightMapPlot using region values.
 
-iNZightMapPlotRegion <- function(data, map, by.data, by.map) {
+iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.level = 0.01) {
   by.vect <- c(by.data)
   names(by.vect) <- by.map
 
-  ## orig.data <- orig.data[!is.na(sf::st_dimension(orig.data)), ]
+  map <- map[!is.na(sf::st_dimension(map)), ]
 
   mapdata <- sf::st_as_sf(dplyr::left_join(map, data, by = by.vect))
-
-  map.layers <- list(baselayer = ggplot2::geom_sf(data = mapdata))
-
   map.centroids <- sf::st_centroid(mapdata)
 
-  point.layers <- list(baselayer = ggplot2::geom_sf(data = map.centroids))
+  mapdata <- sf::st_simplify(mapdata, dTolerance = simplification.level)
+
+  map.layers <- list(baselayer = ggplot2::geom_sf(data = mapdata),
+                     bottomlegend = ggplot2::theme(legend.position = "bottom"))
+
+
+  point.layers <- list(baselayer = ggplot2::geom_sf(data = map.centroids, show.legend = "point"),
+                       sizelegend = ggplot2::scale_size(guide = "none"))
+
+  var.vect <- sort(colnames(mapdata))
+  stored.data <- as.data.frame(mapdata)[, 1:(ncol(mapdata) - 1)]
 
   mapplot.obj <- list(map.layers = map.layers,
                       point.layers = point.layers,
-                      type = "region")
+                      type = "region",
+                      vars = var.vect,
+                      data = stored.data)
 
   class(mapplot.obj) <- c("iNZightMapPlot", "list")
 
