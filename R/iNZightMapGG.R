@@ -18,12 +18,15 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
 
   mapdata <- sf::st_simplify(mapdata, dTolerance = simplification.level)
 
+  has.multipleobs <- isTRUE(any(table(data[, by.data]) > 1))
+
   mapplot.obj <- list(region.data = mapdata,
                       centroid.data = map.centroids,
                       type = "region",
                       projection = "",
-                      code.history = "TODO...")
-
+                      code.history = "TODO...",
+                      region.var = by.map,
+                      multiple.obs = has.multipleobs) 
   class(mapplot.obj) <- c("iNZightMapPlot", "list")
 
   mapplot.obj
@@ -38,7 +41,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                 facet = NULL, multiple.vars = FALSE,
                                 main = NULL, xlab = "Longitude", ylab = "Latitude", axis.labels = TRUE,
                                 datum.lines = TRUE, theme = NULL, projection = NULL,
-                                label.title = "", multipleobs = TRUE) {
+                                label.title = "") {
     if (multiple.vars) {
         args <- names(as.list(args(plot.iNZightMapPlot)))
         args <- args[-length(args)]
@@ -70,14 +73,17 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                              shape = 21, stroke = 1)
         } else if (obj$type == "point") {
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj$region.data)
+            obj$centroid.data[, paste0(colour.var, "_na")] <- !is.na(as.data.frame(obj$centroid.data)[, colour.var])
+            print(obj$centroid.data)
             layers.list[["points"]] <- ggplot2::geom_sf(data = obj$centroid.data,
                                             mapping = ggplot2::aes_string(colour = colour.var,
-                                                                          size = size.var),
+                                                                          size = size.var,
+                                                                          alpha = paste0(colour.var, "_na")),
                                             show.legend = "point")
         } else if (obj$type == "sparklines") {
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj$region.data)
             layers.list[["sparklines"]] <- geom_sparkline(data = obj$centroid.data,
-                                                                    aes_string(group = "NAME",
+                                                                    aes_string(group = obj$region.var,
                                                                                x_line = "Year",
                                                                                y_line = colour.var))
         }
