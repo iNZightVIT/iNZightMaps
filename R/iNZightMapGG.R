@@ -7,7 +7,8 @@ iNZightMapPlot <- function(data, map, type, ...) {
 
 #' @describeIn iNZightMapPlot Constructs a iNZightMapPlot using region values.
 
-iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.level = 0.01) {
+iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.level = 0.01,
+                                 multiple.obs = FALSE, sequence.var = NULL, agg.type = "last") {
   by.vect <- c(by.data)
   names(by.vect) <- by.map
 
@@ -17,8 +18,19 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
   map.centroids <- sf::st_centroid(mapdata)
 
   mapdata <- sf::st_simplify(mapdata, dTolerance = simplification.level)
+  
+  if (multiple.obs) {
+      mapdata.agg <- mapdata %>%
+          dplyr::group_by(!!as.name(by.map)) %>%
+          dplyr::summarise_if(is.numeric, last)
 
-  has.multipleobs <- isTRUE(any(table(data[, by.data]) > 1))
+      centroid.agg <- map.centroids %>%
+          dplyr::group_by(!!as.name(by.map)) %>%
+          dplyr::summarise_if(is.numeric, last)
+  } else {
+      mapdata.agg <- NULL
+      centroid.agg <- NULL
+  }
 
   mapplot.obj <- list(region.data = mapdata,
                       centroid.data = map.centroids,
@@ -26,7 +38,11 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
                       projection = "",
                       code.history = "TODO...",
                       region.var = by.map,
-                      multiple.obs = has.multipleobs) 
+                      multiple.obs = multiple.obs,
+                      sequence.var = sequence.var,
+                      region.aggregate = mapdata.agg, 
+                      centroid.aggregate = centroid.agg) 
+
   class(mapplot.obj) <- c("iNZightMapPlot", "list")
 
   mapplot.obj
@@ -41,7 +57,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                 facet = NULL, multiple.vars = FALSE,
                                 main = NULL, xlab = "Longitude", ylab = "Latitude", axis.labels = TRUE,
                                 datum.lines = TRUE, theme = NULL, projection = NULL,
-                                label.title = "") {
+                                label.title = "", aggregate = FALSE) {
     if (multiple.vars) {
         args <- names(as.list(args(plot.iNZightMapPlot)))
         args <- args[-length(args)]
@@ -56,8 +72,15 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                 ", main = '", x, "', multiple.vars = FALSE)")
             eval(parse(text = func.call))
         }))
+
+        d.size <- dev.size()
+        opt.layout <- n2mfrow(length(plots))
+        if(d.size[1] > d.size[2]) {
+            opt.layout <- rev(opt.layout)
+        }
         
-        plot.grid <- do.call(gridExtra::arrangeGrob, list(grobs = plots, top = main, as.table = FALSE))
+        plot.grid <- do.call(gridExtra::arrangeGrob, list(grobs = plots, top = main,
+                                                          nrow = opt.layout[1], ncol = opt.layout[2]))
         return(plot.grid)
     } else {
         layers.list <- list(regions = NULL,
@@ -66,26 +89,46 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                             axislabels = NULL,
                             projection = NULL,
                             theme = NULL)
-        
+
+        if(obj$multiple.obs) {
+            region.data.to.use <- "region.aggregate"
+            centroid.data.to.use <- "centroid.aggregate"
+        } else {
+            region.data.to.use <- "region.data"
+            centroid.data.to.use <- "centroid.data"
+        }         
+
         if (obj$type == "region") {
-            layers.list[["regions"]] <- ggplot2::geom_sf(data = obj$region.data,
+            layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]],
                                              mapping = ggplot2::aes_string(fill = colour.var),
                                              shape = 21, stroke = 1)
         } else if (obj$type == "point") {
-            layers.list[["regions"]] <- ggplot2::geom_sf(data = obj$region.data)
-            obj$centroid.data[, paste0(colour.var, "_na")] <- !is.na(as.data.frame(obj$centroid.data)[, colour.var])
-            print(obj$centroid.data)
-            layers.list[["points"]] <- ggplot2::geom_sf(data = obj$centroid.data,
+            layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]],
+                                                         colour = "#00000040",
+                                                         alpha = 0.3)
+
+            obj[[centroid.data.to.use]][, paste0(colour.var, "_na")] <- is.na(as.data.frame(obj[[centroid.data.to.use]])[, colour.var])
+            layers.list[["points"]] <- ggplot2::geom_sf(data = obj[[centroid.data.to.use]],
                                             mapping = ggplot2::aes_string(colour = colour.var,
                                                                           size = size.var,
                                                                           alpha = paste0(colour.var, "_na")),
-                                            show.legend = "point")
+                                            show.legend = "point") 
+            if (!is.null(size.var)) {
+                layers.list[["legend.size"]] <- ggplot2::scale_size(guide = FALSE)
+            }
+
+            layers.list[["legend.alpha"]] <- ggplot2::scale_alpha_discrete(guide = FALSE, range = c(1, 0.1))
+            
         } else if (obj$type == "sparklines") {
-            layers.list[["regions"]] <- ggplot2::geom_sf(data = obj$region.data)
-            layers.list[["sparklines"]] <- geom_sparkline(data = obj$centroid.data,
+            layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[["region.aggregate"]],
+                                                         colour = "#00000040",
+                                                         alpha = 0.3)
+
+            layers.list[["sparklines"]] <- geom_sparkline(data = obj[["centroid.data"]],
                                                                     aes_string(group = obj$region.var,
-                                                                               x_line = "Year",
-                                                                               y_line = colour.var))
+                                                                               x_line = obj$sequence.var,
+                                                                               y_line = colour.var),
+                                                          fill = "white", fill_alpha = 0.75)
         }
         
         layers.list[["title"]] <- ggplot2::labs(title = main)
@@ -100,7 +143,6 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
         } else {
             layers.list[["projection"]] <- ggplot2::coord_sf(crs = projection, datum = NA)
         }
-        
         
 ##         if (!is.null(facet)) {
 ##             if (facet == "_MULTI") {
@@ -121,9 +163,39 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
 ##             
 ##         }
 
-        Reduce(`+`, x = layers.list, init = ggplot2::ggplot())
-        
-        ## + ggplot2::labs(fill = label.title, colour = label.title) +
-            ## ggplot2::scale_fill_continuous(label=scales::comma) 
+        if (!is.null(theme)) {
+            layers.list[["theme"]] <- mapThemes[[theme]]
+        }
+
+        layers.list[["legend.bottom"]] <- ggplot2::theme(legend.position = "bottom")
+
+        Reduce(`+`, x = layers.list, init = ggplot2::ggplot()) 
     }
 }
+
+##' @export
+iNZightMapAggregation <- function(obj, aggregation = "mean", single.value = NULL) {
+    if (aggregation == "singlevalue") {
+        obj$region.aggregate <- obj$region.data %>%
+            dplyr::group_by(!!as.name(obj$region.var)) %>%
+            dplyr::filter((!!as.name(obj$sequence.var)) == single.value)
+        obj$centroid.aggregate <- obj$centroid.data %>%
+            dplyr::group_by(!!as.name(obj$region.var)) %>%
+            dplyr::filter((!!as.name(obj$sequence.var)) == single.value)
+    } else {
+        obj$region.aggregate <- obj$region.data %>%
+            dplyr::group_by(!!as.name(obj$region.var)) %>%
+            dplyr::summarise_if(is.numeric, aggregation)
+        obj$centroid.aggregate <- obj$centroid.data %>%
+            dplyr::group_by(!!as.name(obj$region.var)) %>%
+            dplyr::summarise_if(is.numeric, aggregation)
+    }
+
+   obj 
+}
+
+theme_dark <- ggplot2::theme(panel.background = ggplot2::element_rect(fill = "#343434"),
+                              line = ggplot2::element_line(colour = "#555555"))
+
+mapThemes <- list("Dark" = theme_dark,
+                  "Default" = NULL)

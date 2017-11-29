@@ -39,8 +39,10 @@ findBestMatch <- function(data, map.data) {
     best.match.vars
 }
 
+##' @export
 matchVariables <- function(data.vect, map.vect) {
     data.is.na <- is.na(data.vect)
+    data.n.obs <- table(data.vect)
     data.vect <- as.character(unique(data.vect[!data.is.na]))
     map.vect <-  as.character(map.vect)
 
@@ -52,5 +54,6 @@ matchVariables <- function(data.vect, map.vect) {
     list(data.vect = data.vect,
          data.matched = data.matched,
          map.matched = map.matched,
-         matches = matches)
+         matches = matches,
+         multiple.obs = isTRUE(any(data.n.obs > 1)))
 }
