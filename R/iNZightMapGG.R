@@ -6,7 +6,6 @@ iNZightMapPlot <- function(data, map, type, ...) {
 }
 
 #' @describeIn iNZightMapPlot Constructs a iNZightMapPlot using region values.
-
 iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.level = 0.01,
                                  multiple.obs = FALSE, sequence.var = NULL, agg.type = "last") {
   by.vect <- c(by.data)
@@ -22,15 +21,17 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
   if (multiple.obs) {
       mapdata.agg <- mapdata %>%
           dplyr::group_by(!!as.name(by.map)) %>%
-          dplyr::summarise_if(is.numeric, last)
+          dplyr::summarise_if(is.numeric, "last")
 
       centroid.agg <- map.centroids %>%
           dplyr::group_by(!!as.name(by.map)) %>%
-          dplyr::summarise_if(is.numeric, last)
+          dplyr::summarise_if(is.numeric, "last")
   } else {
       mapdata.agg <- NULL
       centroid.agg <- NULL
   }
+
+  var.types <- sapply(mapdata, class)
 
   mapplot.obj <- list(region.data = mapdata,
                       centroid.data = map.centroids,
@@ -41,7 +42,8 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
                       multiple.obs = multiple.obs,
                       sequence.var = sequence.var,
                       region.aggregate = mapdata.agg, 
-                      centroid.aggregate = centroid.agg) 
+                      centroid.aggregate = centroid.agg,
+                      var.types = var.types) 
 
   class(mapplot.obj) <- c("iNZightMapPlot", "list")
 
@@ -52,6 +54,31 @@ iNZightMapVars <- function(obj) {
     colnames(obj$region.data)[-ncol(obj$region.data)]
 }
 
+##' .. content for \description{} (no empty lines) ..
+##'
+##' .. content for \details{} ..
+##' @title Plot an iNZightMapPlot object
+##' @param obj iNZightMapPlot object
+##' @param colour.var String containing the variable name to map to
+##'     colour for either the regions or points (depending on the map
+##'     type)
+##' @param size.var String containing the variable name to map to
+##'     point size
+##' @param multiple.vars Is the plot of multiple variables?
+##' @param main Title of the plot
+##' @param xlab x-axis label
+##' @param ylab y-axis label
+##' @param axis.labels Should the axis labels be visible?
+##' @param datum.lines Should the datum lines (grid behind the map) be
+##'     visible?
+##' @param theme Either NULL for no theme or a string corresponding to
+##'     a theme. See [...]
+##' @param projection Either a PROJ4 string (or EPSG code?)
+##' @param aggregate Is the plot some form of aggregate of the
+##'     original data (either mean/median/etc or a single year's data)
+##' @return A ggplot object that can be plotted
+##' @author Daniel Barnett
+##' @export
 plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.var = NULL,
                                 fill.const = NULL, colour.const = NULL, size.const = NULL, alpha.const = NULL,
                                 facet = NULL, multiple.vars = FALSE,
@@ -79,16 +106,15 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             opt.layout <- rev(opt.layout)
         }
         
-        plot.grid <- do.call(gridExtra::arrangeGrob, list(grobs = plots, top = main,
-                                                          nrow = opt.layout[1], ncol = opt.layout[2]))
+        plot.grid <- do.call(gridExtra::arrangeGrob,
+                             list(grobs = plots, top = main,
+                                  nrow = opt.layout[1], ncol = opt.layout[2]))
         return(plot.grid)
     } else {
         layers.list <- list(regions = NULL,
                             points = NULL,
                             title = NULL,
-                            axislabels = NULL,
-                            projection = NULL,
-                            theme = NULL)
+                            axislabels = NULL)
 
         if(obj$multiple.obs) {
             region.data.to.use <- "region.aggregate"
@@ -123,12 +149,13 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[["region.aggregate"]],
                                                          colour = "#00000040",
                                                          alpha = 0.3)
-
-            layers.list[["sparklines"]] <- geom_sparkline(data = obj[["centroid.data"]],
-                                                                    aes_string(group = obj$region.var,
-                                                                               x_line = obj$sequence.var,
-                                                                               y_line = colour.var),
-                                                          fill = "white", fill_alpha = 0.75)
+            if (isTRUE(!is.null(colour.var))) {
+                layers.list[["sparklines"]] <- geom_sparkline(data = obj[["centroid.data"]],
+                                                              ggplot2::aes_string(group = obj$region.var,
+                                                                                  line_x = obj$sequence.var,
+                                                                                  line_y = colour.var),
+                                                              fill = "white", fill_alpha = 0.75)
+            }
         }
         
         layers.list[["title"]] <- ggplot2::labs(title = main)
@@ -178,10 +205,10 @@ iNZightMapAggregation <- function(obj, aggregation = "mean", single.value = NULL
     if (aggregation == "singlevalue") {
         obj$region.aggregate <- obj$region.data %>%
             dplyr::group_by(!!as.name(obj$region.var)) %>%
-            dplyr::filter((!!as.name(obj$sequence.var)) == single.value)
+            dplyr::filter((!!as.name(obj$sequence.var)) == single.value | is.na(!!as.name(obj$sequence.var)))
         obj$centroid.aggregate <- obj$centroid.data %>%
             dplyr::group_by(!!as.name(obj$region.var)) %>%
-            dplyr::filter((!!as.name(obj$sequence.var)) == single.value)
+            dplyr::filter((!!as.name(obj$sequence.var)) == single.value | is.na(!!as.name(obj$sequence.var)))
     } else {
         obj$region.aggregate <- obj$region.data %>%
             dplyr::group_by(!!as.name(obj$region.var)) %>%
@@ -195,7 +222,8 @@ iNZightMapAggregation <- function(obj, aggregation = "mean", single.value = NULL
 }
 
 theme_dark <- ggplot2::theme(panel.background = ggplot2::element_rect(fill = "#343434"),
-                              line = ggplot2::element_line(colour = "#555555"))
+                             line = ggplot2::element_line(colour = "#555555"))
 
-mapThemes <- list("Dark" = theme_dark,
-                  "Default" = NULL)
+mapThemes <- list("Default" = NULL,
+                  "Dark" = theme_dark)
+
