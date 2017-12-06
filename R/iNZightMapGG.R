@@ -13,6 +13,9 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
 
   map <- map[!is.na(sf::st_dimension(map)), ]
 
+  map[, by.map] <- as.character(as.data.frame(map)[, by.map])
+  data[, by.data] <- as.character(data[, by.data])
+
   mapdata <- sf::st_as_sf(dplyr::left_join(map, data, by = by.vect))
   map.centroids <- sf::st_centroid(mapdata)
 
