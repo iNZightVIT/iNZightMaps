@@ -24,11 +24,11 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
   if (multiple.obs) {
       mapdata.agg <- mapdata %>%
           dplyr::group_by(!!as.name(by.map)) %>%
-          dplyr::summarise_if(is.numeric, "last")
+          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")), "last")
 
       centroid.agg <- map.centroids %>%
           dplyr::group_by(!!as.name(by.map)) %>%
-          dplyr::summarise_if(is.numeric, "last")
+          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")), "last")
   } else {
       mapdata.agg <- NULL
       centroid.agg <- NULL
@@ -215,10 +215,18 @@ iNZightMapAggregation <- function(obj, aggregation = "mean", single.value = NULL
     } else {
         obj$region.aggregate <- obj$region.data %>%
             dplyr::group_by(!!as.name(obj$region.var)) %>%
-            dplyr::summarise_if(is.numeric, aggregation)
+            dplyr::summarise_at(vars(-dplyr::matches("^geometry$")),
+                       funs(if (is.numeric(.))
+                                          eval(substitute(chosen_fun(., na.rm = TRUE),
+                                                          list(chosen_fun = as.name(aggregation))))
+                                      else last(.)))
         obj$centroid.aggregate <- obj$centroid.data %>%
             dplyr::group_by(!!as.name(obj$region.var)) %>%
-            dplyr::summarise_if(is.numeric, aggregation)
+            dplyr::summarise_at(vars(-dplyr::matches("^geometry$")),
+                                funs(if (is.numeric(.))
+                                         eval(substitute(chosen_fun(., na.rm = TRUE),
+                                                         list(chosen_fun = as.name(aggregation))))
+                                     else last(.)))
     }
 
    obj 
