@@ -136,11 +136,11 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
         if (obj$type == "region") {
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]],
                                              mapping = ggplot2::aes_string(fill = colour.var),
-                                             shape = 21, stroke = 1)
+                                             shape = 21, stroke = 1, alpha = alpha.const)
         } else if (obj$type == "point") {
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]],
-                                                         colour = "#00000040",
-                                                         alpha = 0.3)
+                                                         colour = alpha("#000000", alpha.const),
+                                                         alpha = alpha.const)
 
             obj[[centroid.data.to.use]][, paste0(colour.var, "_na")] <- is.na(as.data.frame(obj[[centroid.data.to.use]])[, colour.var])
             layers.list[["points"]] <- ggplot2::geom_sf(data = obj[[centroid.data.to.use]],
@@ -156,8 +156,8 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             
         } else if (obj$type == "sparklines") {
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[["region.aggregate"]],
-                                                         colour = "#00000040",
-                                                         alpha = 0.3)
+                                                         colour = alpha("#000000", alpha.const),
+                                                         alpha = alpha.const)
             if (isTRUE(!is.null(colour.var))) {
                 layers.list[["sparklines"]] <- geom_sparkline(data = obj[["centroid.data"]],
                                                               ggplot2::aes_string(group = obj$region.var,
