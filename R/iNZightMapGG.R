@@ -95,19 +95,17 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                 datum.lines = TRUE, theme = NULL, projection = NULL,
                                 label.title = "", aggregate = FALSE) {
     if (multiple.vars) {
-        args <- names(as.list(args(plot.iNZightMapPlot)))
-        args <- args[-length(args)]
-        args <- args[args != "colour.var"]
-        args <- args[args != "multiple.vars"]
-        args <- args[args != "main"]
-        arg.call <- paste(args, sep = " = ", args, collapse = ", ")
-        
-        plots <- invisible(lapply(colour.var, function(x) {
-            func.call <- paste0("plot(", arg.call,
-                                ", colour.var = '", x, "'",
-                                ", main = '", x, "', multiple.vars = FALSE)")
-            eval(parse(text = func.call))
-        }))
+        orig.call <- match.call()
+        orig.call$multiple.vars <- FALSE
+
+        plots <- vector("list", length(colour.var))
+
+        for (i in 1:length(plots)) {
+            orig.call$colour.var <- colour.var[i]
+            orig.call$main <- colour.var[i]
+
+            plots[[i]] <- eval.parent(orig.call)
+        }
 
         d.size <- dev.size()
         opt.layout <- n2mfrow(length(plots))
