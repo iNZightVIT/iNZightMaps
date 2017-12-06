@@ -46,15 +46,21 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
                       sequence.var = sequence.var,
                       region.aggregate = mapdata.agg, 
                       centroid.aggregate = centroid.agg,
-                      var.types = var.types) 
+                      var.types = var.types,
+                      map.vars = colnames(map)) 
 
   class(mapplot.obj) <- c("iNZightMapPlot", "list")
 
   mapplot.obj
 }
 
-iNZightMapVars <- function(obj) {
-    colnames(obj$region.data)[-ncol(obj$region.data)]
+iNZightMapVars <- function(obj, map.vars = FALSE) {
+    cols <- colnames(obj$region.data)[-ncol(obj$region.data)]
+    if (!map.vars) {
+        cols <- cols[!(cols %in% obj$map.vars)]
+    }
+
+    cols                                 
 }
 
 ##' .. content for \description{} (no empty lines) ..
