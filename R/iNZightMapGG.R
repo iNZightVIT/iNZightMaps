@@ -20,7 +20,7 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
   map.centroids <- sf::st_centroid(mapdata)
 
   mapdata <- sf::st_simplify(mapdata, dTolerance = simplification.level)
-  
+
   if (multiple.obs) {
       mapdata.agg <- mapdata %>%
           dplyr::group_by(!!as.name(by.map)) %>%
@@ -44,10 +44,10 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
                       region.var = by.map,
                       multiple.obs = multiple.obs,
                       sequence.var = sequence.var,
-                      region.aggregate = mapdata.agg, 
+                      region.aggregate = mapdata.agg,
                       centroid.aggregate = centroid.agg,
                       var.types = var.types,
-                      map.vars = colnames(map)) 
+                      map.vars = colnames(map))
 
   class(mapplot.obj) <- c("iNZightMapPlot", "list")
 
@@ -60,7 +60,7 @@ iNZightMapVars <- function(obj, map.vars = FALSE) {
         cols <- cols[!(cols %in% obj$map.vars)]
     }
 
-    cols                                 
+    cols
 }
 
 ##' .. content for \description{} (no empty lines) ..
@@ -92,8 +92,12 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                 fill.const = NULL, colour.const = NULL, size.const = NULL, alpha.const = NULL,
                                 facet = NULL, multiple.vars = FALSE,
                                 main = NULL, xlab = "Longitude", ylab = "Latitude", axis.labels = TRUE,
-                                datum.lines = TRUE, theme = NULL, projection = NULL,
-                                label.title = "", aggregate = FALSE) {
+                                datum.lines = TRUE, darkTheme = NULL, projection = NULL, palette = NULL,
+                                label.title = "", aggregate = FALSE,
+                                current.seq = NULL) {
+    print(size.const)
+    ## size.const <- ifelse(is.na(size.var), size.const, )
+
     if (multiple.vars) {
         orig.call <- match.call()
         orig.call$multiple.vars <- FALSE
@@ -102,7 +106,11 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
 
         for (i in 1:length(plots)) {
             orig.call$colour.var <- colour.var[i]
-            orig.call$main <- colour.var[i]
+            if (isTRUE(!is.null(current.seq))) {
+                orig.call$main <- paste0(colour.var[i], " (", current.seq, ")")
+            } else {
+                orig.call$main <- colour.var[i]
+            }
 
             plots[[i]] <- eval.parent(orig.call)
         }
@@ -112,7 +120,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
         if(d.size[1] > d.size[2]) {
             opt.layout <- rev(opt.layout)
         }
-        
+
         plot.grid <- do.call(gridExtra::arrangeGrob,
                              list(grobs = plots, top = main,
                                   nrow = opt.layout[1], ncol = opt.layout[2]))
@@ -129,29 +137,36 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
         } else {
             region.data.to.use <- "region.data"
             centroid.data.to.use <- "centroid.data"
-        }         
+        }
 
         if (obj$type == "region") {
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]],
                                              mapping = ggplot2::aes_string(fill = colour.var),
-                                             shape = 21, stroke = 1, alpha = alpha.const)
+                                             shape = 21, stroke = 1)
         } else if (obj$type == "point") {
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]],
                                                          colour = alpha("#000000", alpha.const),
                                                          alpha = alpha.const)
 
             obj[[centroid.data.to.use]][, paste0(colour.var, "_na")] <- is.na(as.data.frame(obj[[centroid.data.to.use]])[, colour.var])
-            layers.list[["points"]] <- ggplot2::geom_sf(data = obj[[centroid.data.to.use]],
-                                            mapping = ggplot2::aes_string(colour = colour.var,
-                                                                          size = size.var,
-                                                                          alpha = paste0(colour.var, "_na")),
-                                            show.legend = "point") 
-            if (!is.null(size.var)) {
+            if (!isTRUE(is.null(size.var) || size.var == "")) {
+                layers.list[["points"]] <- ggplot2::geom_sf(data = obj[[centroid.data.to.use]],
+                                                            mapping = ggplot2::aes_string(colour = colour.var,
+                                                                                          size = size.var,
+                                                                                          alpha = paste0(colour.var, "_na")),
+                                                            show.legend = "point")
+
                 layers.list[["legend.size"]] <- ggplot2::scale_size(guide = FALSE)
+            } else {
+                layers.list[["points"]] <- ggplot2::geom_sf(data = obj[[centroid.data.to.use]],
+                                                            mapping = ggplot2::aes_string(colour = colour.var,
+                                                                                          alpha = paste0(colour.var, "_na")),
+                                                            show.legend = "point", size = size.const)
             }
 
+
             layers.list[["legend.alpha"]] <- ggplot2::scale_alpha_discrete(guide = FALSE, range = c(1, 0.1))
-            
+
         } else if (obj$type == "sparklines") {
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[["region.aggregate"]],
                                                          colour = alpha("#000000", alpha.const),
@@ -164,46 +179,52 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                                               fill = "white", fill_alpha = 0.75)
             }
         }
-        
+
         layers.list[["title"]] <- ggplot2::labs(title = main)
 
         if (axis.labels) {
             layers.list[["axislabels"]] <- ggplot2::labs(x = xlab, y = ylab)
         }
-        
+
         projection <- sf::st_crs(projection)
         if (datum.lines) {
             layers.list[["projection"]] <- ggplot2::coord_sf(crs = projection)
         } else {
             layers.list[["projection"]] <- ggplot2::coord_sf(crs = projection, datum = NA)
         }
-        
+
 ##         if (!is.null(facet)) {
 ##             if (facet == "_MULTI") {
 ##                 plot(to.plot)
 ##             } else {
 ##                 plot.grob <- ggplot2::ggplotGrob(to.plot)
-##                 
+##
 ##                 panel.cols <- plot.grob$layout[grepl("^panel-", plot.grob$layout$name), c("l")] * (-1)
 ##                 spacer.rows <- which(plot.grob$layout$name == "spacer") * (-1)
-##                 
+##
 ##                 facet.var <- obj$facet.var
-##                 
+##
 ##                 col.to.keep <- which(levels(obj[[layersetHelper(obj$type)]]$baselayer[[1]]$data[[facet.var]]) == facet)
 ##                 panel.cols <- panel.cols[-col.to.keep]
-##                 
+##
 ##                 to.plot <- plot.grob[spacer.rows, panel.cols]
 ##             }
-##             
+##
 ##         }
 
-        if (!is.null(theme)) {
-            layers.list[["theme"]] <- mapThemes[[theme]]
+        if (isTRUE(darkTheme)) {
+            layers.list[["theme"]] <- ggplot2::theme(panel.background = ggplot2::element_rect(fill = "#343434"),
+                                                     line = ggplot2::element_line(colour = "#555555"))
         }
 
         layers.list[["legend.bottom"]] <- ggplot2::theme(legend.position = "bottom")
+        layers.list[["center.title"]] <- ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
 
-        Reduce(`+`, x = layers.list, init = ggplot2::ggplot()) 
+        if (isTRUE(palette != "Default") && isTRUE(colour.var != "")) {
+          layers.list[["palette"]] <- getMapPalette(palette, obj$type, obj$var.types[[colour.var]])
+        }
+
+        Reduce(`+`, x = layers.list, init = ggplot2::ggplot())
     }
 }
 
@@ -233,7 +254,7 @@ iNZightMapAggregation <- function(obj, aggregation = "mean", single.value = NULL
                                      else last(.)))
     }
 
-   obj 
+   obj
 }
 
 theme_dark <- ggplot2::theme(panel.background = ggplot2::element_rect(fill = "#343434"),
@@ -241,4 +262,41 @@ theme_dark <- ggplot2::theme(panel.background = ggplot2::element_rect(fill = "#3
 
 mapThemes <- list("Default" = NULL,
                   "Dark" = theme_dark)
+
+getMapPalette <- function(palette, map.type, var.type, direction = -1) {
+  viridis.pals <- c("Viridis", "Magma", "Plasma", "Inferno")
+  brewer.pals <- c("BrBG", "PiYG", "PRGn",
+                   "Accent", "Dark2", "Paired", "Pastel1", "Set1",
+                   "Blues", "BuGn", "BuPu", "GnBu")
+
+  if (map.type == "region") {
+    if (var.type %in% c("numeric", "integer")) {
+      if (palette %in% viridis.pals) {
+        ggplot2::scale_fill_viridis_c(option = tolower(palette), direction = direction)
+      } else if (palette %in% brewer.pals) {
+        ggplot2::scale_fill_distiller(palette = palette, direction = direction)
+      }
+    } else {
+      if (palette %in% viridis.pals) {
+        ggplot2::scale_fill_viridis_d(option = tolower(palette), direction = direction)
+      } else if (palette %in% brewer.pals) {
+        ggplot2::scale_fill_brewer(palette = palette, direction = direction)
+      }
+    }
+  } else {
+    if (var.type %in% c("numeric", "integer")) {
+      if (palette %in% viridis.pals) {
+        ggplot2::scale_colour_viridis_c(option = tolower(palette), direction = direction)
+      } else if (palette %in% brewer.pals) {
+        ggplot2::scale_colour_distiller(palette = palette, direction = direction)
+      }
+    } else {
+      if (palette %in% viridis.pals) {
+        ggplot2::scale_colour_viridis_d(option = tolower(palette), direction = direction)
+      } else if (palette %in% brewer.pals) {
+        ggplot2::scale_colour_brewer(palette = palette, direction = direction)
+      }
+    }
+  }
+}
 
