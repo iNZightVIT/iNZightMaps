@@ -217,7 +217,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                                      line = ggplot2::element_line(colour = "#555555"))
         }
 
-        layers.list[["legend.bottom"]] <- ggplot2::theme(legend.position = "bottom")
+        ## layers.list[["legend.bottom"]] <- ggplot2::theme(legend.position = "bottom")
         layers.list[["center.title"]] <- ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
 
         if (isTRUE(palette != "Default") && isTRUE(colour.var != "")) {
