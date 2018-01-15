@@ -1,6 +1,6 @@
-##' .. content for \description{} (no empty lines) ..
+##' description
 ##'
-##' .. content for \details{} ..
+##' details
 ##' @title
 ##' @param filename
 ##' @return
@@ -59,4 +59,14 @@ matchVariables <- function(data.vect, map.vect) {
          map.matched = map.matched,
          matches = matches,
          multiple.obs = isTRUE(any(data.n.obs > 1)))
+}
+
+##' @export
+iNZightMapProjections <- function() {
+    return(proj.df)
+}
+
+##' @export
+iNZightMapCountryISO <- function() {
+    return(country.isos)
 }

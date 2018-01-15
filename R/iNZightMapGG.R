@@ -1,3 +1,5 @@
+#' @title Create iNZightMapPlot object
+#' @export
 iNZightMapPlot <- function(data, map, type, ...) {
   switch(type,
          region = iNZightMapPlotRegion(data, map, ...),
@@ -57,6 +59,7 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
   mapplot.obj
 }
 
+#' @export
 iNZightMapVars <- function(obj, map.vars = FALSE) {
     cols <- colnames(obj$region.data)[-ncol(obj$region.data)]
     if (!map.vars) {
@@ -66,31 +69,8 @@ iNZightMapVars <- function(obj, map.vars = FALSE) {
     cols
 }
 
-##' .. content for \description{} (no empty lines) ..
-##'
-##' .. content for \details{} ..
-##' @title Plot an iNZightMapPlot object
-##' @param obj iNZightMapPlot object
-##' @param colour.var String containing the variable name to map to
-##'     colour for either the regions or points (depending on the map
-##'     type)
-##' @param size.var String containing the variable name to map to
-##'     point size
-##' @param multiple.vars Is the plot of multiple variables?
-##' @param main Title of the plot
-##' @param xlab x-axis label
-##' @param ylab y-axis label
-##' @param axis.labels Should the axis labels be visible?
-##' @param datum.lines Should the datum lines (grid behind the map) be
-##'     visible?
-##' @param theme Either NULL for no theme or a string corresponding to
-##'     a theme. See [...]
-##' @param projection Either a PROJ4 string (or EPSG code?)
-##' @param aggregate Is the plot some form of aggregate of the
-##'     original data (either mean/median/etc or a single year's data)
-##' @return A ggplot object that can be plotted
-##' @author Daniel Barnett
-##' @export
+
+#' @export
 plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.var = NULL,
                                 fill.const = NULL, colour.const = NULL, size.const = NULL, alpha.const = NULL,
                                 facet = NULL, multiple.vars = FALSE,
@@ -100,6 +80,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                 current.seq = NULL) {
     if (multiple.vars) {
         orig.call <- match.call()
+		orig.call[1] <- call("plot")
         orig.call$multiple.vars <- FALSE
 
         plots <- vector("list", length(colour.var))
@@ -228,7 +209,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
     }
 }
 
-##' @export
+#' @export
 iNZightMapAggregation <- function(obj, aggregation = "mean", single.value = NULL) {
     if (aggregation == "singlevalue") {
         obj$region.aggregate <- obj$region.data %>%
