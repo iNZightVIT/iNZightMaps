@@ -23,11 +23,11 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
 
   if (multiple.obs) {
       mapdata.agg <- mapdata %>%
-          dplyr::group_by(!!as.name(by.map)) %>%
-          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")), "last")
+          dplyr::group_by(rlang::`!!`(as.name(by.map))) %>%
+          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")), dplyr::last)
 
       centroid.agg <- map.centroids %>%
-          dplyr::group_by(!!as.name(by.map)) %>%
+          dplyr::group_by(rlang::`!!`(as.name(by.map))) %>%
           dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")), "last")
   } else {
       mapdata.agg <- NULL
@@ -50,6 +50,9 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
                       map.vars = colnames(map))
 
   class(mapplot.obj) <- c("iNZightMapPlot", "list")
+
+  print(summarise.sf)
+  print(methods(summarise))
 
   mapplot.obj
 }
@@ -95,9 +98,6 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                 datum.lines = TRUE, darkTheme = NULL, projection = NULL, palette = NULL,
                                 label.title = "", aggregate = FALSE,
                                 current.seq = NULL) {
-    print(size.const)
-    ## size.const <- ifelse(is.na(size.var), size.const, )
-
     if (multiple.vars) {
         orig.call <- match.call()
         orig.call$multiple.vars <- FALSE
@@ -145,7 +145,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                              shape = 21, stroke = 1)
         } else if (obj$type == "point") {
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]],
-                                                         colour = alpha("#000000", alpha.const),
+                                                         colour = scales::alpha("#000000", alpha.const),
                                                          alpha = alpha.const)
 
             obj[[centroid.data.to.use]][, paste0(colour.var, "_na")] <- is.na(as.data.frame(obj[[centroid.data.to.use]])[, colour.var])
@@ -169,7 +169,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
 
         } else if (obj$type == "sparklines") {
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[["region.aggregate"]],
-                                                         colour = alpha("#000000", alpha.const),
+                                                         colour = scales::alpha("#000000", alpha.const),
                                                          alpha = alpha.const)
             if (isTRUE(!is.null(colour.var))) {
                 layers.list[["sparklines"]] <- geom_sparkline(data = obj[["centroid.data"]],
@@ -232,26 +232,26 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
 iNZightMapAggregation <- function(obj, aggregation = "mean", single.value = NULL) {
     if (aggregation == "singlevalue") {
         obj$region.aggregate <- obj$region.data %>%
-            dplyr::group_by(!!as.name(obj$region.var)) %>%
-            dplyr::filter((!!as.name(obj$sequence.var)) == single.value | is.na(!!as.name(obj$sequence.var)))
+            dplyr::group_by(rlang::`!!`(as.name(obj$region.var))) %>%
+            dplyr::filter((rlang::`!!`(as.name(obj$sequence.var))) == single.value | is.na(rlang::`!!`(as.name(obj$sequence.var))))
         obj$centroid.aggregate <- obj$centroid.data %>%
-            dplyr::group_by(!!as.name(obj$region.var)) %>%
-            dplyr::filter((!!as.name(obj$sequence.var)) == single.value | is.na(!!as.name(obj$sequence.var)))
+            dplyr::group_by(rlang::`!!`(as.name(obj$region.var))) %>%
+            dplyr::filter((rlang::`!!`(as.name(obj$sequence.var))) == single.value | is.na(rlang::`!!`(as.name(obj$sequence.var))))
     } else {
         obj$region.aggregate <- obj$region.data %>%
-            dplyr::group_by(!!as.name(obj$region.var)) %>%
-            dplyr::summarise_at(vars(-dplyr::matches("^geometry$")),
-                       funs(if (is.numeric(.))
+            dplyr::group_by(rlang::`!!`(as.name(obj$region.var))) %>%
+            dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")),
+                       dplyr::funs(if (is.numeric(.))
                                           eval(substitute(chosen_fun(., na.rm = TRUE),
                                                           list(chosen_fun = as.name(aggregation))))
-                                      else last(.)))
+                                      else dplyr::last(.)))
         obj$centroid.aggregate <- obj$centroid.data %>%
-            dplyr::group_by(!!as.name(obj$region.var)) %>%
-            dplyr::summarise_at(vars(-dplyr::matches("^geometry$")),
-                                funs(if (is.numeric(.))
+            dplyr::group_by(rlang::`!!`(as.name(obj$region.var))) %>%
+            dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")),
+                                dplyr::funs(if (is.numeric(.))
                                          eval(substitute(chosen_fun(., na.rm = TRUE),
                                                          list(chosen_fun = as.name(aggregation))))
-                                     else last(.)))
+                                     else dplyr::last(.)))
     }
 
    obj
