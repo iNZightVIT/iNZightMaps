@@ -1,6 +1,6 @@
-Package: iNZightMaps
+Package: iNZightMaps2
 Type: Package
-Title: iNZightMaps
+Title: iNZightMaps2
 Version: 1.1-3
 Date: 2017-04-10
 Authors@R: c(person("Daniel", "Barnett", role = c("aut"),
