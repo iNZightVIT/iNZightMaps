@@ -101,6 +101,8 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
         if(d.size[1] > d.size[2]) {
             opt.layout <- rev(opt.layout)
         }
+        if (length(plots) == 3)
+            opt.layout <- c(2, 2)
 
         plot.grid <- do.call(gridExtra::arrangeGrob,
                              list(grobs = plots, top = main,
@@ -244,7 +246,7 @@ theme_dark <- ggplot2::theme(panel.background = ggplot2::element_rect(fill = "#3
 mapThemes <- list("Default" = NULL,
                   "Dark" = theme_dark)
 
-getMapPalette <- function(palette, map.type, var.type, direction = -1) {
+getMapPalette <- function(palette, map.type, var.type, direction = 1) {
   viridis.pals <- c("Viridis", "Magma", "Plasma", "Inferno")
   brewer.pals <- c("BrBG", "PiYG", "PRGn",
                    "Accent", "Dark2", "Paired", "Pastel1", "Set1",

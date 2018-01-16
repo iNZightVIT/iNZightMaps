@@ -24,6 +24,8 @@ Imports:
   rlang,
   scales,
   magrittr,
+  RCurl,
+  XML,
   RgoogleMaps,
   maptools,
   grid,

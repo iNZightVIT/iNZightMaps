@@ -70,3 +70,75 @@ iNZightMapProjections <- function() {
 iNZightMapCountryISO <- function() {
     return(country.isos)
 }
+
+##' @export
+read.mapmetadata <- function(shapefileDir) {
+    if (file.exists(file.path(shapefileDir, "metadata"))) {
+        metadata <- scan(file.path(shapefileDir, "metadata"),
+                         what = rep("character", 3), fill = TRUE,
+                         comment.char = ";", sep = "\t",
+                         fileEncoding = "UTF-8")
+    } else {
+        tryCatch(download.file("https://www.stat.auckland.ac.nz/~wild/data/shapefiles/metadata",
+                               file.path(shapefileDir, "metadata")),
+                 error = function(e) error("Cannot download metadata file.")
+                 )
+        metadata <- c(NA, NA, NA)
+    }
+
+    metadata <- matrix(metadata, ncol = 3, byrow = TRUE)
+    colnames(metadata) <- c("filepath", "tidy_filename", "description")
+    metadata
+}
+
+##' @export
+download.shapefiles <- function(dirURL, currPath, shapefileDir) {
+    message("Searching... ", dirURL)
+    curr.links <- XML::getHTMLLinks(RCurl::getURL(dirURL, dirlistonly = TRUE))
+    curr.dirs <- curr.links[grep("/$", curr.links)]
+    curr.files <- curr.links[grep("\\.(rds|shp)", curr.links)]
+    if (!dir.exists(currPath) && !dir.create(currPath))
+        stop("Failed to create directory")
+    for (filename in curr.files) {
+        if (!file.exists(file.path(currPath, filename))) {
+            download.file(paste0(dirURL, filename),
+                          file.path(currPath, filename))
+        }
+    }
+
+    for (dir in curr.dirs[-1]) {
+        download.shapefiles(paste0(dirURL, dir),
+                            file.path(currPath, dir),
+                            shapefileDir)
+    }
+}
+
+##' @export
+decodeMapDir <- function(mapdir.mat) {
+    have.tidy <- !is.na(mapdir.mat[, "tidy_filename"])
+
+    dir.vect <- as.character(mapdir.mat[, "x"])
+
+    for (i in which(have.tidy)) {
+        dir.vect[i] <- sub("/[-_\\df.A-z0-9]+\\.[A-z]+$",
+                           paste0("/",mapdir.mat[i, "tidy_filename"]),
+                           dir.vect[i])
+    }
+
+    for (i in which(!have.tidy)) {
+        dir.vect[i] <- sub("\\.[A-z]+$", "", dir.vect[i])
+    }
+    which.countries <- which(grepl("^countries/", dir.vect))
+
+    for (i in which.countries) {
+        curr.code.ind <- regexpr("/(...)/", dir.vect[i])
+        curr.code <- substr(dir.vect[i], curr.code.ind + 1, curr.code.ind + 3)
+        curr.name <- country.isos[country.isos$iso == toupper(curr.code), "name"]
+        dir.vect[i] <- sub("/(...)/", paste0("/", curr.name, "/"), dir.vect[i])
+    }
+
+    dir.vect <- sub("^([A-z])([A-z0-9]*)/", "\\U\\1\\E\\2/", dir.vect, perl = TRUE)
+
+    mapdir.mat[, "tidy_filepath"] <- dir.vect
+    mapdir.mat
+}
