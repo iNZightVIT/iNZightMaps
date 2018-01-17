@@ -153,7 +153,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                                          colour = scales::alpha("#000000", alpha.const),
                                                          alpha = alpha.const)
             if (isTRUE(!is.null(colour.var))) {
-                layers.list[["sparklines"]] <- geom_sparkline(data = obj[["centroid.data"]],
+                layers.list[["sparklines"]] <- ggsfextra::geom_sparkline(data = obj[["centroid.data"]],
                                                               ggplot2::aes_string(group = obj$region.var,
                                                                                   line_x = obj$sequence.var,
                                                                                   line_y = colour.var),
