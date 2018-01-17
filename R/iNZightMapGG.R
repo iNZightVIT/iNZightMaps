@@ -53,8 +53,6 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
 
   class(mapplot.obj) <- c("iNZightMapPlot", "list")
 
-  print(summarise.sf)
-  print(methods(summarise))
 
   mapplot.obj
 }

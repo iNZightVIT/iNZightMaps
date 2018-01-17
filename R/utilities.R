@@ -73,18 +73,20 @@ iNZightMapCountryISO <- function() {
 
 ##' @export
 read.mapmetadata <- function(shapefileDir) {
-    if (file.exists(file.path(shapefileDir, "metadata"))) {
-        metadata <- scan(file.path(shapefileDir, "metadata"),
-                         what = rep("character", 3), fill = TRUE,
-                         comment.char = ";", sep = "\t",
-                         fileEncoding = "UTF-8")
-    } else {
-        tryCatch(download.file("https://www.stat.auckland.ac.nz/~wild/data/shapefiles/metadata",
-                               file.path(shapefileDir, "metadata")),
+    if (!file.exists(file.path(shapefileDir, "metadata.gz"))) {
+        tryCatch({
+            download.file("https://www.stat.auckland.ac.nz/~wild/data/shapefiles/metadata",
+                          file.path(shapefileDir, "metadata.gz"), mode = "wb")
+            },
                  error = function(e) error("Cannot download metadata file.")
                  )
-        metadata <- c(NA, NA, NA)
     }
+
+    metadata <- scan(file.path(shapefileDir, "metadata.gz"),
+                     what = rep("character", 3), fill = TRUE,
+                     comment.char = ";", sep = "\t",
+                     fileEncoding = "UTF-8")
+
 
     metadata <- matrix(metadata, ncol = 3, byrow = TRUE)
     colnames(metadata) <- c("filepath", "tidy_filename", "description")
@@ -102,7 +104,8 @@ download.shapefiles <- function(dirURL, currPath, shapefileDir) {
     for (filename in curr.files) {
         if (!file.exists(file.path(currPath, filename))) {
             download.file(paste0(dirURL, filename),
-                          file.path(currPath, filename))
+                          file.path(currPath, filename),
+                          mode = "wb")
         }
     }
 
