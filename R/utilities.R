@@ -96,7 +96,8 @@ read.mapmetadata <- function(shapefileDir) {
 ##' @export
 download.shapefiles <- function(dirURL, currPath, shapefileDir) {
     message("Searching... ", dirURL)
-    curr.links <- XML::getHTMLLinks(RCurl::getURL(dirURL, dirlistonly = TRUE))
+    ## curr.links <- XML::getHTMLLinks(RCurl::getURL(dirURL, dirlistonly = TRUE))
+    curr.links <- XML::getHTMLLinks(rawToChar(curl::curl_fetch_memory(dirURL)$content))
     curr.dirs <- curr.links[grep("/$", curr.links)]
     curr.files <- curr.links[grep("\\.(rds|shp)", curr.links)]
     if (!dir.exists(currPath) && !dir.create(currPath))
