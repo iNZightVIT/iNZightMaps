@@ -76,7 +76,7 @@ iNZightMapVars <- function(obj, map.vars = FALSE) {
 
 #' @export
 plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.var = NULL,
-                                fill.const = NULL, colour.const = NULL, size.const = NULL, alpha.const = NULL,
+                                fill.const = NULL, colour.const = NULL, size.const = 1, alpha.const = 1,
                                 facet = NULL, multiple.vars = FALSE,
                                 main = NULL, xlab = "Longitude", ylab = "Latitude", axis.labels = TRUE,
                                 datum.lines = TRUE, darkTheme = NULL, projection = NULL, palette = NULL,
