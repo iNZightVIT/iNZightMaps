@@ -38,10 +38,16 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
 
   var.types <- sapply(mapdata, class)
 
+  if (isTRUE(sf::st_crs(ta.map)$proj4string != "")) {
+      proj <- sf::st_crs(ta.map)$proj4string
+  } else {
+      proj <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+  }
+
   mapplot.obj <- list(region.data = mapdata,
                       centroid.data = map.centroids,
                       type = "region",
-                      projection = "",
+                      projection = proj,
                       code.history = "TODO...",
                       region.var = by.map,
                       multiple.obs = multiple.obs,
@@ -170,7 +176,12 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             layers.list[["axislabels"]] <- ggplot2::labs(x = xlab, y = ylab)
         }
 
-        projection <- sf::st_crs(projection)
+        if (isTRUE(!is.null(projection))) {
+            projection <- sf::st_crs(projection)
+        } else {
+            projection <- sf::st_crs(obj$projection)
+        }
+
         if (datum.lines) {
             layers.list[["projection"]] <- ggplot2::coord_sf(crs = projection)
         } else {
