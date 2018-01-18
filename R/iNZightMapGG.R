@@ -121,10 +121,12 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
         }
 
         if (obj$type == "region") {
+            base.ggplot <- ggplot2::ggplot(obj[[region.data.to.use]])
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]],
                                              mapping = ggplot2::aes_string(fill = colour.var),
                                              shape = 21, stroke = 1)
         } else if (obj$type == "point") {
+            base.ggplot <- ggplot2::ggplot(obj[[centroid.data.to.use]])
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]],
                                                          colour = scales::alpha("#000000", alpha.const),
                                                          alpha = alpha.const)
@@ -149,6 +151,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             layers.list[["legend.alpha"]] <- ggplot2::scale_alpha_discrete(guide = FALSE, range = c(1, 0.1))
 
         } else if (obj$type == "sparklines") {
+            base.ggplot <- ggplot2::ggplot(obj[[region.data.to.use]])
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[["region.aggregate"]],
                                                          colour = scales::alpha("#000000", alpha.const),
                                                          alpha = alpha.const)
@@ -205,7 +208,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
           layers.list[["palette"]] <- getMapPalette(palette, obj$type, obj$var.types[[colour.var]])
         }
 
-        Reduce(`+`, x = layers.list, init = ggplot2::ggplot())
+        Reduce(`+`, x = layers.list, init = base.ggplot)
     }
 }
 
