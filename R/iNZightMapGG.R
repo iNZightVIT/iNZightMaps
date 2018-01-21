@@ -38,8 +38,8 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
 
   var.types <- sapply(mapdata, class)
 
-  if (isTRUE(sf::st_crs(ta.map)$proj4string != "")) {
-      proj <- sf::st_crs(ta.map)$proj4string
+  if (isTRUE(sf::st_crs(map)$proj4string != "")) {
+      proj <- sf::st_crs(map)$proj4string
   } else {
       proj <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
   }
