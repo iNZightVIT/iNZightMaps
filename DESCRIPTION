@@ -26,6 +26,7 @@ Imports:
   magrittr,
   curl,
   XML,
+  rgeos,
   RgoogleMaps,
   maptools,
   grid,
