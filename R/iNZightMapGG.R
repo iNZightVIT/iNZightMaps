@@ -8,6 +8,9 @@ iNZightMapPlot <- function(data, map, type, ...) {
 }
 
 #' @describeIn iNZightMapPlot Constructs a iNZightMapPlot using region values.
+#' @importFrom sf filter.sf arrange.sf distinct.sf group_by.sf ungroup.sf mutate.sf transmute.sf select.sf rename.sf slice.sf summarise.sf gather.sf spread.sf sample_n.sf sample_frac.sf nest.sf separate.sf unite.sf unnest.sf
+#' @importFrom sf inner_join.sf left_join.sf right_join.sf full_join.sf semi_join.sf anti_join.sf
+#' @import sf
 iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.level = 0.01,
                                  multiple.obs = FALSE, sequence.var = NULL, agg.type = "last") {
   by.vect <- c(by.data)
@@ -24,12 +27,15 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
   mapdata <- sf::st_simplify(mapdata, dTolerance = simplification.level)
 
   if (multiple.obs) {
+      library(sf)
+      ## print(search())
+      print(methods(summarise))
       mapdata.agg <- mapdata %>%
-          dplyr::group_by(!!(as.name(by.map))) %>%
+          dplyr::group_by(UQ((as.name(by.map)))) %>%
           dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")), dplyr::last)
 
       centroid.agg <- map.centroids %>%
-          dplyr::group_by(!!(as.name(by.map))) %>%
+          dplyr::group_by(UQ((as.name(by.map)))) %>%
           dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")), "last")
   } else {
       mapdata.agg <- NULL
@@ -79,7 +85,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                 fill.const = NULL, colour.const = NULL, size.const = 1, alpha.const = 1,
                                 facet = NULL, multiple.vars = FALSE,
                                 main = NULL, xlab = "Longitude", ylab = "Latitude", axis.labels = TRUE,
-                                datum.lines = TRUE, darkTheme = NULL, projection = NULL, palette = NULL,
+                                datum.lines = TRUE, darkTheme = NULL, projection = "Default", palette = NULL,
                                 label.title = "", aggregate = FALSE,
                                 current.seq = NULL) {
     if (multiple.vars) {
@@ -130,12 +136,12 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             base.ggplot <- ggplot2::ggplot(obj[[region.data.to.use]])
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]],
                                              mapping = ggplot2::aes_string(fill = colour.var),
-                                             shape = 21, stroke = 1)
+                                             shape = 21, stroke = 1, inherit.aes = FALSE)
         } else if (obj$type == "point") {
             base.ggplot <- ggplot2::ggplot(obj[[centroid.data.to.use]])
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]],
                                                          colour = scales::alpha("#000000", alpha.const),
-                                                         alpha = alpha.const)
+                                                         alpha = alpha.const, inherit.aes = FALSE)
 
             obj[[centroid.data.to.use]][, paste0(colour.var, "_na")] <- is.na(as.data.frame(obj[[centroid.data.to.use]])[, colour.var])
             if (!isTRUE(is.null(size.var) || size.var == "")) {
@@ -143,14 +149,14 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                                             mapping = ggplot2::aes_string(colour = colour.var,
                                                                                           size = size.var,
                                                                                           alpha = paste0(colour.var, "_na")),
-                                                            show.legend = "point")
+                                                            show.legend = "point", inherit.aes = FALSE)
 
                 layers.list[["legend.size"]] <- ggplot2::scale_size(guide = FALSE)
             } else {
                 layers.list[["points"]] <- ggplot2::geom_sf(data = obj[[centroid.data.to.use]],
                                                             mapping = ggplot2::aes_string(colour = colour.var,
                                                                                           alpha = paste0(colour.var, "_na")),
-                                                            show.legend = "point", size = size.const)
+                                                            show.legend = "point", size = size.const, inherit.aes = FALSE)
             }
 
 
@@ -160,13 +166,13 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             base.ggplot <- ggplot2::ggplot(obj[[region.data.to.use]])
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[["region.aggregate"]],
                                                          colour = scales::alpha("#000000", alpha.const),
-                                                         alpha = alpha.const)
+                                                         alpha = alpha.const, inherit.aes = FALSE)
             if (isTRUE(!is.null(colour.var))) {
                 layers.list[["sparklines"]] <- ggsfextra::geom_sparkline(data = obj[["centroid.data"]],
                                                               ggplot2::aes_string(group = obj$region.var,
                                                                                   line_x = obj$sequence.var,
                                                                                   line_y = colour.var),
-                                                              fill = "white", fill_alpha = 0.75)
+                                                              fill = "white", fill_alpha = 0.75, inherit.aes = FALSE, plot_size = size.const)
             }
         }
 
@@ -176,7 +182,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             layers.list[["axislabels"]] <- ggplot2::labs(x = xlab, y = ylab)
         }
 
-        if (isTRUE(!is.null(projection))) {
+        if (isTRUE(projection != "Default")) {
             projection <- sf::st_crs(projection)
         } else {
             projection <- sf::st_crs(obj$projection)
@@ -229,21 +235,21 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
 iNZightMapAggregation <- function(obj, aggregation = "mean", single.value = NULL) {
     if (aggregation == "singlevalue") {
         obj$region.aggregate <- obj$region.data %>%
-            dplyr::group_by(!!(as.name(obj$region.var))) %>%
-            dplyr::filter((!!(as.name(obj$sequence.var))) == single.value | is.na(!!(as.name(obj$sequence.var))))
+            dplyr::group_by(UQ((as.name(obj$region.var)))) %>%
+            dplyr::filter((UQ((as.name(obj$sequence.var)))) == single.value | is.na(UQ((as.name(obj$sequence.var)))))
         obj$centroid.aggregate <- obj$centroid.data %>%
-            dplyr::group_by(!!(as.name(obj$region.var))) %>%
-            dplyr::filter((!!(as.name(obj$sequence.var))) == single.value | is.na(!!(as.name(obj$sequence.var))))
+            dplyr::group_by(UQ((as.name(obj$region.var)))) %>%
+            dplyr::filter((UQ((as.name(obj$sequence.var)))) == single.value | is.na(UQ((as.name(obj$sequence.var)))))
     } else {
         obj$region.aggregate <- obj$region.data %>%
-            dplyr::group_by(!!(as.name(obj$region.var))) %>%
+            dplyr::group_by(UQ((as.name(obj$region.var)))) %>%
             dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")),
                        dplyr::funs(if (is.numeric(.))
                                           eval(substitute(chosen_fun(., na.rm = TRUE),
                                                           list(chosen_fun = as.name(aggregation))))
                                       else dplyr::last(.)))
         obj$centroid.aggregate <- obj$centroid.data %>%
-            dplyr::group_by(!!(as.name(obj$region.var))) %>%
+            dplyr::group_by(UQ((as.name(obj$region.var)))) %>%
             dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")),
                                 dplyr::funs(if (is.numeric(.))
                                          eval(substitute(chosen_fun(., na.rm = TRUE),
