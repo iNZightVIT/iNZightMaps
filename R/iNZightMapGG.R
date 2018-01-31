@@ -1,4 +1,9 @@
 #' @title Create iNZightMapPlot object
+#'
+#' @param data Dataset with values for rows of the map object
+#' @param map  An sf object containing a row for each feature of the map
+#' @param type What type of map is being passed in. Only \code{"region"} is implemented right now.
+#' @param ... Extra arguments required for the type of map being created.
 #' @export
 iNZightMapPlot <- function(data, map, type, ...) {
   switch(type,
@@ -8,9 +13,15 @@ iNZightMapPlot <- function(data, map, type, ...) {
 }
 
 #' @describeIn iNZightMapPlot Constructs a iNZightMapPlot using region values.
-#' @importFrom sf filter.sf arrange.sf distinct.sf group_by.sf ungroup.sf mutate.sf transmute.sf select.sf rename.sf slice.sf summarise.sf gather.sf spread.sf sample_n.sf sample_frac.sf nest.sf separate.sf unite.sf unnest.sf
-#' @importFrom sf inner_join.sf left_join.sf right_join.sf full_join.sf semi_join.sf anti_join.sf
 #' @import sf
+#' @param data Dataset with values for rows of the map object
+#' @param map  An sf object containing a row for each feature of the map
+#' @param by.data Variable name in the dataset that will be matched to \code{by.map} in the map
+#' @param by.map Variable name in the map that will be matched to \code{by.data} in the dataset
+#' @param simplification.level How much should the map be simplified by? (see \code{\link[sf]{st_simplify}})
+#' @param multiple.obs Does the dataset have multiple observations for each region of the map (i.e. observations from multiple years)
+#' @param sequence.var If \code{multiple.obs = TRUE}, which variable identifies the different observations for a region?
+#' @param agg.type If \code{multiple.obs = TRUE}, which aggregation should be used to produce one observation for each region.
 iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.level = 0.01,
                                  multiple.obs = FALSE, sequence.var = NULL, agg.type = "last") {
   by.vect <- c(by.data)
@@ -78,6 +89,9 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
   mapplot.obj
 }
 
+#' @title Extract column names from an iNZightMapPlot object
+#' @param obj iNZightMapPlot object
+#' @param map.vars Should the variables included in the original map be included in the output?
 #' @export
 iNZightMapVars <- function(obj, map.vars = FALSE) {
     cols <- colnames(obj$region.data)[-ncol(obj$region.data)]
@@ -89,6 +103,25 @@ iNZightMapVars <- function(obj, map.vars = FALSE) {
 }
 
 
+#' Plot an iNZightMapPlot
+#' @param obj iNZightMapPlot object
+#' @param colour.var Variable to colour the regions or points by
+#' @param size.var If plotting a map of points, a variable to scale the points by
+#' @param size.const Size of plotted points (ignored if plotting regions or \code{size.var} is also passed)
+#' @param alpha.const Alpha value of the underlying region map when plotting points
+#' @param multiple.vars Are multiple variables being plotted?
+#' @param main Main title for the plot
+#' @param xlab x-axis label
+#' @param ylab y-axis label
+#' @param axis.labels Should the x- and y-axis labels be plotted
+#' @param datum.lines Should the datum lines be plotte
+#' @param darkTheme Enable dark background
+#' @param projection Either \code{"Default"} or a proj4string
+#' @param palette Palette to use
+#' @param aggregate Is the plot an aggregate
+#' @param current.seq Current value of the sequence variable or aggregation
+#' @param sparkline.type Either \code{"Absolute"} or \code{"Relative"}
+#' @param scale.limits Limits for the legend scale
 #' @export
 plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.var = NULL,
                                 fill.const = NULL, colour.const = NULL, size.const = 1, alpha.const = 1,

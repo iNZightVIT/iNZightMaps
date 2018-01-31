@@ -1,11 +1,7 @@
-##' description
-##'
-##' details
-##' @title
-##' @param filename
-##' @return
+##' @title Retrieve a map for use in iNZightMapPlot
+##' @param filename Filename of the map
+##' @return An sf object containing the map
 ##' @export
-##' @author
 retrieveMap <- function(filename) {
     if(grepl(".rds$", filename)) {
         readRDS(filename)
@@ -42,6 +38,10 @@ findBestMatch <- function(data, map.data) {
     best.match.vars
 }
 
+##' Match two vectors
+##' @param data.vect Vector containing the dataset variable
+##' @param map.vect Vector containing the map object variable
+##' @return A list containing: the dataset variable vector with duplicates removed, which values in the dataset and map variable had a match, how many matches occured overall and if there was multiple observations for any region.
 ##' @export
 matchVariables <- function(data.vect, map.vect) {
     data.is.na <- is.na(data.vect)
@@ -93,10 +93,11 @@ read.mapmetadata <- function(shapefileDir) {
     metadata
 }
 
-##' @export
+#' @param dirURL URL of the directory containing shapefiles
+#' @param currPath Current path to save to
+#' @export
 download.shapefiles <- function(dirURL, currPath, shapefileDir) {
     message("Searching... ", dirURL)
-    ## curr.links <- XML::getHTMLLinks(RCurl::getURL(dirURL, dirlistonly = TRUE))
     curr.links <- XML::getHTMLLinks(rawToChar(curl::curl_fetch_memory(dirURL)$content))
     curr.dirs <- curr.links[grep("/$", curr.links)]
     curr.files <- curr.links[grep("\\.(rds|shp)", curr.links)]
