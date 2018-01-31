@@ -160,6 +160,10 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
         plot.grid <- do.call(gridExtra::arrangeGrob,
                              list(grobs = plots, top = main,
                                   nrow = opt.layout[1], ncol = opt.layout[2]))
+
+        all.code <- lapply(plots, function(x) attr(x, "code"))
+        attr(plot.grid, "code") <- unlist(all.code, recursive = FALSE)
+
         return(plot.grid)
     } else {
         ## layers.list <- list(regions = NULL,
@@ -184,47 +188,100 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                              mapping = ggplot2::aes_string(fill = colour.var),
                                              shape = 21, stroke = 1, inherit.aes = FALSE)
 
-            if (isTRUE(colour.var != "")) {
-                attr(layers.list[["regions"]], "code") <- sprintf("ggplot2::geom_sf(ggplot2::aes(fill = %s))", colour.var)
-            } else {
-                attr(layers.list[["regions"]], "code") <- "ggplot2::geom_sf()"
-            }
+            ## Only add the fill aesthetic if we have a variable plotted
+            attr(layers.list[["regions"]], "code") <- sprintf("ggplot2::geom_sf(%s)",
+                                                              if (isTRUE(colour.var != ""))
+                                                                  sprintf("ggplot2::aes(fill = %s)", colour.var)
+                                                              else
+                                                                  "")
         } else if (obj$type == "point") {
             base.ggplot <- ggplot2::ggplot(obj[[centroid.data.to.use]])
             attr(base.ggplot, "code") <- sprintf("ggplot2::ggplot()")
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]],
                                                          colour = scales::alpha("#000000", alpha.const),
                                                          alpha = alpha.const, inherit.aes = FALSE)
-            attr(layers.list[["regions"]], "code") <- sprintf("ggplot2::geom_sf(data = %s, colour = scales::alpha(\"#000000\", %.1f), alpha = %.1f)", region.data.to.use, alpha.const, alpha.const)
 
-            obj[[centroid.data.to.use]][, paste0(colour.var, "_na")] <- is.na(as.data.frame(obj[[centroid.data.to.use]])[, colour.var])
-            if (!isTRUE(is.null(size.var) || size.var == "")) {
-                layers.list[["points"]] <- ggplot2::geom_sf(data = obj[[centroid.data.to.use]],
-                                                            mapping = ggplot2::aes_string(colour = colour.var,
-                                                                                          size = size.var,
-                                                                                          alpha = paste0(colour.var, "_na")),
-                                                            show.legend = "point", inherit.aes = FALSE)
-                attr(layers.list[["points"]], "code") <- sprintf("ggplot2::geom_sf(data = %s, ggplot2::aes(colour = %s, size = %s))", centroid.data.to.use, colour.var, size.var)
+            ## Only put the alpha argument if its required (i.e. alpha < 1)
+            attr(layers.list[["regions"]], "code") <- sprintf("ggplot2::geom_sf(data = %s%s)",
+                                                              region.data.to.use,
+                                                              if (alpha.const < 1)
+                                                                  sprintf(", colour = scales::alpha(\"#000000\", %.1f), alpha = %.1f)", alpha.const, alpha.const)
+                                                              else
+                                                                  "")
 
-                layers.list[["legend.size"]] <- ggplot2::scale_size(guide = FALSE)
-                attr(layers.list[["legend.size"]], "code") <- "ggplot2::scale_size(guide = FALSE)"
+            if (isTRUE(colour.var != "")) {
+                obj[[centroid.data.to.use]][, paste0(colour.var, "_na")] <- is.na(as.data.frame(obj[[centroid.data.to.use]])[, colour.var])
+
+                if (isTRUE(size.var != "")) {
+                    layers.list[["points"]] <- ggplot2::geom_sf(data = obj[[centroid.data.to.use]],
+                                                                mapping = ggplot2::aes_string(colour = colour.var,
+                                                                                              size = size.var,
+                                                                                              alpha = paste0(colour.var, "_na")),
+                                                                show.legend = "point", inherit.aes = FALSE)
+
+                    layers.list[["legend.size"]] <- ggplot2::scale_size(guide = FALSE)
+
+                    attr(layers.list[["points"]], "code") <- sprintf("ggplot2::geom_sf(data = %s, ggplot2::aes(colour = %s, size = %s))",
+                                                                     centroid.data.to.use, colour.var, size.var)
+
+                    attr(layers.list[["legend.size"]], "code") <- "ggplot2::scale_size(guide = FALSE)"
+                } else {
+                    layers.list[["points"]] <- ggplot2::geom_sf(data = obj[[centroid.data.to.use]],
+                                                                mapping = ggplot2::aes_string(colour = colour.var,
+                                                                                              alpha = paste0(colour.var, "_na")),
+                                                                show.legend = "point", size = size.const, inherit.aes = FALSE)
+
+                    ## Only add size argument if constant size has been changed
+                    attr(layers.list[["points"]], "code") <- sprintf("ggplot2::geom_sf(data = %s, ggplot2::aes(colour = %s)%s)",
+                                                                     centroid.data.to.use, colour.var,
+                                                                     if (size.const != 1)
+                                                                         paste0(", size = ", size.const)
+                                                                     else
+                                                                         "")
+                }
+
+                layers.list[["legend.alpha"]] <- ggplot2::scale_alpha_discrete(guide = FALSE, range = c(1, 0.1))
             } else {
-                layers.list[["points"]] <- ggplot2::geom_sf(data = obj[[centroid.data.to.use]],
-                                                            mapping = ggplot2::aes_string(colour = colour.var,
-                                                                                          alpha = paste0(colour.var, "_na")),
-                                                            show.legend = "point", size = size.const, inherit.aes = FALSE)
-                attr(layers.list[["points"]], "code") <- sprintf("ggplot2::geom_sf(data = %s, ggplot2::aes(colour = %s))", centroid.data.to.use, colour.var)
+                if (isTRUE(size.var != "")) {
+                    layers.list[["points"]] <- ggplot2::geom_sf(data = obj[[centroid.data.to.use]],
+                                                                mapping = ggplot2::aes_string(size = size.var),
+                                                                show.legend = "point", inherit.aes = FALSE)
+
+                    layers.list[["legend.size"]] <- ggplot2::scale_size(guide = FALSE)
+
+                    attr(layers.list[["points"]], "code") <- sprintf("ggplot2::geom_sf(data = %s, ggplot2::aes(size = %s))",
+                                                                     centroid.data.to.use, size.var)
+
+                    attr(layers.list[["legend.size"]], "code") <- "ggplot2::scale_size(guide = FALSE)"
+                } else {
+                    layers.list[["points"]] <- ggplot2::geom_sf(data = obj[[centroid.data.to.use]], size = size.const, inherit.aes = FALSE)
+
+                    ## Only add size argument if constant size has been changed
+                    attr(layers.list[["points"]], "code") <- sprintf("ggplot2::geom_sf(data = %s%s)",
+                                                                     centroid.data.to.use,
+                                                                     if (size.const != 1)
+                                                                         paste0(", size = ", size.const)
+                                                                     else
+                                                                         "")
+                }
             }
-
-
-            layers.list[["legend.alpha"]] <- ggplot2::scale_alpha_discrete(guide = FALSE, range = c(1, 0.1))
 
         } else if (obj$type == "sparklines") {
             base.ggplot <- ggplot2::ggplot(obj[[region.data.to.use]])
+            attr(base.ggplot, "code") <- sprintf("ggplot2::ggplot(%s)", region.data.to.use)
+
             layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[["region.aggregate"]],
                                                          colour = scales::alpha("#000000", alpha.const),
                                                          alpha = alpha.const, inherit.aes = FALSE)
-            if (isTRUE(!is.null(colour.var))) {
+
+            ## Only put the alpha argument if its required (i.e. alpha < 1)
+            attr(layers.list[["regions"]], "code") <- sprintf("ggplot2::geom_sf(%s)",
+                                                              if (alpha.const < 1)
+                                                                  sprintf("colour = scales::alpha(\"#000000\", %.1f), alpha = %.1f)", alpha.const, alpha.const)
+                                                              else
+                                                                  "")
+
+            if (isTRUE(colour.var != "")) {
                 sparkline.relative <- sparkline.type == "Relative"
                 layers.list[["sparklines"]] <- ggsfextra::geom_sparkline(data = obj[["centroid.data"]],
                                                               ggplot2::aes_string(group = obj$region.var,
@@ -233,17 +290,13 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                                               fill = "white", fill_alpha = 0.75,
                                                               inherit.aes = FALSE, plot_size = size.const,
                                                               relative = sparkline.relative)
+                attr(layers.list[["sparklines"]], "code") <- sprintf("ggsfextra::geom_sparkline(data = %s, aes(group = %s, line_x = %s, line_y = %s), fill_alpha = 0.75, plot_size = %d, relative = %s)",
+                                                                     "centroid.data", obj$region.var, obj$sequence.var, colour.var, size.const, ifelse(sparkline.relative, "TRUE", "FALSE"))
             }
         }
 
-        layers.list[["title"]] <- ggplot2::labs(title = main)
-        attr(layers.list[["title"]], "code") <- sprintf("ggplot2::labs(title = \"%s\")", main)
-
-        if (axis.labels) {
-            layers.list[["axislabels"]] <- ggplot2::labs(x = xlab, y = ylab)
-            attr(layers.list[["axislabels"]], "code") <- sprintf("ggplot2::labs(x = \"%s\", y = \"%s\")", xlab, ylab)
-        }
-
+        ## If projection is "Default", take the one stored in the sf object. Otherwise, use
+        ## the proj4string passed in.
         if (isTRUE(projection != "Default")) {
             proj_crs <- sf::st_crs(projection)
         } else {
@@ -268,35 +321,14 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             }
         }
 
-##         if (!is.null(facet)) {
-##             if (facet == "_MULTI") {
-##                 plot(to.plot)
-##             } else {
-##                 plot.grob <- ggplot2::ggplotGrob(to.plot)
-##
-##                 panel.cols <- plot.grob$layout[grepl("^panel-", plot.grob$layout$name), c("l")] * (-1)
-##                 spacer.rows <- which(plot.grob$layout$name == "spacer") * (-1)
-##
-##                 facet.var <- obj$facet.var
-##
-##                 col.to.keep <- which(levels(obj[[layersetHelper(obj$type)]]$baselayer[[1]]$data[[facet.var]]) == facet)
-##                 panel.cols <- panel.cols[-col.to.keep]
-##
-##                 to.plot <- plot.grob[spacer.rows, panel.cols]
-##             }
-##
-##         }
-
+        ## Dark background
         if (isTRUE(darkTheme)) {
             layers.list[["theme"]] <- ggplot2::theme(panel.background = ggplot2::element_rect(fill = "#343434"),
                                                      line = ggplot2::element_line(colour = "#555555"))
             attr(layers.list[["theme"]], "code") <- "ggplot2::theme(panel.background = ggplot2::element_rect(fill = \"#343434\"), line = ggplot2::element_line(colour = \"#555555\"))"
         }
 
-        ## layers.list[["legend.bottom"]] <- ggplot2::theme(legend.position = "bottom")
-        layers.list[["center.title"]] <- ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
-        attr(layers.list[["center.title"]], "code") <- "ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))"
-
+        ## Palette
         if (isTRUE(palette != "Default") && isTRUE(colour.var != "")) {
           layers.list[["palette"]] <- getMapPalette(palette, obj$type, obj$var.types[[colour.var]], limits = scale.limits)
         } else if (isTRUE(!is.null(scale.limits)) && isTRUE(!is.null(colour.var))) {
@@ -307,8 +339,26 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             }
         }
 
-        layers.list[["legend.title"]] <- ggplot2::theme(legend.title = ggplot2::element_blank())
-        attr(layers.list[["legend.title"]], "code") <- "ggplot2::theme(legend.title = ggplot2::element_blank())"
+        ## Title
+        if (isTRUE(main != "")) {
+            layers.list[["title"]] <- ggplot2::labs(title = main)
+            layers.list[["center.title"]] <- ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
+
+            attr(layers.list[["title"]], "code") <- sprintf("ggplot2::labs(title = \"%s\")", main)
+            attr(layers.list[["center.title"]], "code") <- "ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))"
+        }
+
+        ## Axis labels
+        if (axis.labels) {
+            layers.list[["axislabels"]] <- ggplot2::labs(x = xlab, y = ylab)
+            attr(layers.list[["axislabels"]], "code") <- sprintf("ggplot2::labs(x = \"%s\", y = \"%s\")", xlab, ylab)
+        }
+
+        ## Remove legend title if required
+        if (isTRUE(colour.var != "")) {
+            layers.list[["legend.title"]] <- ggplot2::theme(legend.title = ggplot2::element_blank())
+            attr(layers.list[["legend.title"]], "code") <- "ggplot2::theme(legend.title = ggplot2::element_blank())"
+        }
 
         plot.obj <- Reduce(`+`, x = layers.list, init = base.ggplot)
 
@@ -319,12 +369,23 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
         n.lines <- length(code.list)
         code.list[1:(n.lines - 1)] <- paste(code.list[1:(n.lines - 1)], "+")
         code.list[2:n.lines] <- paste0("\t", code.list[2:n.lines])
-        attr(plot.obj, "code") <- c(list("## Plot the map using ggplot2"), code.list)
+        code.list[n.lines] <- paste0(code.list[n.lines], "\n")
+
+        if (isTRUE(colour.var != ""))
+            opening.comment <- sprintf("## Plot a map of variable %s", colour.var)
+        else
+            opening.comment <- "## Plot the map"
+
+        attr(plot.obj, "code") <- c(list(opening.comment), code.list)
 
         plot.obj
     }
 }
 
+#' @title Aggregate an iNZightMapPlot with Multiple Observations
+#' @param obj iNZightMapPlot object
+#' @param aggregation Type of aggregation to use
+#' @param single.value If \code{aggregation = "singlevalue"}, the observation that should be extracted
 #' @export
 iNZightMapAggregation <- function(obj, aggregation = "mean", single.value = NULL) {
     if (aggregation == "singlevalue") {
@@ -360,40 +421,65 @@ theme_dark <- ggplot2::theme(panel.background = ggplot2::element_rect(fill = "#3
 mapThemes <- list("Default" = NULL,
                   "Dark" = theme_dark)
 
-getMapPalette <- function(palette, map.type, var.type, direction = 1, limits = NULL) {
+getMapPalette <- function(col.pal, map.type, var.type, direction = 1, limits = NULL) {
   viridis.pals <- c("Viridis", "Magma", "Plasma", "Inferno")
   brewer.pals <- c("BrBG", "PiYG", "PRGn",
                    "Accent", "Dark2", "Paired", "Pastel1", "Set1",
                    "Blues", "BuGn", "BuPu", "GnBu")
 
+  ## Define some string representations to make code writing easier
+  if (isTRUE(is.null(limits)))
+      limit.str <- ""
+  else
+      limit.str <- sprintf(", limits = c(%d, %d)", limits[1], limits[2])
+
   if (map.type == "region") {
     if (var.type %in% c("numeric", "integer")) {
-      if (palette %in% viridis.pals) {
-        ggplot2::scale_fill_viridis_c(option = tolower(palette), direction = direction, limits = limits)
-      } else if (palette %in% brewer.pals) {
-        ggplot2::scale_fill_distiller(palette = palette, direction = direction, limits = limits)
+      if (col.pal %in% viridis.pals) {
+        palette <- ggplot2::scale_fill_viridis_c(option = tolower(col.pal), direction = direction, limits = limits)
+        attr(palette, "code") <- sprintf("ggplot2::scale_fill_viridis_c(option = \"%s\", direction = %d%s)",
+                                         tolower(col.pal), direction, limit.str)
+
+      } else if (col.pal %in% brewer.pals) {
+        palette <- ggplot2::scale_fill_distiller(palette = col.pal, direction = direction, limits = limits)
+        attr(palette, "code") <- sprintf("ggplot2::scale_fill_distiller(palette = \"%s\", direction = %d%s)",
+                                         col.pal, direction, limit.str)
       }
     } else {
-      if (palette %in% viridis.pals) {
-        ggplot2::scale_fill_viridis_d(option = tolower(palette), direction = direction, limits = limits)
-      } else if (palette %in% brewer.pals) {
-        ggplot2::scale_fill_brewer(palette = palette, direction = direction, limits = limits)
+      if (col.pal %in% viridis.pals) {
+        palette <- ggplot2::scale_fill_viridis_d(option = tolower(col.pal), direction = direction, limits = limits)
+        attr(palette, "code") <- sprintf("ggplot2::scale_fill_viridis_d(option = \"%s\", direction = %d%s)",
+                                         tolower(col.pal), direction, limit.str)
+      } else if (col.pal %in% brewer.pals) {
+        palette <- ggplot2::scale_fill_brewer(palette = col.pal, direction = direction, limits = limits)
+        attr(palette, "code") <- sprintf("ggplot2::scale_fill_brewer(palette = \"%s\", direction = %d%s)",
+                                         col.pal, direction, limit.str)
       }
     }
   } else {
     if (var.type %in% c("numeric", "integer")) {
-      if (palette %in% viridis.pals) {
-        ggplot2::scale_colour_viridis_c(option = tolower(palette), direction = direction, limits = limits)
-      } else if (palette %in% brewer.pals) {
-        ggplot2::scale_colour_distiller(palette = palette, direction = direction, limits = limits)
+      if (col.pal %in% viridis.pals) {
+        palette <- ggplot2::scale_colour_viridis_c(option = tolower(col.pal), direction = direction, limits = limits)
+        attr(palette, "code") <- sprintf("ggplot2::scale_colour_viridis_c(option = \"%s\", direction = %d%s)",
+                                         tolower(col.pal), direction, limit.str)
+      } else if (col.pal %in% brewer.pals) {
+        palette <- ggplot2::scale_colour_distiller(palette = col.pal, direction = direction, limits = limits)
+        attr(palette, "code") <- sprintf("ggplot2::scale_colour_distiller(palette = \"%s\", direction = %d%s)",
+                                         col.pal, direction, limit.str)
       }
     } else {
-      if (palette %in% viridis.pals) {
-        ggplot2::scale_colour_viridis_d(option = tolower(palette), direction = direction, limits = limits)
-      } else if (palette %in% brewer.pals) {
-        ggplot2::scale_colour_brewer(palette = palette, direction = direction, limits = limits)
+      if (col.pal %in% viridis.pals) {
+        palette <- ggplot2::scale_colour_viridis_d(option = tolower(col.pal), direction = direction, limits = limits)
+        attr(palette, "code") <- sprintf("ggplot2::scale_colour_viridis_d(option = \"%s\", direction = %d%s)",
+                                         tolower(col.pal), direction, limit.str)
+      } else if (col.pal %in% brewer.pals) {
+        palette <- ggplot2::scale_colour_brewer(palette = col.pal, direction = direction, limits = limits)
+        attr(palette, "code") <- sprintf("ggplot2::scale_colour_brewer(palette = \"%s\", direction = %d%s)",
+                                         col.pal, direction, limit.str)
       }
     }
   }
+
+  return(palette)
 }
 
