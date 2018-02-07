@@ -219,7 +219,8 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                                                                               alpha = paste0(colour.var, "_na")),
                                                                 show.legend = "point", inherit.aes = FALSE)
 
-                    layers.list[["legend.size"]] <- ggplot2::scale_size(guide = FALSE)
+                    layers.list[["legend.size"]] <- ggplot2::scale_size(guide = FALSE,
+                                                                        range = (size.const - 1) + c(1, 6))
 
                     attr(layers.list[["points"]], "code") <- sprintf("ggplot2::geom_sf(data = %s, ggplot2::aes(colour = %s, size = %s))",
                                                                      centroid.data.to.use, colour.var, size.var)
