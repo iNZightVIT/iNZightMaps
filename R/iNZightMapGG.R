@@ -102,6 +102,11 @@ iNZightMapVars <- function(obj, map.vars = FALSE) {
     cols
 }
 
+#' @export
+iNZightMapRegions <- function(obj) {
+    sort(unique(as.data.frame(obj$region.data)[, obj$region.var]))
+}
+
 
 #' Plot an iNZightMapPlot
 #' @param obj iNZightMapPlot object
@@ -130,7 +135,8 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                 datum.lines = TRUE, darkTheme = NULL, projection = "Default", palette = NULL,
                                 label.title = "", aggregate = FALSE,
                                 current.seq = NULL, sparkline.type = "Absolute",
-                                scale.limits = NULL) {
+                                scale.limits = NULL, ci.plot = FALSE,
+                                regions.to.plot = NULL) {
     if (multiple.vars) {
         orig.call <- match.call()
 		orig.call[1] <- call("plot")
@@ -179,6 +185,14 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             region.data.to.use <- "region.data"
             centroid.data.to.use <- "centroid.data"
         }
+
+        if (!is.null(regions.to.plot)) {
+            obj[[region.data.to.use]] <- dplyr::filter(obj[[region.data.to.use]],
+                                                       UQ(as.name(obj$region.var)) %in% regions.to.plot)
+            obj[[centroid.data.to.use]] <- dplyr::filter(obj[[centroid.data.to.use]],
+                                                         UQ(as.name(obj$region.var)) %in% regions.to.plot)
+        }
+
 
         if (obj$type == "region") {
             base.ggplot <- ggplot2::ggplot(obj[[region.data.to.use]])
