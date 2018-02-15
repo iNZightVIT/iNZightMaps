@@ -192,7 +192,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
         }
 
         if (!is.null(regions.to.plot)) {
-            if (keep.other.regions) {
+            if (keep.other.regions & length(regions.to.plot) > 0) {
                 obj[[region.data.to.use]] <- dplyr::mutate(obj[[region.data.to.use]],
                                                            UQ(as.name(colour.var)) := replace(UQ(as.name(colour.var)), !(UQ(as.name(obj$region.var)) %in% regions.to.plot), NA))
                 obj[[centroid.data.to.use]] <- dplyr::mutate(obj[[centroid.data.to.use]],
@@ -339,7 +339,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                                                      proj_crs$proj4string)
             }
         } else {
-            if (!is.null(regions.to.plot) & keep.other.regions) {
+            if (!is.null(regions.to.plot) & length(regions.to.plot) > 0 & keep.other.regions) {
                 region.bbox <- sf::st_bbox(na.omit(obj[[region.data.to.use]][, colour.var]))
                 layers.list[["projection"]] <- ggplot2::coord_sf(crs = proj_crs, datum = NA,
                                                                  xlim = region.bbox[c(1, 3)],
