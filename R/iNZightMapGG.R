@@ -297,7 +297,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             base.ggplot <- ggplot2::ggplot(obj[[region.data.to.use]])
             attr(base.ggplot, "code") <- sprintf("ggplot2::ggplot(%s)", region.data.to.use)
 
-            layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[["region.aggregate"]],
+            layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]],
                                                          colour = scales::alpha("#000000", alpha.const),
                                                          alpha = alpha.const, inherit.aes = FALSE)
 
@@ -310,7 +310,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
 
             if (isTRUE(colour.var != "")) {
                 sparkline.relative <- sparkline.type == "Relative"
-                layers.list[["sparklines"]] <- ggsfextra::geom_sparkline(data = obj[["centroid.data"]],
+                layers.list[["sparklines"]] <- ggsfextra::geom_sparkline(data = obj[[centroid.data.to.use]],
                                                               ggplot2::aes_string(group = obj$region.var,
                                                                                   line_x = obj$sequence.var,
                                                                                   line_y = colour.var),
@@ -318,7 +318,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                                               inherit.aes = FALSE, plot_size = size.const,
                                                               relative = sparkline.relative)
                 attr(layers.list[["sparklines"]], "code") <- sprintf("ggsfextra::geom_sparkline(data = %s, aes(group = %s, line_x = %s, line_y = %s), fill_alpha = 0.75, plot_size = %d, relative = %s)",
-                                                                     "centroid.data", obj$region.var, obj$sequence.var, colour.var, size.const, ifelse(sparkline.relative, "TRUE", "FALSE"))
+                                                                     centroid.data.to.use, obj$region.var, obj$sequence.var, colour.var, size.const, ifelse(sparkline.relative, "TRUE", "FALSE"))
             }
         }
 
@@ -369,7 +369,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             if (obj$type == "region" && obj$var.types[[colour.var]] %in% c("numeric", "integer")) {
                 layers.list[["palette"]] <- ggplot2::scale_fill_gradient(limits = scale.limits)
             } else if (obj$type == "point" && obj$var.types[[colour.var]] %in% c("numeric", "integer")) {
-                layer.list[["palette"]] <- ggplot2::scale_colour_gradient(limits = scale.limits)
+                layers.list[["palette"]] <- ggplot2::scale_colour_gradient(limits = scale.limits)
             }
         }
 
