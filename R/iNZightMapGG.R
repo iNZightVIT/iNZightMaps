@@ -136,7 +136,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                 label.title = "", aggregate = FALSE,
                                 current.seq = NULL, sparkline.type = "Absolute",
                                 scale.limits = NULL, ci.plot = FALSE,
-                                regions.to.plot = NULL) {
+                                regions.to.plot = NULL, keep.other.regions = TRUE) {
     if (multiple.vars) {
         orig.call <- match.call()
 		orig.call[1] <- call("plot")
@@ -180,17 +180,29 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
 
         if(obj$multiple.obs) {
             region.data.to.use <- "region.aggregate"
-            centroid.data.to.use <- "centroid.aggregate"
+
+            if (obj$type == "sparklines") {
+                centroid.data.to.use <- "centroid.data"
+            } else {
+                centroid.data.to.use <- "centroid.aggregate"
+            }
         } else {
             region.data.to.use <- "region.data"
             centroid.data.to.use <- "centroid.data"
         }
 
         if (!is.null(regions.to.plot)) {
-            obj[[region.data.to.use]] <- dplyr::filter(obj[[region.data.to.use]],
-                                                       UQ(as.name(obj$region.var)) %in% regions.to.plot)
-            obj[[centroid.data.to.use]] <- dplyr::filter(obj[[centroid.data.to.use]],
-                                                         UQ(as.name(obj$region.var)) %in% regions.to.plot)
+            if (keep.other.regions) {
+                obj[[region.data.to.use]] <- dplyr::mutate(obj[[region.data.to.use]],
+                                                           UQ(as.name(colour.var)) := replace(UQ(as.name(colour.var)), !(UQ(as.name(obj$region.var)) %in% regions.to.plot), NA))
+                obj[[centroid.data.to.use]] <- dplyr::mutate(obj[[centroid.data.to.use]],
+                                                           UQ(as.name(colour.var)) := replace(UQ(as.name(colour.var)), !(UQ(as.name(obj$region.var)) %in% regions.to.plot), NA))
+            } else {
+                obj[[region.data.to.use]] <- dplyr::filter(obj[[region.data.to.use]],
+                                                           UQ(as.name(obj$region.var)) %in% regions.to.plot)
+                obj[[centroid.data.to.use]] <- dplyr::filter(obj[[centroid.data.to.use]],
+                                                             UQ(as.name(obj$region.var)) %in% regions.to.plot)
+            }
         }
 
 
@@ -327,7 +339,14 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                                                      proj_crs$proj4string)
             }
         } else {
-            layers.list[["projection"]] <- ggplot2::coord_sf(crs = proj_crs, datum = NA)
+            if (!is.null(regions.to.plot) & keep.other.regions) {
+                region.bbox <- sf::st_bbox(na.omit(obj[[region.data.to.use]][, colour.var]))
+                layers.list[["projection"]] <- ggplot2::coord_sf(crs = proj_crs, datum = NA,
+                                                                 xlim = region.bbox[c(1, 3)],
+                                                                 ylim = region.bbox[c(2, 4)])
+            } else {
+                layers.list[["projection"]] <- ggplot2::coord_sf(crs = proj_crs, datum = NA)
+            }
             if (isTRUE(projection != "Default")) {
                 attr(layers.list[["projection"]], "code") <- sprintf("ggplot2::coord_sf(crs = \"%s\", datum = NA)",
                                                                      proj_crs$proj4string)
