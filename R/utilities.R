@@ -147,3 +147,14 @@ decodeMapDir <- function(mapdir.mat) {
     mapdir.mat[, "tidy_filepath"] <- dir.vect
     mapdir.mat
 }
+
+##' @export
+getMinMax <- function(obj, vars) {
+    print("anything")
+    if (length(vars) == 0) {
+        return
+    }
+
+    selected.data <- as.data.frame(obj$region.data)[, vars, drop = FALSE]
+    range(selected.data[, sapply(selected.data, is.numeric)], na.rm = TRUE)
+}

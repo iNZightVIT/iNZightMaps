@@ -39,8 +39,6 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
 
   if (multiple.obs) {
       library(sf)
-      ## print(search())
-      ## print(methods(summarise))
       mapdata.agg <- mapdata %>%
           dplyr::group_by(UQ((as.name(by.map)))) %>%
           dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")), dplyr::last)
@@ -321,16 +319,15 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                                                   "")
 
             if (isTRUE(colour.var != "")) {
-                sparkline.relative <- sparkline.type == "Relative"
                 layers.list[["sparklines"]] <- ggsfextra::geom_sparkline(data = obj[[centroid.data.to.use]],
                                                               ggplot2::aes_string(group = obj$region.var,
                                                                                   line_x = obj$sequence.var,
                                                                                   line_y = colour.var),
                                                               fill = "white", fill_alpha = 0.75,
                                                               inherit.aes = FALSE, plot_size = size.const,
-                                                              relative = sparkline.relative)
-                attr(layers.list[["sparklines"]], "code") <- sprintf("ggsfextra::geom_sparkline(data = %s, aes(group = %s, line_x = %s, line_y = %s), fill_alpha = 0.75, plot_size = %d, relative = %s)",
-                                                                     centroid.data.to.use, obj$region.var, obj$sequence.var, colour.var, size.const, ifelse(sparkline.relative, "TRUE", "FALSE"))
+                                                              sparkline_type = sparkline.type)
+                attr(layers.list[["sparklines"]], "code") <- sprintf("ggsfextra::geom_sparkline(data = %s, aes(group = %s, line_x = %s, line_y = %s), fill_alpha = 0.75, plot_size = %d, sparkline_type = %s)",
+                                                                     centroid.data.to.use, obj$region.var, obj$sequence.var, colour.var, size.const, sparkline.type)
             }
         }
 
@@ -368,8 +365,10 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                 layers.list[["projection"]] <- ggplot2::coord_sf(crs = proj_crs, datum = NA,
                                                                  xlim = region.bbox[c(1, 3)],
                                                                  ylim = region.bbox[c(2, 4)])
-            } else {
+            } else if (length(regions.to.plot) > 0) {
                 layers.list[["projection"]] <- ggplot2::coord_sf(crs = proj_crs, datum = NA)
+            } else {
+                layers.list[["projection"]] <- ggplot2::coord_sf(datum = NA)
             }
 
             if (isTRUE(projection != "Default")) {
