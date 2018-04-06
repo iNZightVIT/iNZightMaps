@@ -19,6 +19,7 @@ Imports:
   ggplot2 (>= 2.2.1.9000),
   dplyr,
   ggrepel,
+  ggsfextra,
   gridExtra,
   grid,
   rlang,

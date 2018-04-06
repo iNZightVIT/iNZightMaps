@@ -351,23 +351,37 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             proj_crs <- sf::st_crs(obj$projection)
         }
 
+        ## print(proj_crs)
+
         ## In the case of non-default projections, we need to specifically define it. Otherwise
         ## it is stored in the ggplot object anyway (as it comes from the sf object).
         if (datum.lines) {
-            layers.list[["projection"]] <- ggplot2::coord_sf(crs = proj_crs)
+            if (!is.null(regions.to.plot) & length(regions.to.plot) > 0 & keep.other.regions) {
+                region.bbox <- sf::st_bbox(st_transform(na.omit(obj[[region.data.to.use]][, colour.var]), crs = proj_crs))
+                layers.list[["projection"]] <- ggplot2::coord_sf(crs = proj_crs,
+                                                                 xlim = region.bbox[c(1, 3)],
+                                                                 ylim = region.bbox[c(2, 4)])
+            } else if (is.null(regions.to.plot) || length(regions.to.plot) > 0) {
+                layers.list[["projection"]] <- ggplot2::coord_sf(crs = proj_crs)
+            }
+
             if (isTRUE(projection != "Default")) {
                 attr(layers.list[["projection"]], "code") <- sprintf("ggplot2::coord_sf(crs = \"%s\")",
                                                                      proj_crs$proj4string)
             }
         } else {
+            ## print(regions.to.plot)
             if (!is.null(regions.to.plot) & length(regions.to.plot) > 0 & keep.other.regions) {
                 region.bbox <- sf::st_bbox(st_transform(na.omit(obj[[region.data.to.use]][, colour.var]), crs = proj_crs))
+                ## print("I'm here")
                 layers.list[["projection"]] <- ggplot2::coord_sf(crs = proj_crs, datum = NA,
                                                                  xlim = region.bbox[c(1, 3)],
                                                                  ylim = region.bbox[c(2, 4)])
-            } else if (length(regions.to.plot) > 0) {
+            } else if (is.null(regions.to.plot) || length(regions.to.plot) > 0) {
+                ## print("I'm actually here")
                 layers.list[["projection"]] <- ggplot2::coord_sf(crs = proj_crs, datum = NA)
             } else {
+                ## print("Here")
                 layers.list[["projection"]] <- ggplot2::coord_sf(datum = NA)
             }
 
@@ -378,6 +392,8 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                 attr(layers.list[["projection"]], "code") <- "ggplot2::coord_sf(datum = NA)"
             }
         }
+
+        ## print(layers.list[["projection"]])
 
         ## Dark background
         if (isTRUE(darkTheme)) {
