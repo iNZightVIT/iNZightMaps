@@ -135,7 +135,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                 current.seq = NULL, sparkline.type = "Absolute",
                                 scale.limits = NULL, ci.plot = FALSE,
                                 regions.to.plot = NULL, keep.other.regions = TRUE,
-                                label.var = NULL) {
+                                label.var = NULL, scale.label = 1, scale.axis = 1) {
     if (multiple.vars) {
         orig.call <- match.call()
 		orig.call[1] <- call("plot")
@@ -171,10 +171,6 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
 
         return(plot.grid)
     } else {
-        ## layers.list <- list(regions = NULL,
-                            ## points = NULL,
-                            ## title = NULL,
-                            ## axislabels = NULL)
         layers.list <- list()
 
         if(obj$multiple.obs) {
@@ -326,7 +322,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                                               fill = "white", fill_alpha = 0.75,
                                                               inherit.aes = FALSE, plot_size = size.const,
                                                               sparkline_type = sparkline.type)
-                attr(layers.list[["sparklines"]], "code") <- sprintf("ggsfextra::geom_sparkline(data = %s, aes(group = %s, line_x = %s, line_y = %s), fill_alpha = 0.75, plot_size = %d, sparkline_type = %s)",
+                attr(layers.list[["sparklines"]], "code") <- sprintf("ggsfextra::geom_sparkline(data = %s, aes(group = %s, line_x = %s, line_y = %s), fill_alpha = 0.75, plot_size = %f, sparkline_type = %s)",
                                                                      centroid.data.to.use, obj$region.var, obj$sequence.var, colour.var, size.const, sparkline.type)
             }
         }
@@ -337,7 +333,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
             }
 
             if (obj$type != "sparklines") {
-                layers.list[["sftext"]] <- ggsfextra::geom_sftext(data = obj[[centroid.data.to.use]], ggplot2::aes_string(label = label.var, colour = colour.var), inherit.aes = FALSE)
+                layers.list[["sftext"]] <- ggsfextra::geom_sftext(data = obj[[centroid.data.to.use]], ggplot2::aes_string(label = label.var, colour = colour.var), size = scale.label, inherit.aes = FALSE)
             } else {
                 layers.list[["sftext"]] <- ggsfextra::geom_sftext(data = obj[["centroid.aggregate"]], ggplot2::aes_string(label = label.var), inherit.aes = FALSE)
             }
@@ -394,6 +390,7 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
         }
 
         ## print(layers.list[["projection"]])
+        layers.list[["text.scale"]] <- ggplot2::theme_gray(base_size = scale.axis)
 
         ## Dark background
         if (isTRUE(darkTheme)) {
