@@ -13,7 +13,6 @@ iNZightMapPlot <- function(data, map, type, ...) {
 }
 
 #' @describeIn iNZightMapPlot Constructs a iNZightMapPlot using region values.
-#' @import sf
 #' @param data Dataset with values for rows of the map object
 #' @param map  An sf object containing a row for each feature of the map
 #' @param by.data Variable name in the dataset that will be matched to \code{by.map} in the map
@@ -24,6 +23,16 @@ iNZightMapPlot <- function(data, map, type, ...) {
 #' @param agg.type If \code{multiple.obs = TRUE}, which aggregation should be used to produce one observation for each region.
 iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.level = 0.01,
                                  multiple.obs = FALSE, sequence.var = NULL, agg.type = "last") {
+
+  if (packageVersion('ggplot2') < numeric.version("2.2.1.9000")) {
+    ## R is too old ...
+    if (numeric_version(paste(R.version[c('major', 'minor')], collapse = ".")) < numeric_version(3.3))
+      stop("The region maps are only available on R v3.3.0 or later")
+
+    ## ggplot2 is too old ...
+    stop("You need to install the development version of `ggplot2`:\n  https://github.com/tidyverse/ggplot2")
+  }
+
   by.vect <- c(by.data)
   names(by.vect) <- by.map
 
@@ -38,7 +47,7 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
   mapdata <- sf::st_simplify(mapdata, dTolerance = simplification.level)
 
   if (multiple.obs) {
-      library(sf)
+      ## library(sf)
       mapdata.agg <- mapdata %>%
           dplyr::group_by(UQ((as.name(by.map)))) %>%
           dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")), dplyr::last)
