@@ -26,7 +26,7 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
 
   if (packageVersion('ggplot2') < numeric.version("2.2.1.9000")) {
     ## R is too old ...
-    if (numeric_version(paste(R.version[c('major', 'minor')], collapse = ".")) < numeric_version(3.3))
+    if (getRversion() < numeric_version(3.3))
       stop("The region maps are only available on R v3.3.0 or later")
 
     ## ggplot2 is too old ...
