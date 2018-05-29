@@ -12,7 +12,8 @@
   projection = "Default", palette = NULL, label.title = "",
   aggregate = FALSE, current.seq = NULL, sparkline.type = "Absolute",
   scale.limits = NULL, ci.plot = FALSE, regions.to.plot = NULL,
-  keep.other.regions = TRUE, label.var = NULL)
+  keep.other.regions = TRUE, label.var = NULL, scale.label = 1,
+  scale.axis = 1)
 }
 \arguments{
 \item{obj}{iNZightMapPlot object}

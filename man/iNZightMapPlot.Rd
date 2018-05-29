@@ -35,9 +35,6 @@ iNZightMapPlotRegion(data, map, by.data, by.map, simplification.level = 0.01,
 
 \item{map}{An sf object containing a row for each feature of the map}
 }
-\description{
-Create iNZightMapPlot object
-}
 \section{Functions}{
 \itemize{
 \item \code{iNZightMapPlotRegion}: Constructs a iNZightMapPlot using region values.

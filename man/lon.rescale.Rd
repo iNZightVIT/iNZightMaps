@@ -18,10 +18,6 @@ transform latitude inorder to get the biggest map as possibile
 \details{
 transform the longitude
 }
-\examples{
-lon = runif(100,-360,360)
-lon.rescale(lon)
-}
 \author{
 Jason Wen
 }

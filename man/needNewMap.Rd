@@ -26,9 +26,6 @@ Do we need a new map or not
 \details{
 A function for checking wheather we need to download a new map from google or not, it checks the input with the global inzight objects, if something if not matched, then return TRUE, otherwise FALSE.
 }
-\examples{
-needNewMap()
-}
 \author{
 Jason Wen
 }

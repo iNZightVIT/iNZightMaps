@@ -27,11 +27,6 @@ Get a new map and save it into Global Env
 \details{
 a wrap function of \link{GetMap} from package 'RgoogleMaps'
 }
-\examples{
-golbal.objects = list()
-r.bbox = runif(4,-90,90)
-getNewMap(r.bbox[1:2],r.bbox[3:4],2,zoom = 3)
-}
 \author{
 Jason Wen
 }

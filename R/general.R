@@ -6,12 +6,6 @@
 ##' @param map a map object from RgoogleMaps package.
 ##' @return a list that contain the tramsformed x and y.
 ##' @author Jason Wen
-##' @examples
-##' golbal.objects = list()
-##' r.latlon = cbind(runif(100,-90,90),runif(100,-90,90))
-##' r.bbox = runif(4,-90,90)
-##' getNewMap(r.bbox[1:2],r.bbox[3:4],2,zoom = 3)
-##' latlon.xy(r.latlon,global.objects$maps$map)
 ##' @export
 latlon.xy <- function(latlon,map) {
     zoom <- map$zoom
@@ -31,10 +25,6 @@ latlon.xy <- function(latlon,map) {
 ##' @param zoom variable from \link{GetMap}, Google maps zoom level.
 ##' @return a map object that assign as 'golbal.object'
 ##' @author Jason Wen
-##' @examples
-##' golbal.objects = list()
-##' r.bbox = runif(4,-90,90)
-##' getNewMap(r.bbox[1:2],r.bbox[3:4],2,zoom = 3)
 getNewMap <- function(lat.lim, lon.lim, SCALE,
                       type = c("roadmap", "mobile", "satellite", "terrain", "hybrid",
                                "mapmaker-roadmap", "mapmaker-hybrid"), zoom) {
@@ -57,9 +47,6 @@ getNewMap <- function(lat.lim, lon.lim, SCALE,
 ##' @param lon a numeric value or a numeric vector of longitude
 ##' @return a new longitude value or vector that used for plotting in map.
 ##' @author Jason Wen
-##' @examples
-##' lon = runif(100,-360,360)
-##' lon.rescale(lon)
 lon.rescale <- function(lon) {
     r1 <- range(lon, na.rm = TRUE)
     r2 <- range((360 + lon) %% 360, na.rm = TRUE)
@@ -86,8 +73,6 @@ lon.rescale <- function(lon) {
 ##' @param type a character vector of length 1, type the type of the pervious map
 ##' @return Logical value TRUE/FALSE TRUE = something are not matched, FALSE = the pervious map is ok for re-use.
 ##' @author Jason Wen
-##' @examples
-##' needNewMap()
 needNewMap <- function(bbox, window, size, SCALE, type) {
     need <- FALSE
     map.odd <- global.objects$maps$map
@@ -168,10 +153,6 @@ needNewMap <- function(bbox, window, size, SCALE, type) {
 ##' @param SCALE variable from GetMap, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map
 ##' @return a list that contain the size of the map(in pixels), and the zoom level
 ##' @author Jason Wen
-##' @examples
-##' r.center = runif(4,min = -90,max = 90)
-##' SCALE = 2
-##' Get.map.size(r.center[1:2],r.center[3:4],SCALE)
 Get.map.size <- function(latR, lonR, SCALE) {
     if (missing(SCALE)) {
         SCALE <- global.objects$maps$map.detail$scale
@@ -236,11 +217,6 @@ Get.map.size <- function(latR, lonR, SCALE) {
 ##' @title get the limit of x-axis and y-axis
 ##' @return return a numeric of length 4 that contain the limit of x-axis and y-axis
 ##' @author Jason Wen
-##' @examples
-##' r.center = runif(4,min = 0,max = 90)
-##' r.center = runif(4,min = -90,max = 90)
-##' SCALE = 2
-##' map.xylim(r.center[1:2],r.center[3:4],SCALE)
 map.xylim <- function(latR, lonR, SCALE) {
     ZoomSize <- Get.map.size(latR = latR, lonR = lonR, SCALE = SCALE)
     scale <- global.objects$maps$map$SCALE * 2
@@ -263,10 +239,6 @@ map.xylim <- function(latR, lonR, SCALE) {
 ##' @return return an logical value that tells wheater the coordinates are all within the same range of google map's or not.
 ##' @title Is Google Map?
 ##' @author Jason Wen
-##' @examples
-##' lat = runif(100,min = -180,max = 180)
-##' lon = runif(100,min = -180,max = 180)
-##' is.google.map(lat,lon)
 is.google.map <- function(lat,lon) {
     TRUE
 
@@ -288,10 +260,6 @@ is.google.map <- function(lat,lon) {
 ##' @return NULL
 ##' @details if ratio < 1 then zoom in, if ratio > 1 then zoom out, if ratio = 1 then shift the plot.
 ##' @author Jason
-##' @examples
-##' data("nzquakes")
-##' iNZightPlot(Longitude,Latitude,data = nzquakes,colby = Depth, plottype = 'map',plot.features = list(maptype = 'roadmap'))
-##' ClickOnZoom(ratio = 1)
 ##' @export
 ClickOnZoom <- function(ratio = 1, resize = FALSE, p.center = global.objects$maps$pf$click.points) {
     global.objects$maps$map.detail$num <<- global.objects$maps$map.detail$num + 1

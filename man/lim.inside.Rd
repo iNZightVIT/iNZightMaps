@@ -17,11 +17,6 @@ a logical vector of length of n, indicates which row in x is within in the limit
 \description{
 is the latitude and longitude within the limit?
 }
-\examples{
-x = cbind(runif(100,-50,50),runif(100,-100,100))
-lim = c(-25,25,-80,80)
-lim.inside(x,lim)
-}
 \author{
 Jason Wen
 }

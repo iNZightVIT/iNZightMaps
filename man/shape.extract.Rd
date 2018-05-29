@@ -18,10 +18,6 @@ extract the information from a SpatialPolygonsDataFrame object.
 \details{
 the function will also returns a global object which called global.objects.
 }
-\examples{
-location = 'C:/Users/yeamin/Desktop/something/MED Final 20140226_region.shp'
-shape.extract(location)
-}
 \author{
 Jason Wen
 }
