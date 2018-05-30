@@ -480,14 +480,14 @@ iNZightMapAggregation <- function(obj, aggregation = "mean", single.value = NULL
     } else {
         obj$region.aggregate <- obj$region.data %>%
             dplyr::group_by(UQ((as.name(obj$region.var)))) %>%
-            dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")),
+            dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$"), -UQ((as.name(obj$region.var)))),
                        dplyr::funs(if (is.numeric(.))
                                           eval(substitute(chosen_fun(., na.rm = TRUE),
                                                           list(chosen_fun = as.name(aggregation))))
                                       else dplyr::last(.)))
         obj$centroid.aggregate <- obj$centroid.data %>%
             dplyr::group_by(UQ((as.name(obj$region.var)))) %>%
-            dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")),
+            dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$"), -UQ((as.name(obj$region.var)))),
                                 dplyr::funs(if (is.numeric(.))
                                          eval(substitute(chosen_fun(., na.rm = TRUE),
                                                          list(chosen_fun = as.name(aggregation))))
