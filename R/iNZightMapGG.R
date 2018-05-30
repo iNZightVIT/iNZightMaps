@@ -24,14 +24,15 @@ iNZightMapPlot <- function(data, map, type, ...) {
 iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.level = 0.01,
                                  multiple.obs = FALSE, sequence.var = NULL, agg.type = "last") {
 
-  if (packageVersion('ggplot2') < numeric.version("2.2.1.9000")) {
-    ## R is too old ...
-    if (getRversion() < numeric_version(3.3))
-      stop("The region maps are only available on R v3.3.0 or later")
+  ## This is actually being done by iNZightModules, which will be enough for now.
+  # if (packageVersion('ggplot2') < numeric.version("2.2.1.9000")) {
+  #   ## R is too old ...
+  #   if (getRversion() < numeric_version(3.3))
+  #     stop("The region maps are only available on R v3.3.0 or later")
 
-    ## ggplot2 is too old ...
-    stop("You need to install the development version of `ggplot2`:\n  https://github.com/tidyverse/ggplot2")
-  }
+  #   ## ggplot2 is too old ...
+  #   stop("You need to install the development version of `ggplot2`:\n  https://github.com/tidyverse/ggplot2")
+  # }
 
   by.vect <- c(by.data)
   names(by.vect) <- by.map
