@@ -51,11 +51,11 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
       ## library(sf)
       mapdata.agg <- mapdata %>%
           dplyr::group_by(UQ((as.name(by.map)))) %>%
-          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")), dplyr::last)
+          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$"), -UQ(as.name(by.map))), dplyr::last)
 
       centroid.agg <- map.centroids %>%
           dplyr::group_by(UQ((as.name(by.map)))) %>%
-          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")), "last")
+          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$"), -UQ(as.name(by.map))), "last")
   } else {
       mapdata.agg <- NULL
       centroid.agg <- NULL
