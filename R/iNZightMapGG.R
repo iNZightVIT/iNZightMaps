@@ -155,6 +155,11 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
 
         for (i in 1:length(plots)) {
             orig.call$colour.var <- colour.var[i]
+            
+            if (isTRUE(is.list(scale.limits) && length(scale.limits) > 1)) {
+              orig.call$scale.limits <- scale.limits[[i]]
+            }
+            
             if (isTRUE(!is.null(current.seq))) {
                 orig.call$main <- paste0(colour.var[i], " (", current.seq, ")")
             } else {
@@ -182,6 +187,10 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
         return(plot.grid)
     } else {
         layers.list <- list()
+        
+        if (isTRUE(is.list(scale.limits))) {
+          scale.limits <- scale.limits[[1]]
+        }
 
         if(obj$multiple.obs) {
             region.data.to.use <- "region.aggregate"
@@ -198,16 +207,6 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
 
         if (!is.null(regions.to.plot)) {
             if (keep.other.regions & length(regions.to.plot) > 0) {
-                ## obj[[region.data.to.use]] <- dplyr::mutate_at(obj[[region.data.to.use]],
-                                                              ## dplyr::vars(-geometry),
-                                                              ## .funs = dplyr::funs(ifelse(UQ(as.name(obj$region.var)) %in% regions.to.plot, ., NA)))
-##
-                ## obj[[centroid.data.to.use]] <- dplyr::mutate_at(obj[[centroid.data.to.use]],
-                                                              ## dplyr::vars(-geometry),
-                                                              ## .funs = dplyr::funs(ifelse(UQ(as.name(obj$region.var)) %in% regions.to.plot, ., NA)))
-##
-                ## sapply(obj[[region.data.to.use]], function(x) ifelse(UQ(as.name(obj$region.var)), x, NA))
-
                  obj[[region.data.to.use]] <- dplyr::mutate(obj[[region.data.to.use]],
                                                              UQ(as.name(colour.var)) := replace(UQ(as.name(colour.var)), !(UQ(as.name(obj$region.var)) %in% regions.to.plot), NA))
 
