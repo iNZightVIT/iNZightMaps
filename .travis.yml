@@ -12,3 +12,8 @@ r:
 
 repos:
   docker: http://r.docker.stat.auckland.ac.nz/R
+
+env:
+  global:
+  - _R_CHECK_FORCE_SUGGESTS=false
+
