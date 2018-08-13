@@ -13,6 +13,17 @@ r:
 repos:
   docker: http://r.docker.stat.auckland.ac.nz/R
 
+addons:
+  apt:
+    update: true
+    sources:
+      - ubuntugis-unstable: 'ppa:ubuntugis/ubuntugis-unstable'
+    packages:
+      - libudunits2-dev
+      - libgdal-dev
+      - libgeos-dev
+      - libproj-dev
+
 env:
   global:
   - _R_CHECK_FORCE_SUGGESTS=false
