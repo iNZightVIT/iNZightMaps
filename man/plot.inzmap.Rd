@@ -7,11 +7,11 @@
 \method{plot}{inzmap}(x, gen, ...)
 }
 \arguments{
+\item{x}{object passed from iNZightPlot}
+
 \item{gen}{other options passed from iNZightPlot}
 
 \item{...}{additional arguments (ignored)}
-
-\item{obj}{object passed from iNZightPlot}
 }
 \description{
 draw a map by passing an iNZightPlot object

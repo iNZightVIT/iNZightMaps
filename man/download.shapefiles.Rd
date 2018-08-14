@@ -4,7 +4,7 @@
 \alias{download.shapefiles}
 \title{Download shapefiles from remote repository}
 \usage{
-download.shapefiles(dirURL, currPath, shapefileDir)
+download.shapefiles(dirURL, currPath)
 }
 \arguments{
 \item{dirURL}{URL of the directory containing shapefiles}

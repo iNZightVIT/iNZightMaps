@@ -5,15 +5,13 @@
 \title{Plot an iNZightMapPlot}
 \usage{
 \method{plot}{iNZightMapPlot}(x, colour.var = NULL, size.var = NULL,
-  alpha.var = NULL, fill.const = NULL, colour.const = NULL,
-  size.const = 1, alpha.const = 1, facet = NULL, multiple.vars = FALSE,
-  main = NULL, xlab = "Longitude", ylab = "Latitude",
-  axis.labels = TRUE, datum.lines = TRUE, darkTheme = NULL,
-  projection = "Default", palette = NULL, label.title = "",
+  alpha.var = NULL, size.const = 1, alpha.const = 1,
+  multiple.vars = FALSE, main = NULL, xlab = "Longitude",
+  ylab = "Latitude", axis.labels = TRUE, datum.lines = TRUE,
+  darkTheme = NULL, projection = "Default", palette = NULL,
   aggregate = FALSE, current.seq = NULL, sparkline.type = "Absolute",
-  scale.limits = NULL, ci.plot = FALSE, regions.to.plot = NULL,
-  keep.other.regions = TRUE, label.var = NULL, scale.label = 1,
-  scale.axis = 1, ...)
+  scale.limits = NULL, regions.to.plot = NULL, keep.other.regions = TRUE,
+  label.var = NULL, scale.label = 1, scale.axis = 1, ...)
 }
 \arguments{
 \item{x}{iNZightMapPlot object}
@@ -21,6 +19,8 @@
 \item{colour.var}{Variable to colour the regions or points by}
 
 \item{size.var}{If plotting a map of points, a variable to scale the points by}
+
+\item{alpha.var}{If plotting a map of points, a variable to opacify the points by}
 
 \item{size.const}{Size of plotted points (ignored if plotting regions or \code{size.var} is also passed)}
 
@@ -51,6 +51,16 @@
 \item{sparkline.type}{Either \code{"Absolute"} or \code{"Relative"}}
 
 \item{scale.limits}{Limits for the legend scale}
+
+\item{regions.to.plot}{Which regions should be plotted?}
+
+\item{keep.other.regions}{If \code{regions.to.plot} is not NULL, should regions that are neighbouring these regions still be plotted?}
+
+\item{label.var}{Variable to label regions by}
+
+\item{scale.label}{Scaling factor for region labels}
+
+\item{scale.axis}{Scaling factor for title, axis labels, legend, etc.}
 
 \item{...}{additional arguments (ignored)}
 }

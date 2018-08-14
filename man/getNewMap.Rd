@@ -14,9 +14,9 @@ getNewMap(lat.lim, lon.lim, SCALE, type = c("roadmap", "mobile", "satellite",
 
 \item{SCALE}{variable from \link{GetMap}, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map}
 
-\item{zoom}{variable from \link{GetMap}, Google maps zoom level.}
+\item{type}{the type of map to construct. There are several possible maptype values, including satellite, terrain, hybrid, and mobile.}
 
-\item{variable}{from \link{GetMap}, type defines the type of map to construct. There are several possible maptype values, including satellite, terrain, hybrid, and mobile.}
+\item{zoom}{variable from \link{GetMap}, Google maps zoom level.}
 }
 \value{
 a map object that assign as 'golbal.object'
@@ -25,7 +25,7 @@ a map object that assign as 'golbal.object'
 Get a new map and save it into Global Env
 }
 \details{
-a wrap function of \link{GetMap} from package 'RgoogleMaps'
+Wrapper function of \link{GetMap} from package 'RgoogleMaps'
 }
 \author{
 Jason Wen

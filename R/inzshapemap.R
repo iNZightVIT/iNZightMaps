@@ -61,7 +61,7 @@ create.inz.shapemapplot <- function(obj) {
 ##'
 ##' details...
 ##' @title Plot an iNZight Shape Map
-##' @param obj object passed from iNZightPlot
+##' @param x object passed from iNZightPlot
 ##' @param gen other options passed from iNZightPlot
 ##' @param ... additional arguments (ignored)
 ##' @return NULL

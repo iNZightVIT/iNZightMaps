@@ -27,6 +27,8 @@ iNZightMap(lat, lon, data, name = deparse(substitute(data)))
 \item{type}{the type of map to download from Google}
 
 \item{...}{additional arguments passed to \code{iNZightPlot}}
+
+\item{env}{Environment to evaluate \code{iNZightPlot} in}
 }
 \value{
 data frame object with class \code{inzightmap}

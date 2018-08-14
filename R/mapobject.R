@@ -47,6 +47,7 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
 ##' @param opacity character or expression of the variable name to code point opacity by
 ##' @param type the type of map to download from Google
 ##' @param ... additional arguments passed to \code{iNZightPlot}
+##' @param env Environment to evaluate \code{iNZightPlot} in
 ##' @describeIn iNZightMap Plot an \code{inzightmap} object
 ##' @export
 plot.inzightmap <- function(x,

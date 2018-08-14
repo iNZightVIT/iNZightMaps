@@ -30,10 +30,6 @@ iNZightMapPlotRegion(data, map, by.data, by.map, simplification.level = 0.01,
 \item{sequence.var}{If \code{multiple.obs = TRUE}, which variable identifies the different observations for a region?}
 
 \item{agg.type}{If \code{multiple.obs = TRUE}, which aggregation should be used to produce one observation for each region.}
-
-\item{data}{Dataset with values for rows of the map object}
-
-\item{map}{An sf object containing a row for each feature of the map}
 }
 \description{
 Create iNZightMapPlot object

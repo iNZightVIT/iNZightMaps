@@ -12,15 +12,29 @@
 \arguments{
 \item{x}{the iNZight Shape Map Object}
 
-\item{col.fun}{a character value}
+\item{variable}{the variable or the column name in the data}
+
+\item{col.fun}{a character value corresponding to the colour scale function to use}
+
+\item{transform}{Parameters for \code{inzpar}}
+
+\item{col.offset}{Parameters for \code{inzpar}}
+
+\item{col}{Parameters for \code{inzpar}}
+
+\item{na.fill}{Fill colour of regions with NA for \code{variable}}
 
 \item{full.map}{logical value.}
 
-\item{variablie}{the variable or the column name in the data}
+\item{extend.ratio}{Parameters for \code{inzpar}}
 
-\item{region}{a variable or the column name of the region column}
+\item{name}{Parameters for \code{inzpar}}
 
-\item{data}{the data set}
+\item{zoom}{Parameters for \code{inzpar}}
+
+\item{zoom.center}{Parameters for \code{inzpar}}
+
+\item{...}{Additional arguments}
 }
 \description{
 Create an iNZightShapeMap object

@@ -13,8 +13,6 @@ iNZightMapPlot <- function(data, map, type, ...) {
 }
 
 #' @describeIn iNZightMapPlot Constructs a iNZightMapPlot using region values.
-#' @param data Dataset with values for rows of the map object
-#' @param map  An sf object containing a row for each feature of the map
 #' @param by.data Variable name in the dataset that will be matched to \code{by.map} in the map
 #' @param by.map Variable name in the map that will be matched to \code{by.data} in the dataset
 #' @param simplification.level How much should the map be simplified by?
@@ -123,6 +121,7 @@ iNZightMapRegions <- function(obj) {
 #' @param x iNZightMapPlot object
 #' @param colour.var Variable to colour the regions or points by
 #' @param size.var If plotting a map of points, a variable to scale the points by
+#' @param alpha.var If plotting a map of points, a variable to opacify the points by
 #' @param size.const Size of plotted points (ignored if plotting regions or \code{size.var} is also passed)
 #' @param alpha.const Alpha value of the underlying region map when plotting points
 #' @param multiple.vars Are multiple variables being plotted?
@@ -138,17 +137,22 @@ iNZightMapRegions <- function(obj) {
 #' @param current.seq Current value of the sequence variable or aggregation
 #' @param sparkline.type Either \code{"Absolute"} or \code{"Relative"}
 #' @param scale.limits Limits for the legend scale
+#' @param regions.to.plot Which regions should be plotted?
+#' @param keep.other.regions If \code{regions.to.plot} is not NULL, should regions that are neighbouring these regions still be plotted?
+#' @param label.var Variable to label regions by
+#' @param scale.label Scaling factor for region labels
+#' @param scale.axis Scaling factor for title, axis labels, legend, etc.
 #' @param ... additional arguments (ignored)
 #' @importFrom rlang ":=" UQ
 #' @export
 plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var = NULL,
-                                fill.const = NULL, colour.const = NULL, size.const = 1, alpha.const = 1,
-                                facet = NULL, multiple.vars = FALSE,
+                                size.const = 1, alpha.const = 1,
+                                multiple.vars = FALSE,
                                 main = NULL, xlab = "Longitude", ylab = "Latitude", axis.labels = TRUE,
                                 datum.lines = TRUE, darkTheme = NULL, projection = "Default", palette = NULL,
-                                label.title = "", aggregate = FALSE,
+                                aggregate = FALSE,
                                 current.seq = NULL, sparkline.type = "Absolute",
-                                scale.limits = NULL, ci.plot = FALSE,
+                                scale.limits = NULL, 
                                 regions.to.plot = NULL, keep.other.regions = TRUE,
                                 label.var = NULL, scale.label = 1, scale.axis = 1,
                                 ...) {

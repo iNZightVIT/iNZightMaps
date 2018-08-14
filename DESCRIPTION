@@ -16,7 +16,6 @@ Depends:
 Imports:
   ggplot2,
   dplyr,
-  ggrepel,
   gridExtra,
   grid,
   rlang,

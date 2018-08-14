@@ -17,9 +17,9 @@ map.xylim(latR, lonR, SCALE)
 return a numeric of length 4 that contain the limit of x-axis and y-axis
 }
 \description{
-return the limit of x-axis and y-axis of the plot.
+get the limit of x-axis and y-axis
 }
-\details{
+\note{
 the limit is not the same as latitude/longitude, it is the limit of the plot window
 }
 \author{

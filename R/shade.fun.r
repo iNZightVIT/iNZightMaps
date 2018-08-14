@@ -3,6 +3,7 @@
 ##' the function will also returns a global object which called global.objects.
 ##' @title extract and create a shape object
 ##' @param shp a SpatialPolygonsDataFrame object, see \link{readShapeSpatial}.
+##' @param column.index Index of the region column in \code{shp}
 ##' @return a shape object.
 ##' @author Jason Wen
 ##' @import maptools
@@ -44,12 +45,13 @@ shape.extract = function(shp,column.index = 2)
 	obj
 }
 
-##' Transform the data into the range of [0,1].
-##'
-##'
-##' @title data transformation
+##' @title Transform the data into the range of [0,1].
 ##' @param x a numeric value or vector.
 ##' @param transform the method for transformation, can be linear,log,sqrt,exp,power and normal.
+##' @param data.range ??? range of \code{x}
+##' @param mean ??? mean of \code{x}
+##' @param sd ??? standard deviation of \code{x}
+##' @param max.prob ??? 
 ##' @return a transformed numeric vector.
 ##' @author Jason Wen
 ##' @importFrom stats dnorm
@@ -398,13 +400,9 @@ subByLim = function(obj,lim)
     obj
 }
 
-
-
-##' Calaudate the bbox of a country
-##'
-##' @title Calaudate the bbox of a country
-##' @param obj the iNZight Shape Map Object
-##' @param name the name of the country
+##' @title Match names between map and data
+##' @param shp.region Map object
+##' @param data.region Data
 ##' @return a 2*2 numeric matrix
 ##' @author Jason
 ##' @import countrycode
@@ -577,6 +575,7 @@ bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,
 ##'
 ##' @title Zoom in/out
 ##' @param ratio a numeric value, define the ratio of zomm in or out
+##' @param resize resize the map?
 ##' @return NULL
 ##' @details if ratio < 1 then zoom in, if ratio > 1 then zoom out, if ratio = 1 then shift the plot.
 ##' @author Jason
@@ -678,6 +677,7 @@ srezoom = function(zoom)
 ##' @param cols a color character strings vector
 ##' @param shade.each a numeric vector
 ##' @param region.name a character vector
+##' @param data.region region data
 ##' @param value a numeric vector
 ##' @param name a character vector
 ##' @param center.x a numeric value

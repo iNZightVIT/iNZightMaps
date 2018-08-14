@@ -105,7 +105,7 @@ read.mapmetadata <- function(shapefileDir) {
 ##' @param dirURL URL of the directory containing shapefiles
 ##' @param currPath Current path to save to
 ##' @export
-download.shapefiles <- function(dirURL, currPath, shapefileDir) {
+download.shapefiles <- function(dirURL, currPath) {
     message("Searching... ", dirURL)
     curr.links <- XML::getHTMLLinks(rawToChar(curl::curl_fetch_memory(dirURL)$content))
     curr.dirs <- curr.links[grep("/$", curr.links)]
@@ -121,9 +121,7 @@ download.shapefiles <- function(dirURL, currPath, shapefileDir) {
     }
 
     for (dir in curr.dirs[-1]) {
-        download.shapefiles(paste0(dirURL, dir),
-                            file.path(currPath, dir),
-                            shapefileDir)
+        download.shapefiles(paste0(dirURL, dir), file.path(currPath, dir))
     }
 }
 
