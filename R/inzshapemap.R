@@ -66,6 +66,8 @@ create.inz.shapemapplot <- function(obj) {
 ##' @param ... additional arguments (ignored)
 ##' @return NULL
 ##' @author Jason Wen
+##' @importFrom stats sd dnorm
+##' @importFrom utils modifyList
 ##' @export
 plot.inzshapemap = function(x, gen, ...) {
     obj <- x

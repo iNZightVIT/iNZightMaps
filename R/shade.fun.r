@@ -6,6 +6,7 @@
 ##' @return a shape object.
 ##' @author Jason Wen
 ##' @import maptools
+##' @importFrom methods slot
 ##' @export
 shape.extract = function(shp,column.index = 2)
 {
@@ -51,6 +52,7 @@ shape.extract = function(shp,column.index = 2)
 ##' @param transform the method for transformation, can be linear,log,sqrt,exp,power and normal.
 ##' @return a transformed numeric vector.
 ##' @author Jason Wen
+##' @importFrom stats dnorm
 ##' @export
 data.trans = function(x,transform = 'linear',data.range,mean,sd,max.prob)
 {
@@ -136,6 +138,8 @@ order.match = function(shp.region,data.region)
 ##' @return A color vector.
 ##' @author Jason Wen
 ##' @import RColorBrewer
+##' @importFrom grDevices cm.colors col2rgb gray hcl heat.colors rainbow rgb terrain.colors topo.colors
+##' @importFrom stats runif
 ##' @details hcl,HCL Color Specification, whith c = 35 and l = 85 see \link{hcl}. hue, when display = 'hue', then the 'col' arg need to be specified. The alpha will depend on the data, see \link{rgb}. rainbow,terrain,topo,cm are the method from \link{RColorBrewer}. r,n , the color filled randomly expect n will fill the entire map even the region is unmatch. e, equal color for all matched region.
 col.fun = function(data,color.index,
                     display = 'hue',na.fill = '#F4A460',offset = 0,col = 'red')

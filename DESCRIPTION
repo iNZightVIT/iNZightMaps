@@ -28,7 +28,8 @@ Imports:
   maptools,
   RColorBrewer,
   countrycode,
-  iNZightPlots
+  iNZightPlots,
+  methods
 Suggests:
   sf,
   rgeos,

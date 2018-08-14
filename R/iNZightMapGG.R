@@ -50,12 +50,12 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
   if (multiple.obs) {
       ## library(sf)
       mapdata.agg <- mapdata %>%
-          dplyr::group_by(UQ((as.name(by.map)))) %>%
-          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$"), -UQ(as.name(by.map))), dplyr::last)
+          dplyr::group_by(rlang::UQ((as.name(by.map)))) %>%
+          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$"), -rlang::UQ(as.name(by.map))), dplyr::last)
 
       centroid.agg <- map.centroids %>%
-          dplyr::group_by(UQ((as.name(by.map)))) %>%
-          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$"), -UQ(as.name(by.map))), dplyr::last)
+          dplyr::group_by(rlang::UQ((as.name(by.map)))) %>%
+          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$"), -rlang::UQ(as.name(by.map))), dplyr::last)
   } else {
       mapdata.agg <- NULL
       centroid.agg <- NULL
@@ -136,6 +136,7 @@ iNZightMapRegions <- function(obj) {
 #' @param sparkline.type Either \code{"Absolute"} or \code{"Relative"}
 #' @param scale.limits Limits for the legend scale
 #' @param ... additional arguments (ignored)
+#' @importFrom rlang ":=" UQ
 #' @export
 plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var = NULL,
                                 fill.const = NULL, colour.const = NULL, size.const = 1, alpha.const = 1,
@@ -172,8 +173,8 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
             plots[[i]] <- eval.parent(orig.call)
         }
 
-        d.size <- dev.size()
-        opt.layout <- n2mfrow(length(plots))
+        d.size <- grDevices::dev.size()
+        opt.layout <- grDevices::n2mfrow(length(plots))
         if(d.size[1] > d.size[2]) {
             opt.layout <- rev(opt.layout)
         }
@@ -211,15 +212,15 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
         if (!is.null(regions.to.plot)) {
             if (keep.other.regions & length(regions.to.plot) > 0) {
                  obj[[region.data.to.use]] <- dplyr::mutate(obj[[region.data.to.use]],
-                                                             UQ(as.name(colour.var)) := replace(UQ(as.name(colour.var)), !(UQ(as.name(obj$region.var)) %in% regions.to.plot), NA))
+                                                             rlang::UQ(as.name(colour.var)) := replace(rlang::UQ(as.name(colour.var)), !(rlang::UQ(as.name(obj$region.var)) %in% regions.to.plot), NA))
 
                  obj[[centroid.data.to.use]] <- dplyr::mutate(obj[[centroid.data.to.use]],
-                                                            UQ(as.name(colour.var)) := replace(UQ(as.name(colour.var)), !(UQ(as.name(obj$region.var)) %in% regions.to.plot), NA))
+                                                            rlang::UQ(as.name(colour.var)) := replace(rlang::UQ(as.name(colour.var)), !(rlang::UQ(as.name(obj$region.var)) %in% regions.to.plot), NA))
             } else {
                 obj[[region.data.to.use]] <- dplyr::filter(obj[[region.data.to.use]],
-                                                           UQ(as.name(obj$region.var)) %in% regions.to.plot)
+                                                           rlang::UQ(as.name(obj$region.var)) %in% regions.to.plot)
                 obj[[centroid.data.to.use]] <- dplyr::filter(obj[[centroid.data.to.use]],
-                                                             UQ(as.name(obj$region.var)) %in% regions.to.plot)
+                                                             rlang::UQ(as.name(obj$region.var)) %in% regions.to.plot)
             }
         }
 
@@ -365,7 +366,7 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
         ## it is stored in the ggplot object anyway (as it comes from the sf object).
         if (datum.lines) {
             if (!is.null(regions.to.plot) & length(regions.to.plot) > 0 & keep.other.regions) {
-                region.bbox <- sf::st_bbox(st_transform(na.omit(obj[[region.data.to.use]][, colour.var]), crs = proj_crs))
+                region.bbox <- sf::st_bbox(sf::st_transform(stats::na.omit(obj[[region.data.to.use]][, colour.var]), crs = proj_crs))
                 layers.list[["projection"]] <- ggplot2::coord_sf(crs = proj_crs,
                                                                  xlim = region.bbox[c(1, 3)],
                                                                  ylim = region.bbox[c(2, 4)])
@@ -380,7 +381,7 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
         } else {
             ## print(regions.to.plot)
             if (!is.null(regions.to.plot) & length(regions.to.plot) > 0 & keep.other.regions) {
-                region.bbox <- sf::st_bbox(st_transform(na.omit(obj[[region.data.to.use]][, colour.var]), crs = proj_crs))
+                region.bbox <- sf::st_bbox(sf::st_transform(stats::na.omit(obj[[region.data.to.use]][, colour.var]), crs = proj_crs))
                 ## print("I'm here")
                 layers.list[["projection"]] <- ggplot2::coord_sf(crs = proj_crs, datum = NA,
                                                                  xlim = region.bbox[c(1, 3)],
@@ -470,25 +471,26 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
 #' @param obj iNZightMapPlot object
 #' @param aggregation Type of aggregation to use
 #' @param single.value If \code{aggregation = "singlevalue"}, the observation that should be extracted
+#' @importFrom rlang UQ .data
 #' @export
 iNZightMapAggregation <- function(obj, aggregation = "mean", single.value = NULL) {
     if (aggregation == "singlevalue") {
         obj$region.aggregate <- obj$region.data %>%
-            dplyr::group_by(UQ((as.name(obj$region.var)))) %>%
-            dplyr::filter((UQ((as.name(obj$sequence.var)))) == single.value | is.na(UQ((as.name(obj$sequence.var)))))
+            dplyr::group_by(rlang::UQ((as.name(obj$region.var)))) %>%
+            dplyr::filter((rlang::UQ((as.name(obj$sequence.var)))) == single.value | is.na(rlang::UQ((as.name(obj$sequence.var)))))
         obj$centroid.aggregate <- obj$centroid.data %>%
-            dplyr::group_by(UQ((as.name(obj$region.var)))) %>%
-            dplyr::filter((UQ((as.name(obj$sequence.var)))) == single.value | is.na(UQ((as.name(obj$sequence.var)))))
+            dplyr::group_by(rlang::UQ((as.name(obj$region.var)))) %>%
+            dplyr::filter((rlang::UQ((as.name(obj$sequence.var)))) == single.value | is.na(rlang::UQ((as.name(obj$sequence.var)))))
     } else {
         obj$region.aggregate <- obj$region.data %>%
-            dplyr::group_by(UQ((as.name(obj$region.var)))) %>%
+            dplyr::group_by(rlang::UQ((as.name(obj$region.var)))) %>%
             dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$"), -UQ((as.name(obj$region.var)))),
                        dplyr::funs(if (is.numeric(.))
                                           eval(substitute(chosen_fun(., na.rm = TRUE),
                                                           list(chosen_fun = as.name(aggregation))))
                                       else dplyr::last(.)))
         obj$centroid.aggregate <- obj$centroid.data %>%
-            dplyr::group_by(UQ((as.name(obj$region.var)))) %>%
+            dplyr::group_by(rlang::UQ((as.name(obj$region.var)))) %>%
             dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$"), -UQ((as.name(obj$region.var)))),
                                 dplyr::funs(if (is.numeric(.))
                                          eval(substitute(chosen_fun(., na.rm = TRUE),
