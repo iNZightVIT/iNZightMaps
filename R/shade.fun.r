@@ -3,9 +3,11 @@
 ##' the function will also returns a global object which called global.objects.
 ##' @title extract and create a shape object
 ##' @param shp a SpatialPolygonsDataFrame object, see \link{readShapeSpatial}.
+##' @param column.index Index of the region column in \code{shp}
 ##' @return a shape object.
 ##' @author Jason Wen
 ##' @import maptools
+##' @importFrom methods slot
 ##' @export
 shape.extract = function(shp,column.index = 2)
 {
@@ -43,14 +45,16 @@ shape.extract = function(shp,column.index = 2)
 	obj
 }
 
-##' Transform the data into the range of [0,1].
-##'
-##'
-##' @title data transformation
+##' @title Transform the data into the range of [0,1].
 ##' @param x a numeric value or vector.
 ##' @param transform the method for transformation, can be linear,log,sqrt,exp,power and normal.
+##' @param data.range ??? range of \code{x}
+##' @param mean ??? mean of \code{x}
+##' @param sd ??? standard deviation of \code{x}
+##' @param max.prob ??? 
 ##' @return a transformed numeric vector.
 ##' @author Jason Wen
+##' @importFrom stats dnorm
 ##' @export
 data.trans = function(x,transform = 'linear',data.range,mean,sd,max.prob)
 {
@@ -136,6 +140,8 @@ order.match = function(shp.region,data.region)
 ##' @return A color vector.
 ##' @author Jason Wen
 ##' @import RColorBrewer
+##' @importFrom grDevices cm.colors col2rgb gray hcl heat.colors rainbow rgb terrain.colors topo.colors
+##' @importFrom stats runif
 ##' @details hcl,HCL Color Specification, whith c = 35 and l = 85 see \link{hcl}. hue, when display = 'hue', then the 'col' arg need to be specified. The alpha will depend on the data, see \link{rgb}. rainbow,terrain,topo,cm are the method from \link{RColorBrewer}. r,n , the color filled randomly expect n will fill the entire map even the region is unmatch. e, equal color for all matched region.
 col.fun = function(data,color.index,
                     display = 'hue',na.fill = '#F4A460',offset = 0,col = 'red')
@@ -394,13 +400,9 @@ subByLim = function(obj,lim)
     obj
 }
 
-
-
-##' Calaudate the bbox of a country
-##'
-##' @title Calaudate the bbox of a country
-##' @param obj the iNZight Shape Map Object
-##' @param name the name of the country
+##' @title Match names between map and data
+##' @param shp.region Map object
+##' @param data.region Data
 ##' @return a 2*2 numeric matrix
 ##' @author Jason
 ##' @import countrycode
@@ -573,6 +575,7 @@ bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,
 ##'
 ##' @title Zoom in/out
 ##' @param ratio a numeric value, define the ratio of zomm in or out
+##' @param resize resize the map?
 ##' @return NULL
 ##' @details if ratio < 1 then zoom in, if ratio > 1 then zoom out, if ratio = 1 then shift the plot.
 ##' @author Jason
@@ -636,7 +639,7 @@ sClickOnZoom = function(ratio = 1/2,resize = FALSE)
     grid.rect(gp = gpar(fill = '#F5F5F5'))
 
     grid.polygon(s.obj$latlon[,1], s.obj$latlon[,2],
-             default.units = "native", id.length = s.obj$each,
+             default.units = "native", id.lengths = s.obj$each,
              gp = gpar(col = '#B29980', fill  = s.obj$col))
     drawing.features(bar.obj = bar.obj,
                     latlon = latlon,cols = cols,
@@ -674,6 +677,7 @@ srezoom = function(zoom)
 ##' @param cols a color character strings vector
 ##' @param shade.each a numeric vector
 ##' @param region.name a character vector
+##' @param data.region region data
 ##' @param value a numeric vector
 ##' @param name a character vector
 ##' @param center.x a numeric value
@@ -696,7 +700,7 @@ drawing.features = function(bar.obj,latlon,cols,
             xmax = 0.004 * diff(range(latlon[,1]))
             ymax = 0.1 * diff(range(latlon[,2]))
             grid.polygon(bar.obj$d1[,1],bar.obj$d1[,2],
-                        default.units = "native", id.length = bar.obj$each,
+                        default.units = "native", id.lengths = bar.obj$each,
                         gp = gpar(col = NA, fill  = bar.obj$col))
             out.str = countrycode(region.name, "country.name", "iso3c")
             center.y = center.y - y.shift
@@ -720,6 +724,6 @@ drawing.features = function(bar.obj,latlon,cols,
     if(name %in% full.option){
         grid.text(out.str, x = center.x, y =center.y,
                 just = "centre",default.units = "native",
-                gp=gpar(fontsize=9), check=TRUE)
+                gp=gpar(fontsize=9), check.overlap=TRUE)
     }
 }

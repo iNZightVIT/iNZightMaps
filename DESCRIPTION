@@ -16,7 +16,6 @@ Depends:
 Imports:
   ggplot2,
   dplyr,
-  ggrepel,
   gridExtra,
   grid,
   rlang,
@@ -28,7 +27,8 @@ Imports:
   maptools,
   RColorBrewer,
   countrycode,
-  iNZightPlots
+  iNZightPlots,
+  methods
 Suggests:
   sf,
   rgeos,

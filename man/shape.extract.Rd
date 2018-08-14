@@ -8,6 +8,8 @@ shape.extract(shp, column.index = 2)
 }
 \arguments{
 \item{shp}{a SpatialPolygonsDataFrame object, see \link{readShapeSpatial}.}
+
+\item{column.index}{Index of the region column in \code{shp}}
 }
 \value{
 a shape object.

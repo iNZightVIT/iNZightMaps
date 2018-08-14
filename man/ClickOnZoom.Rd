@@ -9,9 +9,13 @@ ClickOnZoom(ratio = 1, resize = FALSE,
 }
 \arguments{
 \item{ratio}{a numeric value, define the ratio of zomm in or out}
+
+\item{resize}{Should the plot be resized?}
+
+\item{p.center}{Click location centre}
 }
 \description{
-Zoom in/out when click the plot
+Zoom in/out
 }
 \details{
 if ratio < 1 then zoom in, if ratio > 1 then zoom out, if ratio = 1 then shift the plot.

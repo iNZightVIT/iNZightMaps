@@ -18,7 +18,7 @@ a list that contain the tramsformed x and y.
 Transform the latitude and longitude into xy
 }
 \details{
-wrap function for \link{LatLon2XY} from 'RgoogleMaps' package
+Wrapper function for \link{LatLon2XY} from 'RgoogleMaps' package
 }
 \author{
 Jason Wen

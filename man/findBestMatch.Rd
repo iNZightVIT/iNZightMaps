@@ -2,14 +2,18 @@
 % Please edit documentation in R/utilities.R
 \name{findBestMatch}
 \alias{findBestMatch}
-\title{Find the pair of variables from the map and data that have the
-highest number of matches. This function returns in form: (data
-variable, map variable)}
+\title{Find 'best-matching' pair of variables from map and data}
 \usage{
 findBestMatch(data, map.data)
 }
+\arguments{
+\item{data}{Data frame of the input data}
+
+\item{map.data}{sf object of the map data}
+}
+\value{
+Two-element vector of form (data variable, map variable)
+}
 \description{
-Find the pair of variables from the map and data that have the
-highest number of matches. This function returns in form: (data
-variable, map variable)
+Find 'best-matching' pair of variables from map and data
 }

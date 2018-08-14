@@ -7,9 +7,8 @@
 \usage{
 iNZightMapPlot(data, map, type, ...)
 
-iNZightMapPlotRegion(data, map, by.data, by.map,
-  simplification.level = 0.01, multiple.obs = FALSE,
-  sequence.var = NULL, agg.type = "last")
+iNZightMapPlotRegion(data, map, by.data, by.map, simplification.level = 0.01,
+  multiple.obs = FALSE, sequence.var = NULL, agg.type = "last")
 }
 \arguments{
 \item{data}{Dataset with values for rows of the map object}
@@ -24,17 +23,13 @@ iNZightMapPlotRegion(data, map, by.data, by.map,
 
 \item{by.map}{Variable name in the map that will be matched to \code{by.data} in the dataset}
 
-\item{simplification.level}{How much should the map be simplified by? (see \code{\link[sf]{st_simplify}})}
+\item{simplification.level}{How much should the map be simplified by?}
 
 \item{multiple.obs}{Does the dataset have multiple observations for each region of the map (i.e. observations from multiple years)}
 
 \item{sequence.var}{If \code{multiple.obs = TRUE}, which variable identifies the different observations for a region?}
 
 \item{agg.type}{If \code{multiple.obs = TRUE}, which aggregation should be used to produce one observation for each region.}
-
-\item{data}{Dataset with values for rows of the map object}
-
-\item{map}{An sf object containing a row for each feature of the map}
 }
 \description{
 Create iNZightMapPlot object

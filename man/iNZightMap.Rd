@@ -8,8 +8,8 @@
 iNZightMap(lat, lon, data, name = deparse(substitute(data)))
 
 \method{plot}{inzightmap}(x, opacity, type = c("roadmap", "mobile",
-  "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid"),
-  ..., env = parent.frame())
+  "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid"), ...,
+  env = parent.frame())
 }
 \arguments{
 \item{lat}{a formula specifying the name of the latitude variable in \code{data}}
@@ -27,6 +27,8 @@ iNZightMap(lat, lon, data, name = deparse(substitute(data)))
 \item{type}{the type of map to download from Google}
 
 \item{...}{additional arguments passed to \code{iNZightPlot}}
+
+\item{env}{Environment to evaluate \code{iNZightPlot} in}
 }
 \value{
 data frame object with class \code{inzightmap}

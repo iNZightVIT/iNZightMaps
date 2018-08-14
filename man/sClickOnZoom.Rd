@@ -8,6 +8,8 @@ sClickOnZoom(ratio = 1/2, resize = FALSE)
 }
 \arguments{
 \item{ratio}{a numeric value, define the ratio of zomm in or out}
+
+\item{resize}{resize the map?}
 }
 \description{
 Zoom in/out when click the plot

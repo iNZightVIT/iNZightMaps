@@ -2,7 +2,7 @@
 % Please edit documentation in R/general.R
 \name{lon.rescale}
 \alias{lon.rescale}
-\title{transform the latitude}
+\title{Transform the longitude}
 \usage{
 lon.rescale(lon)
 }
@@ -13,10 +13,7 @@ lon.rescale(lon)
 a new longitude value or vector that used for plotting in map.
 }
 \description{
-transform latitude inorder to get the biggest map as possibile
-}
-\details{
-transform the longitude
+Transform longitude in order to get the biggest map as possible
 }
 \author{
 Jason Wen
