@@ -8,5 +8,14 @@
 #'   \item{Order}{For ordering the observations}
 #'   \item{Latitude}{The latitude ("Y") positions of the earthquakes}
 #'   \item{Longitude}{The longitude ("X") positions of the earthquakes}
+#'   \item{Depth}{Depth of the earthquake in kilometres}
+#'   \item{Felt}{Was the earthquake felt?}
+#'   \item{Magnitude}{Magnitude of the earthquake in Richter magnitude}
+#'   \item{RMS}{Root mean square amplitude}
+#'   \item{NorMidSth}{Region of New Zealand the earthquake occurred in (North, Mid, South)}
+#'   \item{Month}{The month the earthquake occurred in (1--12)}
+#'   \item{Day}{Day of the month the earthquake occurred on (1--31)}
+#'   \item{Hour}{Hour of the day the earthquake occurred on (0--23)}
+#'   \item{Minute}{Minute of the hour the earthquake occurred in (0--59)}
 #' }
 "nzquakes"
