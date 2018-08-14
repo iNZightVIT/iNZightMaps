@@ -7,7 +7,6 @@
 ##' @param shp.region a character value, the column name in the region/country column of the shp file
 ##' @param data.region a character value, the column name in the region/country column of the data set
 ##' @param data the data set
-##' @param the variable that display in the map
 ##' @return an iNZight Shape Map Object
 ##' @author Tom Elliott
 ##' @import maptools tools
@@ -73,11 +72,20 @@ iNZightShapeMap <- function(location,shp.region,data.region,data) {
 ##'
 ##' @title Create an iNZight Shape Map Object
 ##' @param x the iNZight Shape Map Object
-##' @param variablie the variable or the column name in the data
-##' @param region a variable or the column name of the region column
-##' @param data the data set
-##' @param col.fun a character value
+##' @param variable the variable or the column name in the data
+##' @param col.fun a character value corresponding to the colour scale function to use
+##' @param transform Parameters for \code{inzpar}
+##' @param col.offset Parameters for \code{inzpar}
+##' @param col Parameters for \code{inzpar}
+##' @param na.fill Fill colour of regions with NA for \code{variable}
 ##' @param full.map logical value.
+##' @param extend.ratio Parameters for \code{inzpar}
+##' @param name Parameters for \code{inzpar}
+##' @param zoom Parameters for \code{inzpar}
+##' @param zoom.center Parameters for \code{inzpar}
+##' @param ... Additional arguments 
+# ##' @param region a variable or the column name of the region column
+# ##' @param data the data set
 ##' @return NULL
 ##' @author Tom Elliott
 ##' @import maptools

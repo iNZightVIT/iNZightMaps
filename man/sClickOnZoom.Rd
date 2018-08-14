@@ -8,31 +8,14 @@ sClickOnZoom(ratio = 1/2, resize = FALSE)
 }
 \arguments{
 \item{ratio}{a numeric value, define the ratio of zomm in or out}
+
+\item{resize}{resize the map?}
 }
 \description{
 Zoom in/out when click the plot
 }
 \details{
 if ratio < 1 then zoom in, if ratio > 1 then zoom out, if ratio = 1 then shift the plot.
-}
-\examples{
-los = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
-data = read.csv('C:/Users/yeamin/Desktop/Gapminder-2008.csv',skip = 1)
-obj <- iNZightShapeMap(los, data.region = 'Country', data = data)
-var = c('BodyMassIndex_F','ChildrenPerWoman','Populationtotal','Populationdensity')
-bar.obj = bar.coor(obj = obj,var = var, data = data, xmax = 1, ymax = 5)
-plot(obj, variable = ~Imports,
-                 region = ~Country,
-                 data = data,
-                 col.fun = 'hue',
-                 col = 'orange',
-                 transform = 'linear',
-                 na.fill = '#C0C0C0',
-                 col.offset = 0,
-                 full.map = F,
-                 extend.ratio = 1,
-                 name = 'v')
-sClickOnZoom()
 }
 \author{
 Jason

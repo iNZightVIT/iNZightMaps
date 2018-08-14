@@ -12,15 +12,10 @@ is.google.map(lat, lon)
 \item{lon}{a numeric vector}
 }
 \value{
-return an logical value that tells wheater the coordinates are all within the same range of google map's or not.
+return an logical value that tells whether the coordinates are all within the same range of google map's or not.
 }
 \description{
 The coordinates should be within on the same range of Google Map's. i.e. longitude = [-180,180], latitude = [-90,90]
-}
-\examples{
-lat = runif(100,min = -180,max = 180)
-lon = runif(100,min = -180,max = 180)
-is.google.map(lat,lon)
 }
 \author{
 Jason Wen

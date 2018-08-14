@@ -4,12 +4,14 @@
 \alias{plot.inzmap}
 \title{Plot an iNZight Map}
 \usage{
-\method{plot}{inzmap}(obj, gen)
+\method{plot}{inzmap}(x, gen, ...)
 }
 \arguments{
-\item{obj}{object passed from iNZightPlot}
+\item{x}{object passed from iNZightPlot}
 
 \item{gen}{other options passed from iNZightPlot}
+
+\item{...}{additional arguments (ignored)}
 }
 \description{
 draw a map by passing an iNZightPlot object

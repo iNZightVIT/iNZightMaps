@@ -61,12 +61,16 @@ create.inz.shapemapplot <- function(obj) {
 ##'
 ##' details...
 ##' @title Plot an iNZight Shape Map
-##' @param obj object passed from iNZightPlot
+##' @param x object passed from iNZightPlot
 ##' @param gen other options passed from iNZightPlot
+##' @param ... additional arguments (ignored)
 ##' @return NULL
 ##' @author Jason Wen
+##' @importFrom stats sd dnorm
+##' @importFrom utils modifyList
 ##' @export
-plot.inzshapemap = function(obj, gen) {
+plot.inzshapemap = function(x, gen, ...) {
+    obj <- x
     df <- obj$df
     full.s.obj <- obj$shape.object
     bbox <- full.s.obj$bbox
@@ -134,7 +138,7 @@ plot.inzshapemap = function(obj, gen) {
     
     ## shp polygon
     grid.polygon(latlon[, 1], latlon[, 2],
-                 default.units = "native", id.length = shade.each,
+                 default.units = "native", id.lengths = shade.each,
                  gp = gpar(col = '#B29980', fill = cols))
     ## other features added into the map
     drawing.features(bar.obj = bar.obj,

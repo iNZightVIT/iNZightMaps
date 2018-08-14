@@ -11,23 +11,17 @@ needNewMap(bbox, window, size, SCALE, type)
 
 \item{window}{a numeric vector of length 2, the size of the pervious window}
 
+\item{size}{a numeric vector of length 2, the size of the pervious map}
+
 \item{SCALE}{a numeric vector of length 1, the scale of the pervious map}
 
 \item{type}{a character vector of length 1, type the type of the pervious map}
-
-\item{sized}{a numeric vector of length 2, the size of the pervious map}
 }
 \value{
-Logical value TRUE/FALSE TRUE = something are not matched, FALSE = the pervious map is ok for re-use.
+Logical value TRUE/FALSE where TRUE = something is not matched or its the first plotting, FALSE = the pervious map is ok for re-use.
 }
 \description{
-Do we need a new map or not
-}
-\details{
 A function for checking wheather we need to download a new map from google or not, it checks the input with the global inzight objects, if something if not matched, then return TRUE, otherwise FALSE.
-}
-\examples{
-needNewMap()
 }
 \author{
 Jason Wen

@@ -14,8 +14,6 @@ iNZightShapeMap(location, shp.region, data.region, data)
 \item{data.region}{a character value, the column name in the region/country column of the data set}
 
 \item{data}{the data set}
-
-\item{the}{variable that display in the map}
 }
 \value{
 an iNZight Shape Map Object

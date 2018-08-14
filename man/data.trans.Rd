@@ -2,7 +2,7 @@
 % Please edit documentation in R/shade.fun.r
 \name{data.trans}
 \alias{data.trans}
-\title{data transformation}
+\title{Transform the data into the range of [0,1].}
 \usage{
 data.trans(x, transform = "linear", data.range, mean, sd, max.prob)
 }
@@ -10,16 +10,20 @@ data.trans(x, transform = "linear", data.range, mean, sd, max.prob)
 \item{x}{a numeric value or vector.}
 
 \item{transform}{the method for transformation, can be linear,log,sqrt,exp,power and normal.}
+
+\item{data.range}{??? range of \code{x}}
+
+\item{mean}{??? mean of \code{x}}
+
+\item{sd}{??? standard deviation of \code{x}}
+
+\item{max.prob}{???}
 }
 \value{
 a transformed numeric vector.
 }
 \description{
 Transform the data into the range of [0,1].
-}
-\examples{
-x = runif(100,1,100)
-data.trans(x)
 }
 \author{
 Jason Wen

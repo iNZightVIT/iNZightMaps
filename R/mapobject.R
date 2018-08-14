@@ -11,11 +11,6 @@
 ##' @return data frame object with class \code{inzightmap}
 ##' @author Tom Elliott
 ##'
-##' @examples
-##' data(nzquakes)
-##' mapobj <- iNZightMap(lat = ~Latitude, lon = ~Longitude, data = nzquakes)
-##' plot(mapobj, opacity = ~Depth, colby = Felt, sizeby = Magnitude, type = "terrain")
-##'
 ##' @export
 iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
     if (missing(data) || is.null(data))
@@ -52,6 +47,7 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
 ##' @param opacity character or expression of the variable name to code point opacity by
 ##' @param type the type of map to download from Google
 ##' @param ... additional arguments passed to \code{iNZightPlot}
+##' @param env Environment to evaluate \code{iNZightPlot} in
 ##' @describeIn iNZightMap Plot an \code{inzightmap} object
 ##' @export
 plot.inzightmap <- function(x,

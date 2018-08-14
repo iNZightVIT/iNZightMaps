@@ -14,18 +14,10 @@ Get.map.size(latR, lonR, SCALE)
 \item{SCALE}{variable from GetMap, use the API's scale parameter to return higher-resolution map images. The scale value is multiplied with the size to determine the actual output size of the image in pixels, without changing the coverage area of the map}
 }
 \value{
-a list that contain the size of the map(in pixels), and the zoom level
+a list that contains the size of the map(in pixels), and the zoom level
 }
 \description{
-compute the size and the zoom level that needs for request a new map.
-}
-\details{
-since the size of the map should not greater than 640, the size and the zoom needs to be transform before pass to the getNewMap function.
-}
-\examples{
-r.center = runif(4,min = -90,max = 90)
-SCALE = 2
-Get.map.size(r.center[1:2],r.center[3:4],SCALE)
+Since the size of the map should not greater than 640, the size and the zoom needs to be transform before pass to the getNewMap function.
 }
 \author{
 Jason Wen

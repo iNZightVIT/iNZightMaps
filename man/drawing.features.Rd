@@ -18,6 +18,8 @@ drawing.features(bar.obj, latlon, cols, shade.each, region.name, data.region,
 
 \item{region.name}{a character vector}
 
+\item{data.region}{region data}
+
 \item{value}{a numeric vector}
 
 \item{name}{a character vector}

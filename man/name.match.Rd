@@ -2,28 +2,20 @@
 % Please edit documentation in R/shade.fun.r
 \name{name.match}
 \alias{name.match}
-\title{Calaudate the bbox of a country}
+\title{Match names between map and data}
 \usage{
 name.match(shp.region, data.region)
 }
 \arguments{
-\item{obj}{the iNZight Shape Map Object}
+\item{shp.region}{Map object}
 
-\item{name}{the name of the country}
+\item{data.region}{Data}
 }
 \value{
 a 2*2 numeric matrix
 }
 \description{
-Calaudate the bbox of a country
-}
-\examples{
-los = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
-shp = readRDS(los)
-shp.region = shp$region
-lod = 'C:/Users/yeamin/Desktop/Gapminder-2008.csv'
-data = read.csv(lod,skip = 1)
-name.match(shp.region,data$Country)
+Match names between map and data
 }
 \author{
 Jason

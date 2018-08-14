@@ -27,6 +27,8 @@ iNZightMap(lat, lon, data, name = deparse(substitute(data)))
 \item{type}{the type of map to download from Google}
 
 \item{...}{additional arguments passed to \code{iNZightPlot}}
+
+\item{env}{Environment to evaluate \code{iNZightPlot} in}
 }
 \value{
 data frame object with class \code{inzightmap}
@@ -43,12 +45,6 @@ the fixed zoom levels provided by Google's Static Maps API.
 \item \code{plot}: Plot an \code{inzightmap} object
 }}
 
-\examples{
-data(nzquakes)
-mapobj <- iNZightMap(lat = ~Latitude, lon = ~Longitude, data = nzquakes)
-plot(mapobj, opacity = ~Depth, colby = Felt, sizeby = Magnitude, type = "terrain")
-
-}
 \author{
 Tom Elliott
 }

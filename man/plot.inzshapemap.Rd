@@ -4,12 +4,14 @@
 \alias{plot.inzshapemap}
 \title{Plot an iNZight Shape Map}
 \usage{
-\method{plot}{inzshapemap}(obj, gen)
+\method{plot}{inzshapemap}(x, gen, ...)
 }
 \arguments{
-\item{obj}{object passed from iNZightPlot}
+\item{x}{object passed from iNZightPlot}
 
 \item{gen}{other options passed from iNZightPlot}
+
+\item{...}{additional arguments (ignored)}
 }
 \description{
 draw a shape file ...

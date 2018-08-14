@@ -3,11 +3,29 @@
 language: R
 sudo: false
 cache: packages
+latex: false
 
 r:
-  - 3.2.3
+  - 3.2
+  - oldrel
   - release
   - devel
 
 repos:
   docker: http://r.docker.stat.auckland.ac.nz/R
+
+addons:
+  apt:
+    update: true
+    sources:
+      - ubuntugis-unstable: 'ppa:ubuntugis/ubuntugis-unstable'
+    packages:
+      - libudunits2-dev
+      - libgdal-dev
+      - libgeos-dev
+      - libproj-dev
+
+env:
+  global:
+  - _R_CHECK_FORCE_SUGGESTS_=false
+
