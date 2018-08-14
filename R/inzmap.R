@@ -49,11 +49,13 @@ create.inz.mapplot <- function(obj) {
 ##' @title Plot an iNZight Map
 ##' @param obj object passed from iNZightPlot
 ##' @param gen other options passed from iNZightPlot
+##' @param ... additional arguments (ignored)
 ##' @return NULL
 ##' @author Jason Wen
 ##' @import RgoogleMaps
 ##' @export
-plot.inzmap <- function(obj, gen) {
+plot.inzmap <- function(x, gen, ...) {
+    obj <- x
     opts <- gen$opts
     mcex <- gen$mcex
     col.args <- gen$col.args

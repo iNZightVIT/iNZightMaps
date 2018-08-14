@@ -93,6 +93,8 @@ read.mapmetadata <- function(shapefileDir) {
     metadata
 }
 
+#' Download shapefiles from remote repository
+#' 
 #' @param dirURL URL of the directory containing shapefiles
 #' @param currPath Current path to save to
 #' @export

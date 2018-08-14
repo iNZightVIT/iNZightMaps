@@ -117,7 +117,7 @@ iNZightMapRegions <- function(obj) {
 
 
 #' Plot an iNZightMapPlot
-#' @param obj iNZightMapPlot object
+#' @param x iNZightMapPlot object
 #' @param colour.var Variable to colour the regions or points by
 #' @param size.var If plotting a map of points, a variable to scale the points by
 #' @param size.const Size of plotted points (ignored if plotting regions or \code{size.var} is also passed)
@@ -135,8 +135,9 @@ iNZightMapRegions <- function(obj) {
 #' @param current.seq Current value of the sequence variable or aggregation
 #' @param sparkline.type Either \code{"Absolute"} or \code{"Relative"}
 #' @param scale.limits Limits for the legend scale
+#' @param ... additional arguments (ignored)
 #' @export
-plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.var = NULL,
+plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var = NULL,
                                 fill.const = NULL, colour.const = NULL, size.const = 1, alpha.const = 1,
                                 facet = NULL, multiple.vars = FALSE,
                                 main = NULL, xlab = "Longitude", ylab = "Latitude", axis.labels = TRUE,
@@ -145,7 +146,9 @@ plot.iNZightMapPlot <- function(obj, colour.var = NULL, size.var = NULL, alpha.v
                                 current.seq = NULL, sparkline.type = "Absolute",
                                 scale.limits = NULL, ci.plot = FALSE,
                                 regions.to.plot = NULL, keep.other.regions = TRUE,
-                                label.var = NULL, scale.label = 1, scale.axis = 1) {
+                                label.var = NULL, scale.label = 1, scale.axis = 1,
+                                ...) {
+    obj <- x
     if (multiple.vars) {
         orig.call <- match.call()
 		orig.call[1] <- call("plot")

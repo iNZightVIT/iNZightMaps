@@ -4,7 +4,7 @@
 \alias{plot.iNZightMapPlot}
 \title{Plot an iNZightMapPlot}
 \usage{
-\method{plot}{iNZightMapPlot}(obj, colour.var = NULL, size.var = NULL,
+\method{plot}{iNZightMapPlot}(x, colour.var = NULL, size.var = NULL,
   alpha.var = NULL, fill.const = NULL, colour.const = NULL,
   size.const = 1, alpha.const = 1, facet = NULL,
   multiple.vars = FALSE, main = NULL, xlab = "Longitude",
@@ -13,10 +13,10 @@
   label.title = "", aggregate = FALSE, current.seq = NULL,
   sparkline.type = "Absolute", scale.limits = NULL, ci.plot = FALSE,
   regions.to.plot = NULL, keep.other.regions = TRUE,
-  label.var = NULL, scale.label = 1, scale.axis = 1)
+  label.var = NULL, scale.label = 1, scale.axis = 1, ...)
 }
 \arguments{
-\item{obj}{iNZightMapPlot object}
+\item{x}{iNZightMapPlot object}
 
 \item{colour.var}{Variable to colour the regions or points by}
 
@@ -51,6 +51,8 @@
 \item{sparkline.type}{Either \code{"Absolute"} or \code{"Relative"}}
 
 \item{scale.limits}{Limits for the legend scale}
+
+\item{...}{additional arguments (ignored)}
 }
 \description{
 Plot an iNZightMapPlot

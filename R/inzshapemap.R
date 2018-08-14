@@ -63,10 +63,12 @@ create.inz.shapemapplot <- function(obj) {
 ##' @title Plot an iNZight Shape Map
 ##' @param obj object passed from iNZightPlot
 ##' @param gen other options passed from iNZightPlot
+##' @param ... additional arguments (ignored)
 ##' @return NULL
 ##' @author Jason Wen
 ##' @export
-plot.inzshapemap = function(obj, gen) {
+plot.inzshapemap = function(x, gen, ...) {
+    obj <- x
     df <- obj$df
     full.s.obj <- obj$shape.object
     bbox <- full.s.obj$bbox
