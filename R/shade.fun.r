@@ -636,7 +636,7 @@ sClickOnZoom = function(ratio = 1/2,resize = FALSE)
     grid.rect(gp = gpar(fill = '#F5F5F5'))
 
     grid.polygon(s.obj$latlon[,1], s.obj$latlon[,2],
-             default.units = "native", id.length = s.obj$each,
+             default.units = "native", id.lengths = s.obj$each,
              gp = gpar(col = '#B29980', fill  = s.obj$col))
     drawing.features(bar.obj = bar.obj,
                     latlon = latlon,cols = cols,
@@ -696,7 +696,7 @@ drawing.features = function(bar.obj,latlon,cols,
             xmax = 0.004 * diff(range(latlon[,1]))
             ymax = 0.1 * diff(range(latlon[,2]))
             grid.polygon(bar.obj$d1[,1],bar.obj$d1[,2],
-                        default.units = "native", id.length = bar.obj$each,
+                        default.units = "native", id.lengths = bar.obj$each,
                         gp = gpar(col = NA, fill  = bar.obj$col))
             out.str = countrycode(region.name, "country.name", "iso3c")
             center.y = center.y - y.shift
@@ -720,6 +720,6 @@ drawing.features = function(bar.obj,latlon,cols,
     if(name %in% full.option){
         grid.text(out.str, x = center.x, y =center.y,
                 just = "centre",default.units = "native",
-                gp=gpar(fontsize=9), check=TRUE)
+                gp=gpar(fontsize=9), check.overlap=TRUE)
     }
 }

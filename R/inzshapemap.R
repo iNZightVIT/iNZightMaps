@@ -136,7 +136,7 @@ plot.inzshapemap = function(x, gen, ...) {
     
     ## shp polygon
     grid.polygon(latlon[, 1], latlon[, 2],
-                 default.units = "native", id.length = shade.each,
+                 default.units = "native", id.lengths = shade.each,
                  gp = gpar(col = '#B29980', fill = cols))
     ## other features added into the map
     drawing.features(bar.obj = bar.obj,
