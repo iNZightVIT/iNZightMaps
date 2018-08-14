@@ -17,11 +17,6 @@ a vector of length of 2, re-sized by the ratio.
 \description{
 rearrange the limit by given a ratio.
 }
-\examples{
-x = c(0,100)
-ratio = 0.5
-re.scale(x,ratio)
-}
 \author{
 Jason Wen
 }

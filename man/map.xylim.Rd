@@ -22,12 +22,6 @@ return the limit of x-axis and y-axis of the plot.
 \details{
 the limit is not the same as latitude/longitude, it is the limit of the plot window
 }
-\examples{
-r.center = runif(4,min = 0,max = 90)
-r.center = runif(4,min = -90,max = 90)
-SCALE = 2
-map.xylim(r.center[1:2],r.center[3:4],SCALE)
-}
 \author{
 Jason Wen
 }

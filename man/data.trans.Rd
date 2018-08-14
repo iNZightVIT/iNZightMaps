@@ -17,10 +17,6 @@ a transformed numeric vector.
 \description{
 Transform the data into the range of [0,1].
 }
-\examples{
-x = runif(100,1,100)
-data.trans(x)
-}
 \author{
 Jason Wen
 }

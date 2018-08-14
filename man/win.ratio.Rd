@@ -17,12 +17,6 @@ a numeric vector of length 4, the first two componets specified the new xlim and
 \description{
 compute and return the xlim and ylim within aspect ratio
 }
-\examples{
-xlim = c(-90,90)
-ylim = c(-80,90)
-grid.newpage()
-win.ratio(xlim,ylim)
-}
 \author{
 Jason
 }

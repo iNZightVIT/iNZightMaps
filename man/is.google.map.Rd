@@ -17,11 +17,6 @@ return an logical value that tells wheater the coordinates are all within the sa
 \description{
 The coordinates should be within on the same range of Google Map's. i.e. longitude = [-180,180], latitude = [-90,90]
 }
-\examples{
-lat = runif(100,min = -180,max = 180)
-lon = runif(100,min = -180,max = 180)
-is.google.map(lat,lon)
-}
 \author{
 Jason Wen
 }

@@ -19,14 +19,6 @@ a 2*2 numeric matrix or a vector of length 4
 \description{
 Calaudate the bbox of a country
 }
-\examples{
-los = 'C:/Users/yeamin/Documents/GitHub/iNZightMaps/data/world.rds'
-lod = 'C:/Users/yeamin/Desktop/Gapminder-2008.csv'
-data = read.csv(lod,skip = 1)
-obj = iNZightShapeMap(los, data.region = 'Country', data = data)
-name = data$Country
-region.bbox(obj,name)
-}
 \author{
 Jason
 }

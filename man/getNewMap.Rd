@@ -4,8 +4,9 @@
 \alias{getNewMap}
 \title{Get an new map object}
 \usage{
-getNewMap(lat.lim, lon.lim, SCALE, type = c("roadmap", "mobile", "satellite",
-  "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid"), zoom)
+getNewMap(lat.lim, lon.lim, SCALE, type = c("roadmap", "mobile",
+  "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid"),
+  zoom)
 }
 \arguments{
 \item{lat.lim}{the range of longitude}
@@ -26,11 +27,6 @@ Get a new map and save it into Global Env
 }
 \details{
 a wrap function of \link{GetMap} from package 'RgoogleMaps'
-}
-\examples{
-golbal.objects = list()
-r.bbox = runif(4,-90,90)
-getNewMap(r.bbox[1:2],r.bbox[3:4],2,zoom = 3)
 }
 \author{
 Jason Wen

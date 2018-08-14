@@ -20,13 +20,6 @@ Transform the latitude and longitude into xy
 \details{
 wrap function for \link{LatLon2XY} from 'RgoogleMaps' package
 }
-\examples{
-golbal.objects = list()
-r.latlon = cbind(runif(100,-90,90),runif(100,-90,90))
-r.bbox = runif(4,-90,90)
-getNewMap(r.bbox[1:2],r.bbox[3:4],2,zoom = 3)
-latlon.xy(r.latlon,global.objects$maps$map)
-}
 \author{
 Jason Wen
 }

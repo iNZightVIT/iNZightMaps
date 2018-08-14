@@ -11,11 +11,6 @@
 ##' @return data frame object with class \code{inzightmap}
 ##' @author Tom Elliott
 ##'
-##' @examples
-##' data(nzquakes)
-##' mapobj <- iNZightMap(lat = ~Latitude, lon = ~Longitude, data = nzquakes)
-##' plot(mapobj, opacity = ~Depth, colby = Felt, sizeby = Magnitude, type = "terrain")
-##'
 ##' @export
 iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
     if (missing(data) || is.null(data))

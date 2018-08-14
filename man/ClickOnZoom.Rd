@@ -16,11 +16,6 @@ Zoom in/out when click the plot
 \details{
 if ratio < 1 then zoom in, if ratio > 1 then zoom out, if ratio = 1 then shift the plot.
 }
-\examples{
-data("nzquakes")
-iNZightPlot(Longitude,Latitude,data = nzquakes,colby = Depth, plottype = 'map',plot.features = list(maptype = 'roadmap'))
-ClickOnZoom(ratio = 1)
-}
 \author{
 Jason
 }
