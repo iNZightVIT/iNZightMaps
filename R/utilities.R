@@ -10,9 +10,10 @@ retrieveMap <- function(filename) {
     }
 }
 
-##' Find the pair of variables from the map and data that have the
-##' highest number of matches. This function returns in form: (data
-##' variable, map variable)
+##' @title Find 'best-matching' pair of variables from map and data
+##' @param data Data frame of the input data
+##' @param map.data sf object of the map data
+##' @return Two-element vector of form (data variable, map variable)
 ##' @export
 findBestMatch <- function(data, map.data) {
     ## Eliminate variables that are associated with multiple regions
@@ -38,7 +39,7 @@ findBestMatch <- function(data, map.data) {
     best.match.vars
 }
 
-##' Match two vectors
+##' @title Match two vectors
 ##' @param data.vect Vector containing the dataset variable
 ##' @param map.vect Vector containing the map object variable
 ##' @return A list containing: the dataset variable vector with duplicates removed, which values in the dataset and map variable had a match, how many matches occured overall and if there was multiple observations for any region.
@@ -61,24 +62,31 @@ matchVariables <- function(data.vect, map.vect) {
          multiple.obs = isTRUE(any(data.n.obs > 1)))
 }
 
+##' @title Get available map projections
+##' @return Data frame of map projections
 ##' @export
 iNZightMapProjections <- function() {
     return(proj.df)
 }
 
+##' @title Get list of country ISO codes
+##' @return Data frame with country names and ISO codes
 ##' @export
 iNZightMapCountryISO <- function() {
     return(country.isos)
 }
 
+##' @title Read shapefile metadata from file
+##' @param shapefileDir Directory containing the shapefiles for iNZight
+##' @return Matrix of filepaths, filenames and descriptions of each shapefile available in `shapefileDir`
 ##' @export
 read.mapmetadata <- function(shapefileDir) {
     if (!file.exists(file.path(shapefileDir, "metadata.gz"))) {
         tryCatch({
-            download.file("https://www.stat.auckland.ac.nz/~wild/data/shapefiles/metadata",
+            utils::download.file("https://www.stat.auckland.ac.nz/~wild/data/shapefiles/metadata",
                           file.path(shapefileDir, "metadata.gz"), mode = "wb")
             },
-                 error = function(e) error("Cannot download metadata file.")
+                 error = function(e) stop("Cannot download metadata file.")
                  )
     }
 
@@ -93,11 +101,10 @@ read.mapmetadata <- function(shapefileDir) {
     metadata
 }
 
-#' Download shapefiles from remote repository
-#' 
-#' @param dirURL URL of the directory containing shapefiles
-#' @param currPath Current path to save to
-#' @export
+##' @title Download shapefiles from remote repository
+##' @param dirURL URL of the directory containing shapefiles
+##' @param currPath Current path to save to
+##' @export
 download.shapefiles <- function(dirURL, currPath, shapefileDir) {
     message("Searching... ", dirURL)
     curr.links <- XML::getHTMLLinks(rawToChar(curl::curl_fetch_memory(dirURL)$content))
@@ -107,7 +114,7 @@ download.shapefiles <- function(dirURL, currPath, shapefileDir) {
         stop("Failed to create directory")
     for (filename in curr.files) {
         if (!file.exists(file.path(currPath, filename))) {
-            download.file(paste0(dirURL, filename),
+            utils::download.file(paste0(dirURL, filename),
                           file.path(currPath, filename),
                           mode = "wb")
         }
@@ -120,6 +127,8 @@ download.shapefiles <- function(dirURL, currPath, shapefileDir) {
     }
 }
 
+##' @title Convert map filepaths to "tidy" filepaths
+##' @param mapdir.mat Matrix of metadata
 ##' @export
 decodeMapDir <- function(mapdir.mat) {
     have.tidy <- !is.na(mapdir.mat[, "tidy_filename"])
@@ -150,9 +159,12 @@ decodeMapDir <- function(mapdir.mat) {
     mapdir.mat
 }
 
+##' @title Get the range of a set of variables while ignoring categorical variables
+##' @param obj iNZightMapPlot object
+##' @param vars Vector of variables to calculate range of
+##' @return Vector of ranges for each variable
 ##' @export
 getMinMax <- function(obj, vars) {
-    print("anything")
     if (length(vars) == 0) {
         return
     }

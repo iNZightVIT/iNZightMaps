@@ -17,7 +17,7 @@ iNZightMapPlot <- function(data, map, type, ...) {
 #' @param map  An sf object containing a row for each feature of the map
 #' @param by.data Variable name in the dataset that will be matched to \code{by.map} in the map
 #' @param by.map Variable name in the map that will be matched to \code{by.data} in the dataset
-#' @param simplification.level How much should the map be simplified by? (see \code{\link[sf]{st_simplify}})
+#' @param simplification.level How much should the map be simplified by?
 #' @param multiple.obs Does the dataset have multiple observations for each region of the map (i.e. observations from multiple years)
 #' @param sequence.var If \code{multiple.obs = TRUE}, which variable identifies the different observations for a region?
 #' @param agg.type If \code{multiple.obs = TRUE}, which aggregation should be used to produce one observation for each region.
@@ -110,6 +110,9 @@ iNZightMapVars <- function(obj, map.vars = FALSE) {
     cols
 }
 
+#' @title Extract region names from iNZightMapPlot object
+#' @param obj iNZightMapPlot object
+#' @return Sorted vector of the region names
 #' @export
 iNZightMapRegions <- function(obj) {
     sort(unique(as.data.frame(obj$region.data)[, obj$region.var]))

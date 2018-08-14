@@ -4,8 +4,8 @@
 \alias{drawing.features}
 \title{drawing features}
 \usage{
-drawing.features(bar.obj, latlon, cols, shade.each, region.name,
-  data.region, value, name, center.x, center.y, y.shift = 0.5)
+drawing.features(bar.obj, latlon, cols, shade.each, region.name, data.region,
+  value, name, center.x, center.y, y.shift = 0.5)
 }
 \arguments{
 \item{bar.obj}{a bar object see \link{bar.coor}}
