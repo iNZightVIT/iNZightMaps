@@ -1,5 +1,5 @@
 # Version 2.0
-__Release date__: 18 Janary 2018
+__Release date__: 14 August 2018
 
 Massive overhaul of the mapping module, using ggplot2 and sf packages.
 
