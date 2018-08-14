@@ -36,4 +36,4 @@ Suggests:
 Additional_repositories: http://r.docker.stat.auckland.ac.nz/R
 Description: Simple plotting functions for geographical data.
 License: GPL-3 | file LICENSE
-RoxygenNote: 6.0.1.9000
+RoxygenNote: 6.1.0.9000

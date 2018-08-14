@@ -12,3 +12,6 @@ retrieveMap(filename)
 \value{
 An sf object containing the map
 }
+\description{
+Retrieve a map for use in iNZightMapPlot
+}

@@ -11,3 +11,6 @@ iNZightMapVars(obj, map.vars = FALSE)
 
 \item{map.vars}{Should the variables included in the original map be included in the output?}
 }
+\description{
+Extract column names from an iNZightMapPlot object
+}

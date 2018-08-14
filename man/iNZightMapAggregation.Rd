@@ -13,3 +13,6 @@ iNZightMapAggregation(obj, aggregation = "mean", single.value = NULL)
 
 \item{single.value}{If \code{aggregation = "singlevalue"}, the observation that should be extracted}
 }
+\description{
+Aggregate an iNZightMapPlot with Multiple Observations
+}

@@ -7,8 +7,9 @@
 \usage{
 iNZightMapPlot(data, map, type, ...)
 
-iNZightMapPlotRegion(data, map, by.data, by.map, simplification.level = 0.01,
-  multiple.obs = FALSE, sequence.var = NULL, agg.type = "last")
+iNZightMapPlotRegion(data, map, by.data, by.map,
+  simplification.level = 0.01, multiple.obs = FALSE,
+  sequence.var = NULL, agg.type = "last")
 }
 \arguments{
 \item{data}{Dataset with values for rows of the map object}
@@ -34,6 +35,9 @@ iNZightMapPlotRegion(data, map, by.data, by.map, simplification.level = 0.01,
 \item{data}{Dataset with values for rows of the map object}
 
 \item{map}{An sf object containing a row for each feature of the map}
+}
+\description{
+Create iNZightMapPlot object
 }
 \section{Functions}{
 \itemize{

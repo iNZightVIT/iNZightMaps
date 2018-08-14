@@ -4,8 +4,9 @@
 \alias{getNewMap}
 \title{Get an new map object}
 \usage{
-getNewMap(lat.lim, lon.lim, SCALE, type = c("roadmap", "mobile", "satellite",
-  "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid"), zoom)
+getNewMap(lat.lim, lon.lim, SCALE, type = c("roadmap", "mobile",
+  "satellite", "terrain", "hybrid", "mapmaker-roadmap", "mapmaker-hybrid"),
+  zoom)
 }
 \arguments{
 \item{lat.lim}{the range of longitude}
