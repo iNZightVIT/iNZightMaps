@@ -12,7 +12,7 @@ r:
   - devel
 
 repos:
-  docker: http://r.docker.stat.auckland.ac.nz/R
+  docker: https://r.docker.stat.auckland.ac.nz
 
 addons:
   apt:
