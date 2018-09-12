@@ -6,8 +6,8 @@
 \usage{
 \method{plot}{inzightshapemap}(x, variable, col.fun = "hue",
   transform = "linear", col.offset = 0.2, col = "red",
-  na.fill = "#F4A460", full.map = TRUE, extend.ratio = 1, name = FALSE,
-  zoom = 1, zoom.center = c(NA, NA), ...)
+  na.fill = "#F4A460", full.map = TRUE, extend.ratio = 1,
+  name = FALSE, zoom = 1, zoom.center = c(NA, NA), ...)
 }
 \arguments{
 \item{x}{the iNZight Shape Map Object}
