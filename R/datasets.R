@@ -66,4 +66,6 @@
 #'   \item{OfferSignLanguage}{Proportion of facilities offering treatment in sign language}
 #'   \item{AnyPublicFunding}{Proportion of facilities that receive any federal, state, county, or local funds}
 #' }
+#' 
+#' @source \href{https://wwwdasis.samhsa.gov/dasis2/nssats.htm}{National Survey of Substance Abuse Treatment Services (N-SSATS)}
 "NSSATS"
