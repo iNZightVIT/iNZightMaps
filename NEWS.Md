@@ -9,6 +9,11 @@ Massive overhaul of the mapping module, using ggplot2 and sf packages.
 - Retrieve the code used for these maps 
 - Add most point appearance options from regular iNZightPlots scatterplots into iNZightMaps coordinate maps
 
+## Patches
+
+### Patch 2.0.1 - 13/09/2018
+- 
+
 ***
 # Version 1.1
 __Release date__: 11 July, 2016
