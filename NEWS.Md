@@ -12,7 +12,9 @@ Massive overhaul of the mapping module, using ggplot2 and sf packages.
 ## Patches
 
 ### Patch 2.0.1 - 13/09/2018
-- 
+- Add example datasets to package
+- Change "opacity" labels to "transparency"
+- Overall transparency slider now always visible
 
 ***
 # Version 1.1
