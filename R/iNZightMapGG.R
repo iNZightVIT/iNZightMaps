@@ -41,9 +41,12 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
   data[, by.data] <- as.character(data[, by.data])
 
   mapdata <- sf::st_as_sf(dplyr::left_join(map, data, by = by.vect))
-  map.centroids <- sf::st_centroid(mapdata)
+  
+  suppressWarnings({
+    map.centroids <- sf::st_centroid(mapdata)
 
-  mapdata <- sf::st_simplify(mapdata, dTolerance = simplification.level)
+    mapdata <- sf::st_simplify(mapdata, dTolerance = simplification.level)
+  })
 
   if (multiple.obs) {
       ## library(sf)
