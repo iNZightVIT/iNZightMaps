@@ -1,3 +1,5 @@
+- [fix/change] replace Google Maps with Stamen Maps due to the former no longer offering free maps!
+
 # Version 2.0
 __Release date__: 14 August 2018
 

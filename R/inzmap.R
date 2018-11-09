@@ -60,8 +60,8 @@ plot.inzmap <- function(x, gen, ...) {
     mcex <- gen$mcex
     col.args <- gen$col.args
     plot.shp <- opts$plot.features$plot.shp
-    zoom <- opts$plot.features$map.zoom
-    # if (is.null(zoom)) 
+    zoom <- opts$plot.features$mapzoom
+    if (is.null(zoom)) 
         zoom <- 5
     
     if (is.null(obj$opacity)) {
@@ -83,7 +83,8 @@ plot.inzmap <- function(x, gen, ...) {
     type <- obj$map.type
 
     bbox <- c(xlim[1], ylim[1], xlim[2], ylim[2])
-    bgmap <- getMap(bbox = bbox, zoom = zoom, size = c(win.width, win.height))
+    bgmap <- getMap(bbox = bbox, zoom = zoom, size = c(win.width, win.height),
+        type = opts$plot.features$maptype)
     
     # get.newmap <- needNewMap(bbox = c(xlim, ylim), size = size, SCALE = SCALE,
     #                          type = type, window = c(win.width, win.height))
@@ -189,9 +190,9 @@ convertLimits <- function(bbox, zoom) {
     list(x = xlim, y = ylim)
 }
 
-getMap <- function(bbox, zoom, size) {
+getMap <- function(bbox, zoom, size, type) {
     ## get the initial map
-    map <- getStamenMap(bbox, zoom)
+    map <- getStamenMap(bbox, zoom, type)
     ## adjust bbox to fill as much space as possible
     mapGrob <- rasterGrob(map, name = "temporary.map")
     grid.draw(mapGrob)
@@ -203,7 +204,7 @@ getMap <- function(bbox, zoom, size) {
     grid.remove(gPath("temporary.map"))
 
     ## fetch new map with better dimensions
-    map <- getStamenMap(bbox, zoom)
+    map <- getStamenMap(bbox, zoom, type)
     attr(map, "bbox") <- bbox
     map
 }
@@ -230,7 +231,7 @@ adjustBbox <- function(bbox, ratio, zoom) {
     bbox
 }
 
-getStamenMap <- function(bbox, zoom) {
+getStamenMap <- function(bbox, zoom, type) {
     ## stamen maps don't like it when you ask for a bounding
     ## box that crosses over (-180,180) longitude,
     ## so we need to fetch two maps and stitch them together
@@ -240,11 +241,11 @@ getStamenMap <- function(bbox, zoom) {
         bbox.left[3] <- 179.99999
         bbox.right[1] <- -180
         bbox.right[3] <- bbox.right[3] - 360
-        map.left <- ggmap::get_stamenmap(bbox.left, zoom = zoom)   
-        map.right <- ggmap::get_stamenmap(bbox.right, zoom = zoom)
-        map <- as.raster(cbind(as.matrix(map.left), as.matrix(map.right)))
+        map.left <- ggmap::get_stamenmap(bbox.left, zoom = zoom, maptype = type)
+        map.right <- ggmap::get_stamenmap(bbox.right, zoom = zoom, maptype = type)
+        map <- grDevices::as.raster(cbind(as.matrix(map.left), as.matrix(map.right)))
     } else {
-        map <- ggmap::get_stamenmap(bbox, zoom = zoom)
+        map <- ggmap::get_stamenmap(bbox, zoom = zoom, maptype = type)
     }
     map
 }
