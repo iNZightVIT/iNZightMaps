@@ -69,6 +69,8 @@ plot.inzmap <- function(x, gen, ...) {
     } else {
         opacity <- obj$opacity
     }
+
+    grid.rect(gp = gpar(fill = "black"))
     
     debug <- if (is.null(opts$debug)) FALSE else opts$debug
     
@@ -218,11 +220,20 @@ adjustBbox <- function(bbox, ratio, zoom) {
     tile.y <- tile.bounds$Y + tile.bounds$y / 255
     tile.x <- tile.bounds$X + tile.bounds$x / 255
     tile.h <- diff(range(tile.y))
-    tile.w <- tile.h * ratio
+    tile.w <- diff(range(tile.x))
 
-    tile.x <- mean(tile.x) + c(-1, 1) * tile.w / 2
-    tile.bounds$X <- floor(tile.x)
-    tile.bounds$x <- (tile.x - floor(tile.x)) * 255
+    if (tile.w / tile.h < ratio) {
+        tile.w <- tile.h * ratio
+        tile.x <- mean(tile.x) + c(-1, 1) * tile.w / 2
+        tile.bounds$X <- floor(tile.x)
+        tile.bounds$x <- (tile.x - floor(tile.x)) * 255
+    } else {
+        tile.h <- tile.w / ratio
+        tile.y <- mean(tile.y) + c(-1, 1) * tile.h / 2
+        tile.bounds$Y <- floor(tile.y)
+        tile.bounds$y <- (tile.y - floor(tile.y)) * 255
+    }
+
     newcorners <-
         do.call(rbind, apply(tile.bounds, 1, function(x)
             ggmap::XY2LonLat(x[1], x[2], zoom, x[3], x[4])))
@@ -236,7 +247,17 @@ getStamenMap <- function(bbox, zoom, type) {
     ## box that crosses over (-180,180) longitude,
     ## so we need to fetch two maps and stitch them together
     if (bbox[1] < -180) {
-    } else if (bbox[3] > 180) {
+        ## need to test this
+        bbox[c(1,3)] <- bbox[c(1,3)] + 360
+    }
+        # bbox.right <- bbox.left <- bbox
+        # bbox.left[3] <- 179.99999
+        # bbox.right[1] <- -180
+        # bbox.right[3] <- bbox.right[3] - 360
+        # map.left <- ggmap::get_stamenmap(bbox.left, zoom = zoom, maptype = type)
+        # map.right <- ggmap::get_stamenmap(bbox.right, zoom = zoom, maptype = type)
+        # map <- grDevices::as.raster(cbind(as.matrix(map.left), as.matrix(map.right)))
+    if (bbox[3] > 180) {
         bbox.right <- bbox.left <- bbox
         bbox.left[3] <- 179.99999
         bbox.right[1] <- -180
