@@ -4,22 +4,24 @@
 \alias{latlon.xy}
 \title{latlon.xy}
 \usage{
-latlon.xy(latlon, map)
+latlon.xy(lat, lon, zoom)
 }
 \arguments{
-\item{latlon}{the data set that use for plotting, the first cloumn needs to be latitude and the second column needs to be longitude.}
+\item{lat}{latitude values to convert}
 
-\item{map}{a map object from RgoogleMaps package.}
+\item{lon}{longitude values to convert}
+
+\item{zoom}{the level of zoom used in the map}
 }
 \value{
-a list that contain the tramsformed x and y.
+a dataframe of x and y values
 }
 \description{
 Transform the latitude and longitude into xy
 }
 \details{
-Wrapper function for \link{LatLon2XY} from 'RgoogleMaps' package
+Wrapper function for \link{LatLon2XY} from 'ggmap' package
 }
 \author{
-Jason Wen
+Tom Elliott
 }

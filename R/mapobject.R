@@ -45,6 +45,7 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
 
 ##' @param x an \code{inzightmap} object
 ##' @param opacity character or expression of the variable name to code point opacity by
+##' @param map.zoom the level of zoom to use; this should depend on the scales unless specified
 ##' @param type the type of map to download from Google
 ##' @param ... additional arguments passed to \code{iNZightPlot}
 ##' @param env Environment to evaluate \code{iNZightPlot} in
@@ -52,9 +53,11 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
 ##' @export
 plot.inzightmap <- function(x,
                             opacity,
+                            map.zoom = -1,
                             type =
-                                c("roadmap", "mobile", "satellite", "terrain", "hybrid",
-                                  "mapmaker-roadmap", "mapmaker-hybrid"),
+                                c("terrain", "terrain-background", "terrain-labels", "terrain-lines", 
+                                  "toner", "toner-2010", "toner-2011", "toner-background", "toner-hybrid",
+                                  "toner-labels", "toner-lines", "toner-lite", "watercolor"),
                             ..., env = parent.frame()) {
     mc <- match.call()
 
@@ -63,7 +66,7 @@ plot.inzightmap <- function(x,
     mc$y <- expression(.latitude)
     mc$plottype <- "map"
     mc$largesample <- FALSE
-    mc$plot.features <- list(maptype = match.arg(type))
+    mc$plot.features <- list(maptype = match.arg(type), mapzoom = map.zoom)
 
     if (!missing(opacity)) {
         if (inherits(opacity, "formula")) {

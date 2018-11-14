@@ -4,15 +4,10 @@
 \alias{ClickOnZoom}
 \title{Zoom in/out}
 \usage{
-ClickOnZoom(ratio = 1, resize = FALSE,
-  p.center = global.objects$maps$pf$click.points)
+ClickOnZoom(...)
 }
 \arguments{
-\item{ratio}{a numeric value, define the ratio of zomm in or out}
-
-\item{resize}{Should the plot be resized?}
-
-\item{p.center}{Click location centre}
+\item{...}{additional parameters}
 }
 \description{
 Zoom in/out
