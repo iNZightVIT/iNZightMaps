@@ -76,7 +76,6 @@ plot.inzmap <- function(x, gen, ...) {
     ylim <- current.viewport()$yscale
     if (zoom < 0) {
         zoom <- ggmap::calc_zoom(xlim, ylim)
-        print(zoom)
     }
     
     ## the SIZE of the current viewport
