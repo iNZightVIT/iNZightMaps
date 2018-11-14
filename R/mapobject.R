@@ -53,7 +53,7 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
 ##' @export
 plot.inzightmap <- function(x,
                             opacity,
-                            map.zoom = 5,
+                            map.zoom = -1,
                             type =
                                 c("terrain", "terrain-background", "terrain-labels", "terrain-lines", 
                                   "toner", "toner-2010", "toner-2011", "toner-background", "toner-hybrid",

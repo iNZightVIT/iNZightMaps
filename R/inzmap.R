@@ -61,8 +61,6 @@ plot.inzmap <- function(x, gen, ...) {
     col.args <- gen$col.args
     plot.shp <- opts$plot.features$plot.shp
     zoom <- opts$plot.features$mapzoom
-    if (is.null(zoom)) 
-        zoom <- 5
     
     if (is.null(obj$opacity)) {
         opacity <- 1            
@@ -76,6 +74,10 @@ plot.inzmap <- function(x, gen, ...) {
     
     xlim <- current.viewport()$xscale
     ylim <- current.viewport()$yscale
+    if (zoom < 0) {
+        zoom <- ggmap::calc_zoom(xlim, ylim)
+        print(zoom)
+    }
     
     ## the SIZE of the current viewport
     win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
