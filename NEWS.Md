@@ -1,3 +1,12 @@
+# Version 2.1
+__Release date__: 15 November 2018
+
+## Major changes
+- Replaced Google Maps with Stamen Maps due to the former no longer offering free maps
+
+
+***
+
 # Version 2.0
 __Release date__: 14 August 2018
 

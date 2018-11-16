@@ -41,9 +41,12 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
   data[, by.data] <- as.character(data[, by.data])
 
   mapdata <- sf::st_as_sf(dplyr::left_join(map, data, by = by.vect))
-  map.centroids <- sf::st_centroid(mapdata)
+  
+  suppressWarnings({
+    map.centroids <- sf::st_centroid(mapdata)
 
-  mapdata <- sf::st_simplify(mapdata, dTolerance = simplification.level)
+    mapdata <- sf::st_simplify(mapdata, dTolerance = simplification.level)
+  })
 
   if (multiple.obs) {
       ## library(sf)
@@ -217,7 +220,7 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
         }
 
         if (!is.null(regions.to.plot)) {
-            if (keep.other.regions & length(regions.to.plot) > 0) {
+            if (keep.other.regions && length(regions.to.plot) > 0 && isTRUE(colour.var != "")) {
                  obj[[region.data.to.use]] <- dplyr::mutate(obj[[region.data.to.use]],
                                                              rlang::UQ(as.name(colour.var)) := replace(rlang::UQ(as.name(colour.var)), !(rlang::UQ(as.name(obj$region.var)) %in% regions.to.plot), NA))
 

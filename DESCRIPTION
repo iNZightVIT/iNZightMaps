@@ -1,8 +1,8 @@
 Package: iNZightMaps
 Type: Package
 Title: iNZightMaps
-Version: 2.0.1
-Date: 2018-09-13
+Version: 2.1
+Date: 2018-11-15
 Authors@R: c(person("Daniel", "Barnett", role = c("aut"),
                     email = "dbar344@aucklanduni.ac.nz"),
              person("Tom", "Elliott", role = c("cre", "aut"),
@@ -28,7 +28,8 @@ Imports:
   RColorBrewer,
   countrycode,
   iNZightPlots,
-  methods
+  methods,
+  ggmap (>= 2.7.900)
 Suggests:
   sf,
   rgeos,
@@ -36,4 +37,5 @@ Suggests:
 Additional_repositories: https://r.docker.stat.auckland.ac.nz
 Description: Simple plotting functions for geographical data.
 License: GPL-3 | file LICENSE
+Encoding: UTF-8
 RoxygenNote: 6.1.0.9000

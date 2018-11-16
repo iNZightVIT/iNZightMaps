@@ -14,6 +14,9 @@ r:
 repos:
   docker: https://r.docker.stat.auckland.ac.nz
 
+r_github_packages:
+  - dkahle/ggmap
+
 addons:
   apt:
     update: true
