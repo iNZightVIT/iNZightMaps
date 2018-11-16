@@ -220,7 +220,7 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
         }
 
         if (!is.null(regions.to.plot)) {
-            if (keep.other.regions & length(regions.to.plot) > 0) {
+            if (keep.other.regions && length(regions.to.plot) > 0 && isTRUE(colour.var != "")) {
                  obj[[region.data.to.use]] <- dplyr::mutate(obj[[region.data.to.use]],
                                                              rlang::UQ(as.name(colour.var)) := replace(rlang::UQ(as.name(colour.var)), !(rlang::UQ(as.name(obj$region.var)) %in% regions.to.plot), NA))
 
