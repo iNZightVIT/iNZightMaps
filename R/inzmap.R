@@ -137,7 +137,7 @@ plot.inzmap <- function(x, gen, ...) {
         name = 'VP:PLOTlayout',
         xscale = lims$x, yscale = rev(lims$y))
     pushViewport(vp)
-    grid.rect()
+    # grid.rect(gp = gpar(fill = "transparent"))
     
     ## transform the points
     dd <- cbind(obj$y,obj$x)

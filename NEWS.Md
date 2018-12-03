@@ -4,6 +4,10 @@ __Release date__: 15 November 2018
 ## Major changes
 - Replaced Google Maps with Stamen Maps due to the former no longer offering free maps
 
+## Patches
+
+### Patch 2.1.1 - 03/12/2018
+- fix bug where Shiny graphics device would plot white background
 
 ***
 
