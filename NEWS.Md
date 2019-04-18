@@ -1,6 +1,7 @@
 ## iNZightMaps 2.1.1.9000
 __Release date__: TBA
 
+- Remove grouped variable from summarise_at to fix map joining bug
 
 
 ## iNZightMaps 2.1.1
@@ -30,7 +31,7 @@ Massive overhaul of the mapping module, using ggplot2 and sf packages.
 
 - Ability to map data to arbitrary shapefiles and plot variables using filled regions or centroids
 - For spatial time series data: plot animated maps over time, overlay small line plots on regions or aggregate values
-- Retrieve the code used for these maps 
+- Retrieve the code used for these maps
 - Add most point appearance options from regular iNZightPlots scatterplots into iNZightMaps coordinate maps
 
 
