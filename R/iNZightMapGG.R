@@ -52,11 +52,11 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
       ## library(sf)
       mapdata.agg <- mapdata %>%
           dplyr::group_by(rlang::UQ((as.name(by.map)))) %>%
-          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$"), -rlang::UQ(as.name(by.map))), dplyr::last)
+          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")), dplyr::last)
 
       centroid.agg <- map.centroids %>%
           dplyr::group_by(rlang::UQ((as.name(by.map)))) %>%
-          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$"), -rlang::UQ(as.name(by.map))), dplyr::last)
+          dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")), dplyr::last)
   } else {
       mapdata.agg <- NULL
       centroid.agg <- NULL
@@ -494,14 +494,14 @@ iNZightMapAggregation <- function(obj, aggregation = "mean", single.value = NULL
     } else {
         obj$region.aggregate <- obj$region.data %>%
             dplyr::group_by(rlang::UQ((as.name(obj$region.var)))) %>%
-            dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$"), -UQ((as.name(obj$region.var)))),
+            dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")),
                        dplyr::funs(if (is.numeric(.))
                                           eval(substitute(chosen_fun(., na.rm = TRUE),
                                                           list(chosen_fun = as.name(aggregation))))
                                       else dplyr::last(.)))
         obj$centroid.aggregate <- obj$centroid.data %>%
             dplyr::group_by(rlang::UQ((as.name(obj$region.var)))) %>%
-            dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$"), -UQ((as.name(obj$region.var)))),
+            dplyr::summarise_at(dplyr::vars(-dplyr::matches("^geometry$")),
                                 dplyr::funs(if (is.numeric(.))
                                          eval(substitute(chosen_fun(., na.rm = TRUE),
                                                          list(chosen_fun = as.name(aggregation))))
