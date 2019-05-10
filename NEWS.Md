@@ -1,5 +1,11 @@
-## iNZightMaps 2.1.1.9000
+## iNZightMaps 2.1.2.9000
 __Release date__: TBA
+
+
+
+
+## iNZightMaps 2.1.2
+__Release date__: 30 April 2019
 
 - Remove grouped variable from summarise_at to fix map joining bug
 
@@ -36,19 +42,19 @@ Massive overhaul of the mapping module, using ggplot2 and sf packages.
 
 
 ## iNZightMaps 1.1-3
-__Release date_: 10 April 2017
+__Release date__: 10 April 2017
 
 - fix bug where difference in range approx 0 but not quite
 
 
 ## iNZightMaps 1.1-2
-__Release date_: 19 November 2016
+__Release date__: 19 November 2016
 
 - fix up an issue where longitude value range was too large at 0 and +-180
 
 
 ## iNZightMaps 1.1-1
-__Release date_: 30 September 2016
+__Release date__: 30 September 2016
 
 - pass the current environment to `iNZightPlot` so `data=` works
 
