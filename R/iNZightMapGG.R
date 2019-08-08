@@ -1,3 +1,22 @@
+dot.density <- function(data, var, total = 300) {
+  point.counts <- round((data[[var]] / sum(data[[var]], na.rm = TRUE)) * total)
+  
+  empty.geometries <- sf::st_is_empty(data$geometry)
+  data <- data[!empty.geometries, ]
+  point.counts <- point.counts[!empty.geometries]
+  # point.counts <- na.omit(point.counts)
+  point.counts[is.na(point.counts)] <- 0
+  
+  points <- suppressMessages(sf::st_sample(data, point.counts, exact = TRUE))
+  
+  points.sf <- tapply(points, rep(1:nrow(data), point.counts), sf::st_combine, simplify = FALSE) %>% 
+    do.call(c, args = .)
+  
+  non.zero <- which(point.counts > 0)
+  
+  sf::st_set_geometry(data[non.zero, ], points.sf)
+}
+
 #' @title Create iNZightMapPlot object
 #'
 #' @param data Dataset with values for rows of the map object
