@@ -367,7 +367,17 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
                 attr(layers.list[["sparklines"]], "code") <- sprintf("ggsfextra::geom_sparkline(data = %s, aes(group = %s, line_x = %s, line_y = %s), fill_alpha = 0.75, plot_size = %f, sparkline_type = %s)",
                                                                      centroid.data.to.use, obj$region.var, obj$sequence.var, colour.var, size.const, sparkline.type)
             }
-        }
+        } else if (obj$type == "dotdensity") {
+          obj.dot <- dot.density(obj$region.data, var = colour.var)
+          
+          base.ggplot <- ggplot2::ggplot(obj.dot)
+          
+          layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]])
+          
+          layers.list[["dots"]] <- ggplot2::geom_sf(data = obj.dot,
+                                                    mapping = ggplot2::aes_string(colour = colour.var),
+                                                    show.legend = "point", inherit.aes = FALSE)
+        } 
 
         if (!is.null(label.var)) {
             if (label.var == "use_colour_var") {
