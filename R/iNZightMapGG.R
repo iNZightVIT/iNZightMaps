@@ -1,5 +1,17 @@
-dot.density <- function(data, var, total = 300) {
-  point.counts <- round((data[[var]] / sum(data[[var]], na.rm = TRUE)) * total)
+dot.density <- function(data, var, total = 300, per.dot = 1000, prop = FALSE) {
+  if (prop) {
+    if (!is.null(var) && var != "") {
+      point.counts <- round((data[[var]] / sum(data[[var]], na.rm = TRUE)) * total)
+    } else {
+      point.counts <- rep(5, nrow(data))
+    }
+  } else {
+    if (!is.null(var) && var != "") {
+      point.counts <- round(data[[var]] / per.dot)
+    } else {
+      point.counts <- rep(5, nrow(data))
+    }
+  }
   
   empty.geometries <- sf::st_is_empty(data$geometry)
   data <- data[!empty.geometries, ]
@@ -177,6 +189,7 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
                                 scale.limits = NULL, 
                                 regions.to.plot = NULL, keep.other.regions = TRUE,
                                 label.var = NULL, scale.label = 1, scale.axis = 1,
+                                per.n = 1000,
                                 ...) {
     obj <- x
     if (multiple.vars) {
@@ -368,15 +381,15 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
                                                                      centroid.data.to.use, obj$region.var, obj$sequence.var, colour.var, size.const, sparkline.type)
             }
         } else if (obj$type == "dotdensity") {
-          obj.dot <- dot.density(obj$region.data, var = colour.var)
-          
-          base.ggplot <- ggplot2::ggplot(obj.dot)
-          
-          layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]])
-          
-          layers.list[["dots"]] <- ggplot2::geom_sf(data = obj.dot,
-                                                    mapping = ggplot2::aes_string(colour = colour.var),
-                                                    show.legend = "point", inherit.aes = FALSE)
+            obj.dot <- dot.density(obj[[region.data.to.use]], var = size.var, per.dot = per.n, prop = FALSE)
+            base.ggplot <- ggplot2::ggplot(obj.dot)
+            
+            layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]], colour = scales::alpha("#000000", alpha.const),
+                                                         alpha = alpha.const, inherit.aes = FALSE)
+            
+            layers.list[["dots"]] <- ggplot2::geom_sf(data = obj.dot,
+                                                      mapping = ggplot2::aes_string(colour = colour.var),
+                                                      show.legend = "point", inherit.aes = FALSE, size = size.const)
         } 
 
         if (!is.null(label.var)) {
