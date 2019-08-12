@@ -21,9 +21,8 @@ dot.density <- function(data, var, total = 300, per.dot = 1000, prop = FALSE) {
   
   points <- suppressMessages(sf::st_sample(data, point.counts, exact = TRUE))
   
-  points.sf <- tapply(points, rep(1:nrow(data), point.counts), sf::st_combine, simplify = FALSE) %>% 
-    do.call(c, args = .)
-  
+  points.sf <- do.call(c, tapply(points, rep(1:nrow(data), point.counts), sf::st_combine, simplify = FALSE))
+
   non.zero <- which(point.counts > 0)
   
   sf::st_set_geometry(data[non.zero, ], points.sf)
