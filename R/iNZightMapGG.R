@@ -1,3 +1,12 @@
+#' Generate dots randomly within regions
+#'
+#' @param data Map dataset
+#' @param var Variable to use to allocate dots
+#' @param total For proportion dot density maps, the total number of points
+#' @param per.dot For "dot per N" maps, the N that each dot reprsents
+#' @param prop Boolean to switch between proportional dot density/"dot per N" maps.
+#'
+#' @return An sf object containing a series of dots for each region.
 dot.density <- function(data, var, total = 300, per.dot = 1000, prop = FALSE) {
   if (prop) {
     if (!is.null(var) && var != "") {
@@ -175,6 +184,7 @@ iNZightMapRegions <- function(obj) {
 #' @param label.var Variable to label regions by
 #' @param scale.label Scaling factor for region labels
 #' @param scale.axis Scaling factor for title, axis labels, legend, etc.
+#' @param per.n For dot density maps: how many people should each dot represent?
 #' @param ... additional arguments (ignored)
 #' @importFrom rlang ":=" UQ
 #' @export
