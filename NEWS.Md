@@ -1,7 +1,7 @@
-## iNZightMaps 2.1.2.9000
-__Release date__: TBA
+## iNZightMaps 2.2
+__Release date__: 13 August 2019
 
-
+- Add dot density maps
 
 
 ## iNZightMaps 2.1.2
