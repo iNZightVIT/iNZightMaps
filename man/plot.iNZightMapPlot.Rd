@@ -12,7 +12,7 @@
   aggregate = FALSE, current.seq = NULL, sparkline.type = "Absolute",
   scale.limits = NULL, regions.to.plot = NULL,
   keep.other.regions = TRUE, label.var = NULL, scale.label = 1,
-  scale.axis = 1, ...)
+  scale.axis = 1, per.n = 1000, ...)
 }
 \arguments{
 \item{x}{iNZightMapPlot object}
@@ -62,6 +62,8 @@
 \item{scale.label}{Scaling factor for region labels}
 
 \item{scale.axis}{Scaling factor for title, axis labels, legend, etc.}
+
+\item{per.n}{For dot density maps: how many people should each dot represent?}
 
 \item{...}{additional arguments (ignored)}
 }

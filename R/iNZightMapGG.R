@@ -1,3 +1,42 @@
+#' Generate dots randomly within regions
+#'
+#' @param data Map dataset
+#' @param var Variable to use to allocate dots
+#' @param total For proportion dot density maps, the total number of points
+#' @param per.dot For "dot per N" maps, the N that each dot reprsents
+#' @param prop Boolean to switch between proportional dot density/"dot per N" maps.
+#'
+#' @return An sf object containing a series of dots for each region.
+dot.density <- function(data, var, total = 300, per.dot = 1000, prop = FALSE) {
+  if (prop) {
+    if (!is.null(var) && var != "") {
+      point.counts <- round((data[[var]] / sum(data[[var]], na.rm = TRUE)) * total)
+    } else {
+      point.counts <- rep(5, nrow(data))
+    }
+  } else {
+    if (!is.null(var) && var != "") {
+      point.counts <- round(data[[var]] / per.dot)
+    } else {
+      point.counts <- rep(5, nrow(data))
+    }
+  }
+  
+  empty.geometries <- sf::st_is_empty(data$geometry)
+  data <- data[!empty.geometries, ]
+  point.counts <- point.counts[!empty.geometries]
+  # point.counts <- na.omit(point.counts)
+  point.counts[is.na(point.counts)] <- 0
+  
+  points <- suppressMessages(sf::st_sample(data, point.counts, exact = TRUE))
+  
+  points.sf <- do.call(c, tapply(points, rep(1:nrow(data), point.counts), sf::st_combine, simplify = FALSE))
+
+  non.zero <- which(point.counts > 0)
+  
+  sf::st_set_geometry(data[non.zero, ], points.sf)
+}
+
 #' @title Create iNZightMapPlot object
 #'
 #' @param data Dataset with values for rows of the map object
@@ -145,6 +184,7 @@ iNZightMapRegions <- function(obj) {
 #' @param label.var Variable to label regions by
 #' @param scale.label Scaling factor for region labels
 #' @param scale.axis Scaling factor for title, axis labels, legend, etc.
+#' @param per.n For dot density maps: how many people should each dot represent?
 #' @param ... additional arguments (ignored)
 #' @importFrom rlang ":=" UQ
 #' @export
@@ -158,6 +198,7 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
                                 scale.limits = NULL, 
                                 regions.to.plot = NULL, keep.other.regions = TRUE,
                                 label.var = NULL, scale.label = 1, scale.axis = 1,
+                                per.n = 1000,
                                 ...) {
     obj <- x
     if (multiple.vars) {
@@ -348,7 +389,17 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
                 attr(layers.list[["sparklines"]], "code") <- sprintf("ggsfextra::geom_sparkline(data = %s, aes(group = %s, line_x = %s, line_y = %s), fill_alpha = 0.75, plot_size = %f, sparkline_type = %s)",
                                                                      centroid.data.to.use, obj$region.var, obj$sequence.var, colour.var, size.const, sparkline.type)
             }
-        }
+        } else if (obj$type == "dotdensity") {
+            obj.dot <- dot.density(obj[[region.data.to.use]], var = size.var, per.dot = per.n, prop = FALSE)
+            base.ggplot <- ggplot2::ggplot(obj.dot)
+            
+            layers.list[["regions"]] <- ggplot2::geom_sf(data = obj[[region.data.to.use]], colour = scales::alpha("#000000", alpha.const),
+                                                         alpha = alpha.const, inherit.aes = FALSE)
+            
+            layers.list[["dots"]] <- ggplot2::geom_sf(data = obj.dot,
+                                                      mapping = ggplot2::aes_string(colour = colour.var),
+                                                      show.legend = "point", inherit.aes = FALSE, size = size.const)
+        } 
 
         if (!is.null(label.var)) {
             if (label.var == "use_colour_var") {
