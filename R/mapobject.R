@@ -55,7 +55,7 @@ plot.inzightmap <- function(x,
                             opacity,
                             map.zoom = -1,
                             type =
-                                c("terrain", "terrain-background", "terrain-labels", "terrain-lines", 
+                                c("terrain", "terrain-background", "terrain-labels", "terrain-lines",
                                   "toner", "toner-2010", "toner-2011", "toner-background", "toner-hybrid",
                                   "toner-labels", "toner-lines", "toner-lite", "watercolor"),
                             ..., env = parent.frame()) {

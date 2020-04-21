@@ -7,27 +7,27 @@
 ##' @export
 create.inz.mapplot <- function(obj) {
     map.type <- obj$opts$plot.features$maptype
-    
+
     ## Create the global object if it isn't already
     if (!"global.objects" %in% ls(envir = .GlobalEnv))
         assign("global.objects", list(), envir = .GlobalEnv)
 
     features <- obj$opts$plot.features
-    
+
     map.type <- obj$opts$plot.features$maptype
     opts <- obj$opts
-    
+
     ##  it's a "scatter" plot ...
     out <- NextMethod()
     out$map.type = map.type
-    
+
     ##here I do the 'shift' data, it should be done 'before-this-function' call
     ##should be re-write in the future
     #is.google.map(out$y,out$x)
-    
+
     out$x = lon.rescale(out$x)
     out$xlim = range(out$x)
-    
+
     ## sort out opacity
     if (!is.null(features$opacity)) {
         ## Move the computation to: function_def - plot.inzightmap; function_eval - iNZightPlots
@@ -35,9 +35,9 @@ create.inz.mapplot <- function(obj) {
         if (any(out$opacity < 1 ))
             out$pch = rep(19, length(out$pch))
     }
-    
+
     class(out) <- c("inzmap", class(out))
-    
+
     out$draw.axes <- FALSE
     out
 }
@@ -61,23 +61,23 @@ plot.inzmap <- function(x, gen, ...) {
     col.args <- gen$col.args
     plot.shp <- opts$plot.features$plot.shp
     zoom <- opts$plot.features$mapzoom
-    
+
     if (is.null(obj$opacity)) {
-        opacity <- 1            
+        opacity <- 1
     } else {
         opacity <- obj$opacity
     }
 
     grid.rect(gp = gpar(fill = "black"))
-    
+
     debug <- if (is.null(opts$debug)) FALSE else opts$debug
-    
+
     xlim <- current.viewport()$xscale
     ylim <- current.viewport()$yscale
     if (zoom < 0) {
         zoom <- ggmap::calc_zoom(xlim, ylim)
     }
-    
+
     ## the SIZE of the current viewport
     win.width <- convertWidth(current.viewport()$width, "mm", TRUE)
     win.height <- convertHeight(current.viewport()$height, "mm", TRUE)
@@ -88,11 +88,11 @@ plot.inzmap <- function(x, gen, ...) {
     bbox <- c(xlim[1], ylim[1], xlim[2], ylim[2])
     bgmap <- getMap(bbox = bbox, zoom = zoom, size = c(win.width, win.height),
         type = opts$plot.features$maptype)
-    
+
     # get.newmap <- needNewMap(bbox = c(xlim, ylim), size = size, SCALE = SCALE,
     #                          type = type, window = c(win.width, win.height))
 
-    
+
     ## need to come up with a better way of doing this!!
     # if (get.newmap) {
     #     getNewMap(lat.lim = ylim, lon.lim = xlim, SCALE = SCALE, type = type,
@@ -105,7 +105,7 @@ plot.inzmap <- function(x, gen, ...) {
     #     global.objects$maps$map.detail$type <<- type
     #     global.objects$maps$map.detail$points <<- cbind(obj$y, obj$x)
     # }
-        
+
     ptCols <- iNZightPlots:::colourPoints(obj$colby, col.args, opts)
     # ## passing the details inorder to redraw.
     # global.objects$maps$pf$cex <<- obj$propsize
@@ -113,23 +113,23 @@ plot.inzmap <- function(x, gen, ...) {
     # global.objects$maps$pf$lwd <<- opts$lwd.pt
     # global.objects$maps$pf$alpha <<- opts$alpha * opacity
     # global.objects$maps$pf$fill <<- obj$fill.pt
-    # global.objects$maps$pf$opacity <<- opacity  
-    # global.objects$maps$pf$pch <<- obj$pch    
+    # global.objects$maps$pf$opacity <<- opacity
+    # global.objects$maps$pf$pch <<- obj$pch
     # global.objects$maps$map.detail$num <<- 1
     # global.objects$maps$pf$click.points <<- c(mean(xlim),mean(ylim))
     # global.objects$maps$pf$bbox.record <<- c(xlim,ylim)
-    
+
     ## drawing~~~~
     mapGrob <- rasterGrob(bgmap, name = "background.map")
     grid.draw(mapGrob)
-    
+
     ## define the limit
     # tmp <- map.xylim(ylim,xlim,SCALE = SCALE)$window.lim
     # xl <- tmp[1:2]
     # yl <- tmp[3:4]
-    
+
     lims <- convertLimits(attr(bgmap, "bbox"), zoom)
-    
+
     ## setting the viewport
     vp <- viewport(
         height = grobHeight(mapGrob),
@@ -138,15 +138,15 @@ plot.inzmap <- function(x, gen, ...) {
         xscale = lims$x, yscale = rev(lims$y))
     pushViewport(vp)
     # grid.rect(gp = gpar(fill = "transparent"))
-    
+
     ## transform the points
     dd <- cbind(obj$y,obj$x)
     point <- latlon.xy(obj$y, obj$x, zoom)
-    
+
     ## other scatter plot things
     if (length(obj$x) == 0)
         return()
-    
+
     NotInView <- obj$x < min(xlim) | obj$x > max(xlim) | obj$y < min(ylim) | obj$y > max(ylim)
     obj$pch[NotInView] <- NA
     grid.points(point$x, point$y, pch = obj$pch,
@@ -156,7 +156,7 @@ plot.inzmap <- function(x, gen, ...) {
                          lwd = opts$lwd.pt, alpha = opts$alpha * opacity,
                          fill = if (obj$fill.pt == "fill") ptCols else obj$fill.pt),
                 name = "SCATTERPOINTS")
-    
+
 
     ## Connect by dots if they want it ...
     if (opts$join) {
@@ -171,13 +171,13 @@ plot.inzmap <- function(x, gen, ...) {
             ytmp <- lapply(levels(byy), function(c) subset(point$y, obj$colby == c))
 
             for (b in 1:length(levels(byy)))
-                grid.lines(xtmp$x, ytmp$y, default.units = "native",
+                grid.lines(xtmp[[b]], ytmp[[b]], default.units = "native",
                            gp =
                            gpar(lwd = opts$lwd, lty = opts$lty,
                                 col = col.args$f.cols[b]))
         }
     }
-        
+
     upViewport()
     invisible(NULL)
 }
