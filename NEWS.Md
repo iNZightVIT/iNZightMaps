@@ -1,3 +1,5 @@
+- fix handling of colour by and join points (simultaneously)
+
 ## iNZightMaps 2.2
 __Release date__: 13 August 2019
 
