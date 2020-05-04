@@ -1,4 +1,7 @@
+## iNZightMaps 2.2.9000
+
 - fix handling of colour by and join points (simultaneously)
+- move the `geom_sparkline` function from the `ggsfextra` package into `iNZightMaps`
 
 ## iNZightMaps 2.2
 __Release date__: 13 August 2019
