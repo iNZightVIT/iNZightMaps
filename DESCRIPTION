@@ -32,8 +32,7 @@ Imports:
 Suggests:
   sf,
   lwgeom,
-  rgeos,
-  ggsfextra
+  rgeos
 Additional_repositories: https://r.docker.stat.auckland.ac.nz
 Description: Simple plotting functions for geographical data.
 License: GPL-3 | file LICENSE

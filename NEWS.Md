@@ -1,6 +1,7 @@
 ## iNZightMaps 2.2.9000
 
 - fix handling of colour by and join points (simultaneously)
+- move the `geom_sparkline` function from the `ggsfextra` package into `iNZightMaps`
 - replace the `geom_sftext` from `ggsfextra` by the `geom_sf_text` function now included in `ggplot2`
 
 ## iNZightMaps 2.2
