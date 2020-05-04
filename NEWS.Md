@@ -1,4 +1,5 @@
 - fix handling of colour by and join points (simultaneously)
+- pass subset and size-by information through to plot title
 
 ## iNZightMaps 2.2
 __Release date__: 13 August 2019
