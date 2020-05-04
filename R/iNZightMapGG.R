@@ -407,9 +407,9 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
             }
 
             if (obj$type != "sparklines") {
-                layers.list[["sftext"]] <- ggsfextra::geom_sftext(data = obj[[centroid.data.to.use]], ggplot2::aes_string(label = label.var, colour = colour.var), size = scale.label, inherit.aes = FALSE)
+                layers.list[["sftext"]] <- ggplot2::geom_sf_text(data = obj[[region.data.to.use]], ggplot2::aes_string(label = label.var), size = scale.label, inherit.aes = FALSE)
             } else {
-                layers.list[["sftext"]] <- ggsfextra::geom_sftext(data = obj[["centroid.aggregate"]], ggplot2::aes_string(label = label.var), inherit.aes = FALSE)
+              layers.list[["sftext"]] <- ggplot2::geom_sf_text(data = obj[["region.aggregate"]], ggplot2::aes_string(label = label.var), inherit.aes = FALSE)
             }
         }
 
