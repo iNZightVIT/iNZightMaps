@@ -379,14 +379,14 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
                                                                   "")
 
             if (isTRUE(colour.var != "")) {
-                layers.list[["sparklines"]] <- ggsfextra::geom_sparkline(data = obj[[centroid.data.to.use]],
+                layers.list[["sparklines"]] <- geom_sparkline(data = obj[[centroid.data.to.use]],
                                                               ggplot2::aes_string(group = obj$region.var,
                                                                                   line_x = obj$sequence.var,
                                                                                   line_y = colour.var),
                                                               fill = "white", fill_alpha = 0.75,
                                                               inherit.aes = FALSE, plot_size = size.const,
                                                               sparkline_type = sparkline.type)
-                attr(layers.list[["sparklines"]], "code") <- sprintf("ggsfextra::geom_sparkline(data = %s, aes(group = %s, line_x = %s, line_y = %s), fill_alpha = 0.75, plot_size = %f, sparkline_type = %s)",
+                attr(layers.list[["sparklines"]], "code") <- sprintf("iNZightMaps::geom_sparkline(data = %s, aes(group = %s, line_x = %s, line_y = %s), fill_alpha = 0.75, plot_size = %f, sparkline_type = %s)",
                                                                      centroid.data.to.use, obj$region.var, obj$sequence.var, colour.var, size.const, sparkline.type)
             }
         } else if (obj$type == "dotdensity") {
