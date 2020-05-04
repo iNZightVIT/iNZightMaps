@@ -22,7 +22,6 @@ repos:
   docker: https://r.docker.stat.auckland.ac.nz
 
 r_github_packages:
-  - dkahle/ggmap
   - iNZightVIT/iNZightPlots@dev
 
 addons:

@@ -28,7 +28,7 @@ Imports:
   countrycode,
   iNZightPlots (>= 2.11.4.9000),
   methods,
-  ggmap (>= 2.7.900)
+  ggmap (>= 3.0.0)
 Suggests:
     sf,
     lwgeom,
