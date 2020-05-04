@@ -83,7 +83,7 @@ plot.inzightmap <- function(x,
 
     ## set the plot labels:
     if (is.null(mc$main))
-        mc$main <- paste("Map of", attr(x, "name"))
+        mc$main <- sprintf("Map of %s%%subset%%%%sizeby%%", attr(x, "name"))
     if (is.null(mc$xlab))
         mc$xlab <- ""
     if (is.null(mc$ylab))

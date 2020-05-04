@@ -26,13 +26,15 @@ Imports:
   maptools,
   RColorBrewer,
   countrycode,
-  iNZightPlots,
+  iNZightPlots (>= 2.11.4.9000),
   methods,
   ggmap (>= 2.7.900)
 Suggests:
     sf,
     lwgeom,
     rgeos,
+    ggsfextra,
+    testthat,
     covr
 Additional_repositories: https://r.docker.stat.auckland.ac.nz
 Description: Simple plotting functions for geographical data.
