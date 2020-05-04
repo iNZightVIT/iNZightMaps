@@ -379,14 +379,14 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
                                                                   "")
 
             if (isTRUE(colour.var != "")) {
-                layers.list[["sparklines"]] <- ggsfextra::geom_sparkline(data = obj[[centroid.data.to.use]],
+                layers.list[["sparklines"]] <- geom_sparkline(data = obj[[centroid.data.to.use]],
                                                               ggplot2::aes_string(group = obj$region.var,
                                                                                   line_x = obj$sequence.var,
                                                                                   line_y = colour.var),
                                                               fill = "white", fill_alpha = 0.75,
                                                               inherit.aes = FALSE, plot_size = size.const,
                                                               sparkline_type = sparkline.type)
-                attr(layers.list[["sparklines"]], "code") <- sprintf("ggsfextra::geom_sparkline(data = %s, aes(group = %s, line_x = %s, line_y = %s), fill_alpha = 0.75, plot_size = %f, sparkline_type = %s)",
+                attr(layers.list[["sparklines"]], "code") <- sprintf("iNZightMaps::geom_sparkline(data = %s, aes(group = %s, line_x = %s, line_y = %s), fill_alpha = 0.75, plot_size = %f, sparkline_type = %s)",
                                                                      centroid.data.to.use, obj$region.var, obj$sequence.var, colour.var, size.const, sparkline.type)
             }
         } else if (obj$type == "dotdensity") {
@@ -407,9 +407,9 @@ plot.iNZightMapPlot <- function(x, colour.var = NULL, size.var = NULL, alpha.var
             }
 
             if (obj$type != "sparklines") {
-                layers.list[["sftext"]] <- ggsfextra::geom_sftext(data = obj[[centroid.data.to.use]], ggplot2::aes_string(label = label.var, colour = colour.var), size = scale.label, inherit.aes = FALSE)
+                layers.list[["sftext"]] <- ggplot2::geom_sf_text(data = obj[[region.data.to.use]], ggplot2::aes_string(label = label.var), size = scale.label, inherit.aes = FALSE)
             } else {
-                layers.list[["sftext"]] <- ggsfextra::geom_sftext(data = obj[["centroid.aggregate"]], ggplot2::aes_string(label = label.var), inherit.aes = FALSE)
+              layers.list[["sftext"]] <- ggplot2::geom_sf_text(data = obj[["region.aggregate"]], ggplot2::aes_string(label = label.var), inherit.aes = FALSE)
             }
         }
 
