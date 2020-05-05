@@ -4,8 +4,14 @@
 \alias{col.fun}
 \title{Color Specification}
 \usage{
-col.fun(data, color.index, display = "hue", na.fill = "#F4A460",
-  offset = 0, col = "red")
+col.fun(
+  data,
+  color.index,
+  display = "hue",
+  na.fill = "#F4A460",
+  offset = 0,
+  col = "red"
+)
 }
 \arguments{
 \item{data}{a numeric vector that should lie on the range of [0,1].}

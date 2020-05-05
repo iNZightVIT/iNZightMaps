@@ -4,7 +4,8 @@
 \name{nzquakes}
 \alias{nzquakes}
 \title{Earthquakes in New Zealand}
-\format{A data frame with 334 rows and 12 variables:
+\format{
+A data frame with 334 rows and 12 variables:
 \describe{
   \item{Order}{For ordering the observations}
   \item{Latitude}{The latitude ("Y") positions of the earthquakes}
@@ -18,7 +19,8 @@
   \item{Day}{Day of the month the earthquake occurred on (1--31)}
   \item{Hour}{Hour of the day the earthquake occurred on (0--23)}
   \item{Minute}{Minute of the hour the earthquake occurred in (0--59)}
-}}
+}
+}
 \usage{
 nzquakes
 }

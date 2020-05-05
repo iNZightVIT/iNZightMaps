@@ -4,7 +4,8 @@
 \name{NSSATS}
 \alias{NSSATS}
 \title{National Survey of Substance Abuse Treatment Services}
-\format{A data frame with 57 rows and 25 variables:
+\format{
+A data frame with 57 rows and 25 variables:
 \describe{
   \item{STATE}{Two character state code}
   \item{OfferNonEnglish}{Proportion of facilities offering non-English language treatment}
@@ -31,7 +32,8 @@
   \item{DUIProgram}{Proportion of facilities offering a program for DUI/DWI offenders}
   \item{OfferSignLanguage}{Proportion of facilities offering treatment in sign language}
   \item{AnyPublicFunding}{Proportion of facilities that receive any federal, state, county, or local funds}
-}}
+}
+}
 \source{
 \href{https://wwwdasis.samhsa.gov/dasis2/nssats.htm}{National Survey of Substance Abuse Treatment Services (N-SSATS)}
 }
