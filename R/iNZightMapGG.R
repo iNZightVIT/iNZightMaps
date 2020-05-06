@@ -120,6 +120,8 @@ iNZightMapPlotRegion <- function(data, map, by.data, by.map, simplification.leve
                       centroid.aggregate = centroid.agg,
                       var.types = var.types,
                       map.vars = colnames(map))
+  
+  mapplot.obj$n_polygons <- polygons_per_region(mapplot.obj)
 
   class(mapplot.obj) <- c("iNZightMapPlot", "list")
   attr(mapplot.obj, "code") <- list(
