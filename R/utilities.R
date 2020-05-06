@@ -176,7 +176,7 @@ getMinMax <- function(obj, vars) {
 ##' @return Vector containing the number of polygons for each region of the map
 ##' @export
 polygons_per_region <- function(obj) {
-    data.to.use <- ifelse(mapObj$multiple.obs, "region.aggregate", "region.data")
+    data.to.use <- ifelse(obj$multiple.obs, "region.aggregate", "region.data")
     
     geo_types <- sf::st_geometry_type(obj[[data.to.use]])
     n_polygons <- numeric(length = length(geo_types))
