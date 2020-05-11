@@ -170,3 +170,18 @@ getMinMax <- function(obj, vars) {
     selected.data <- as.data.frame(obj$region.data)[, vars, drop = FALSE]
     range(selected.data[, sapply(selected.data, is.numeric)], na.rm = TRUE)
 }
+
+##' @title Get number of polygons for each region of a map
+##' @param obj iNZightMapPlot object
+##' @return Vector containing the number of polygons for each region of the map
+##' @export
+polygons_per_region <- function(obj) {
+    data.to.use <- ifelse(obj$multiple.obs, "region.aggregate", "region.data")
+    
+    geo_types <- sf::st_geometry_type(obj[[data.to.use]])
+    n_polygons <- numeric(length = length(geo_types))
+    n_polygons[geo_types == "POLYGON"] <- 1
+    n_polygons[geo_types == "MULTIPOLYGON"] <- lengths(sf::st_geometry(obj[[data.to.use]]))[geo_types == "MULTIPOLYGON"]
+    
+    n_polygons
+}
