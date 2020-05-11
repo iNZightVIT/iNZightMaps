@@ -26,7 +26,7 @@ Imports:
   maptools,
   RColorBrewer,
   countrycode,
-  iNZightPlots (>= 2.11.4.9000),
+  iNZightPlots (>= 2.11.5),
   methods,
   ggmap (>= 3.0.0)
 Suggests:
