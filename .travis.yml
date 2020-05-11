@@ -5,17 +5,24 @@ sudo: false
 cache: packages
 latex: false
 
-r:
-  - 3.2
-  - oldrel
-  - release
-  - devel
+matrix:
+  include:
+    - os: linux
+      r: 3.3
+    - os: linux
+      r: oldrel
+    - os: linux
+      r: release
+    - os: linux
+      r: devel
+  allow_failures:
+    - r: 3.3
 
 repos:
   docker: https://r.docker.stat.auckland.ac.nz
 
 r_github_packages:
-  - dkahle/ggmap
+  - iNZightVIT/iNZightPlots@dev
 
 addons:
   apt:
@@ -32,3 +39,5 @@ env:
   global:
   - _R_CHECK_FORCE_SUGGESTS_=false
 
+after_success:
+    - Rscript -e 'covr::codecov()'

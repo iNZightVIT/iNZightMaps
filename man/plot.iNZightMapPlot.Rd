@@ -4,15 +4,34 @@
 \alias{plot.iNZightMapPlot}
 \title{Plot an iNZightMapPlot}
 \usage{
-\method{plot}{iNZightMapPlot}(x, colour.var = NULL, size.var = NULL,
-  alpha.var = NULL, size.const = 1, alpha.const = 1,
-  multiple.vars = FALSE, main = NULL, xlab = "Longitude",
-  ylab = "Latitude", axis.labels = TRUE, datum.lines = TRUE,
-  darkTheme = NULL, projection = "Default", palette = NULL,
-  aggregate = FALSE, current.seq = NULL, sparkline.type = "Absolute",
-  scale.limits = NULL, regions.to.plot = NULL,
-  keep.other.regions = TRUE, label.var = NULL, scale.label = 1,
-  scale.axis = 1, per.n = 1000, ...)
+\method{plot}{iNZightMapPlot}(
+  x,
+  colour.var = NULL,
+  size.var = NULL,
+  alpha.var = NULL,
+  size.const = 1,
+  alpha.const = 1,
+  multiple.vars = FALSE,
+  main = NULL,
+  xlab = "Longitude",
+  ylab = "Latitude",
+  axis.labels = TRUE,
+  datum.lines = TRUE,
+  darkTheme = NULL,
+  projection = "Default",
+  palette = NULL,
+  aggregate = FALSE,
+  current.seq = NULL,
+  sparkline.type = "Absolute",
+  scale.limits = NULL,
+  regions.to.plot = NULL,
+  keep.other.regions = TRUE,
+  label.var = NULL,
+  scale.label = 1,
+  scale.axis = 1,
+  per.n = 1000,
+  ...
+)
 }
 \arguments{
 \item{x}{iNZightMapPlot object}

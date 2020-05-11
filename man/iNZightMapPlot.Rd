@@ -7,9 +7,16 @@
 \usage{
 iNZightMapPlot(data, map, type, ...)
 
-iNZightMapPlotRegion(data, map, by.data, by.map,
-  simplification.level = 0.01, multiple.obs = FALSE,
-  sequence.var = NULL, agg.type = "last")
+iNZightMapPlotRegion(
+  data,
+  map,
+  by.data,
+  by.map,
+  simplification.level = 0.01,
+  multiple.obs = FALSE,
+  sequence.var = NULL,
+  agg.type = "last"
+)
 }
 \arguments{
 \item{data}{Dataset with values for rows of the map object}

@@ -4,14 +4,16 @@
 \name{heart}
 \alias{heart}
 \title{Cardiac-related mortality in New Zealand DHBs}
-\format{A data frame with 21 rows and 5 variables:
+\format{
+A data frame with 21 rows and 5 variables:
 \describe{
   \item{NAME}{DHB name}
   \item{Char.Code}{Character code of the DHB}
   \item{heart}{Number of cardiac-related deaths in the total DHB population}
   \item{maori}{Number of cardiac-related deaths in the Maori population}
   \item{total}{Number of deaths in the total DHB population due to any cause}
-}}
+}
+}
 \usage{
 heart
 }

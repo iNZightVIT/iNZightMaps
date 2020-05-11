@@ -55,7 +55,7 @@ plot.inzightmap <- function(x,
                             opacity,
                             map.zoom = -1,
                             type =
-                                c("terrain", "terrain-background", "terrain-labels", "terrain-lines", 
+                                c("terrain", "terrain-background", "terrain-labels", "terrain-lines",
                                   "toner", "toner-2010", "toner-2011", "toner-background", "toner-hybrid",
                                   "toner-labels", "toner-lines", "toner-lite", "watercolor"),
                             ..., env = parent.frame()) {
@@ -83,7 +83,7 @@ plot.inzightmap <- function(x,
 
     ## set the plot labels:
     if (is.null(mc$main))
-        mc$main <- paste("Map of", attr(x, "name"))
+        mc$main <- sprintf("Map of %s%%subset%%%%sizeby%%", attr(x, "name"))
     if (is.null(mc$xlab))
         mc$xlab <- ""
     if (is.null(mc$ylab))

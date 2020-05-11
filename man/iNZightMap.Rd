@@ -7,11 +7,16 @@
 \usage{
 iNZightMap(lat, lon, data, name = deparse(substitute(data)))
 
-\method{plot}{inzightmap}(x, opacity, map.zoom = -1,
-  type = c("terrain", "terrain-background", "terrain-labels",
-  "terrain-lines", "toner", "toner-2010", "toner-2011", "toner-background",
-  "toner-hybrid", "toner-labels", "toner-lines", "toner-lite",
-  "watercolor"), ..., env = parent.frame())
+\method{plot}{inzightmap}(
+  x,
+  opacity,
+  map.zoom = -1,
+  type = c("terrain", "terrain-background", "terrain-labels", "terrain-lines", "toner",
+    "toner-2010", "toner-2011", "toner-background", "toner-hybrid", "toner-labels",
+    "toner-lines", "toner-lite", "watercolor"),
+  ...,
+  env = parent.frame()
+)
 }
 \arguments{
 \item{lat}{a formula specifying the name of the latitude variable in \code{data}}
