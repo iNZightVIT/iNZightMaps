@@ -30,11 +30,11 @@ Imports:
   methods,
   ggmap (>= 3.0.0)
 Suggests:
-    sf,
-    lwgeom,
-    rgeos,
-    testthat,
-    covr
+  sf,
+  lwgeom,
+  rgeos,
+  testthat,
+  covr
 Additional_repositories: https://r.docker.stat.auckland.ac.nz
 Description: Simple plotting functions for geographical data.
 License: GPL-3
