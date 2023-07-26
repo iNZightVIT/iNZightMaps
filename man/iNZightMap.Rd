@@ -49,11 +49,11 @@ Create an iNZight Map Object and pass to the plot
 The plot will download a map that contains all of the points. The size is limited by
 the fixed zoom levels provided by Google's Static Maps API.
 }
-\section{Methods (by generic)}{
+\section{Functions}{
 \itemize{
-\item \code{plot}: Plot an \code{inzightmap} object
-}}
+\item \code{plot(inzightmap)}: Plot an \code{inzightmap} object
 
+}}
 \author{
 Tom Elliott
 }

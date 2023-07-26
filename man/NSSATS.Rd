@@ -41,7 +41,7 @@ A data frame with 57 rows and 25 variables:
 NSSATS
 }
 \description{
-A dataset containing the proportion of substance abuse treatment facilities in 
+A dataset containing the proportion of substance abuse treatment facilities in
 a given state that meet a criteria given by the variable name.
 }
 \keyword{datasets}

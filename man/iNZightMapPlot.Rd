@@ -44,6 +44,6 @@ Create iNZightMapPlot object
 }
 \section{Functions}{
 \itemize{
-\item \code{iNZightMapPlotRegion}: Constructs a iNZightMapPlot using region values.
-}}
+\item \code{iNZightMapPlotRegion()}: Constructs a iNZightMapPlot using region values.
 
+}}
