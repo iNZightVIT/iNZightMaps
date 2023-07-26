@@ -1,6 +1,6 @@
 Package: iNZightMaps
 Type: Package
-Title: iNZightMaps
+Title: Map Plotting Functions for iNZight
 Version: 2.3.1
 Authors@R: c(person("Daniel", "Barnett", role = c("aut"),
                     email = "dbar344@aucklanduni.ac.nz"),
@@ -36,7 +36,7 @@ Suggests:
   testthat,
   covr
 Additional_repositories: https://r.docker.stat.auckland.ac.nz
-Description: Simple plotting functions for geographical data.
+Description: Simple plotting functions for geographical data. Users can plot positional data on a map, or plot a choropleth map of a variable. The package also includes a number of datasets for use with the functions.
 License: GPL-3
 Encoding: UTF-8
 Language: en-GB
