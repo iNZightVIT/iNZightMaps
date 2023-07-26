@@ -9,8 +9,9 @@ create.inz.mapplot <- function(obj) {
     map.type <- obj$opts$plot.features$maptype
 
     ## Create the global object if it isn't already
-    if (!"global.objects" %in% ls(envir = .GlobalEnv))
+    if (!"global.objects" %in% ls(envir = .GlobalEnv)) {
         assign("global.objects", list(), envir = .GlobalEnv)
+    }
 
     features <- obj$opts$plot.features
 
@@ -19,21 +20,22 @@ create.inz.mapplot <- function(obj) {
 
     ##  it's a "scatter" plot ...
     out <- NextMethod()
-    out$map.type = map.type
+    out$map.type <- map.type
 
-    ##here I do the 'shift' data, it should be done 'before-this-function' call
-    ##should be re-write in the future
-    #is.google.map(out$y,out$x)
+    ## here I do the 'shift' data, it should be done 'before-this-function' call
+    ## should be re-write in the future
+    # is.google.map(out$y,out$x)
 
-    out$x = lon.rescale(out$x)
-    out$xlim = range(out$x)
+    out$x <- lon.rescale(out$x)
+    out$xlim <- range(out$x)
 
     ## sort out opacity
     if (!is.null(features$opacity)) {
         ## Move the computation to: function_def - plot.inzightmap; function_eval - iNZightPlots
         out$opacity <- obj$df[[features$opacity]]
-        if (any(out$opacity < 1 ))
-            out$pch = rep(19, length(out$pch))
+        if (any(out$opacity < 1)) {
+            out$pch <- rep(19, length(out$pch))
+        }
     }
 
     class(out) <- c("inzmap", class(out))
@@ -86,8 +88,10 @@ plot.inzmap <- function(x, gen, ...) {
     type <- obj$map.type
 
     bbox <- c(xlim[1], ylim[1], xlim[2], ylim[2])
-    bgmap <- getMap(bbox = bbox, zoom = zoom, size = c(win.width, win.height),
-        type = opts$plot.features$maptype)
+    bgmap <- getMap(
+        bbox = bbox, zoom = zoom, size = c(win.width, win.height),
+        type = opts$plot.features$maptype
+    )
 
     # get.newmap <- needNewMap(bbox = c(xlim, ylim), size = size, SCALE = SCALE,
     #                          type = type, window = c(win.width, win.height))
@@ -134,47 +138,62 @@ plot.inzmap <- function(x, gen, ...) {
     vp <- viewport(
         height = grobHeight(mapGrob),
         width = grobWidth(mapGrob),
-        name = 'VP:PLOTlayout',
-        xscale = lims$x, yscale = rev(lims$y))
+        name = "VP:PLOTlayout",
+        xscale = lims$x, yscale = rev(lims$y)
+    )
     pushViewport(vp)
     # grid.rect(gp = gpar(fill = "transparent"))
 
     ## transform the points
-    dd <- cbind(obj$y,obj$x)
+    dd <- cbind(obj$y, obj$x)
     point <- latlon.xy(obj$y, obj$x, zoom)
 
     ## other scatter plot things
-    if (length(obj$x) == 0)
+    if (length(obj$x) == 0) {
         return()
+    }
 
     NotInView <- obj$x < min(xlim) | obj$x > max(xlim) | obj$y < min(ylim) | obj$y > max(ylim)
     obj$pch[NotInView] <- NA
-    grid.points(point$x, point$y, pch = obj$pch,
-                gp =
-                    gpar(col = ptCols,
-                         cex = obj$propsize,
-                         lwd = opts$lwd.pt, alpha = opts$alpha * opacity,
-                         fill = if (obj$fill.pt == "fill") ptCols else obj$fill.pt),
-                name = "SCATTERPOINTS")
+    grid.points(point$x, point$y,
+        pch = obj$pch,
+        gp =
+            gpar(
+                col = ptCols,
+                cex = obj$propsize,
+                lwd = opts$lwd.pt, alpha = opts$alpha * opacity,
+                fill = if (obj$fill.pt == "fill") ptCols else obj$fill.pt
+            ),
+        name = "SCATTERPOINTS"
+    )
 
 
     ## Connect by dots if they want it ...
     if (opts$join) {
         if (length(unique(obj$colby)) <= 1 | !opts$lines.by) {
-            grid.lines(point$x, point$y, default.units = "native",
-                       gp =
-                           gpar(lwd = opts$lwd, lty = opts$lty,
-                                col = opts$col.line))
+            grid.lines(point$x, point$y,
+                default.units = "native",
+                gp =
+                    gpar(
+                        lwd = opts$lwd, lty = opts$lty,
+                        col = opts$col.line
+                    )
+            )
         } else {
-            byy <- as.factor(obj$colby)  # pseudo-by-variable
+            byy <- as.factor(obj$colby) # pseudo-by-variable
             xtmp <- lapply(levels(byy), function(c) subset(point$x, obj$colby == c))
             ytmp <- lapply(levels(byy), function(c) subset(point$y, obj$colby == c))
 
-            for (b in 1:length(levels(byy)))
-                grid.lines(xtmp[[b]], ytmp[[b]], default.units = "native",
-                           gp =
-                           gpar(lwd = opts$lwd, lty = opts$lty,
-                                col = col.args$f.cols[b]))
+            for (b in 1:length(levels(byy))) {
+                grid.lines(xtmp[[b]], ytmp[[b]],
+                    default.units = "native",
+                    gp =
+                        gpar(
+                            lwd = opts$lwd, lty = opts$lty,
+                            col = col.args$f.cols[b]
+                        )
+                )
+            }
         }
     }
 
@@ -236,8 +255,9 @@ adjustBbox <- function(bbox, ratio, zoom) {
     }
 
     newcorners <-
-        do.call(rbind, apply(tile.bounds, 1, function(x)
-            ggmap::XY2LonLat(x[1], x[2], zoom, x[3], x[4])))
+        do.call(rbind, apply(tile.bounds, 1, function(x) {
+            ggmap::XY2LonLat(x[1], x[2], zoom, x[3], x[4])
+        }))
 
     bbox <- c(t(apply(newcorners, 2, range)))
     bbox
@@ -249,15 +269,15 @@ getStamenMap <- function(bbox, zoom, type) {
     ## so we need to fetch two maps and stitch them together
     if (bbox[1] < -180) {
         ## need to test this
-        bbox[c(1,3)] <- bbox[c(1,3)] + 360
+        bbox[c(1, 3)] <- bbox[c(1, 3)] + 360
     }
-        # bbox.right <- bbox.left <- bbox
-        # bbox.left[3] <- 179.99999
-        # bbox.right[1] <- -180
-        # bbox.right[3] <- bbox.right[3] - 360
-        # map.left <- ggmap::get_stamenmap(bbox.left, zoom = zoom, maptype = type)
-        # map.right <- ggmap::get_stamenmap(bbox.right, zoom = zoom, maptype = type)
-        # map <- grDevices::as.raster(cbind(as.matrix(map.left), as.matrix(map.right)))
+    # bbox.right <- bbox.left <- bbox
+    # bbox.left[3] <- 179.99999
+    # bbox.right[1] <- -180
+    # bbox.right[3] <- bbox.right[3] - 360
+    # map.left <- ggmap::get_stamenmap(bbox.left, zoom = zoom, maptype = type)
+    # map.right <- ggmap::get_stamenmap(bbox.right, zoom = zoom, maptype = type)
+    # map <- grDevices::as.raster(cbind(as.matrix(map.left), as.matrix(map.right)))
     if (bbox[3] > 180) {
         bbox.right <- bbox.left <- bbox
         bbox.left[3] <- 179.99999

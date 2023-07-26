@@ -3,7 +3,7 @@
 ##' @return An sf object containing the map
 ##' @export
 retrieveMap <- function(filename) {
-    if(grepl(".rds$", filename)) {
+    if (grepl(".rds$", filename)) {
         readRDS(filename)
     } else {
         sf::st_read(filename)
@@ -48,18 +48,20 @@ matchVariables <- function(data.vect, map.vect) {
     data.is.na <- is.na(data.vect)
     data.n.obs <- table(data.vect)
     data.vect <- as.character(unique(data.vect[!data.is.na]))
-    map.vect <-  as.character(map.vect)
+    map.vect <- as.character(map.vect)
 
     matches <- match(data.vect, map.vect)
     data.matched <- !is.na(matches)
     map.matched <- logical(length(map.vect))
     map.matched[matches] <- TRUE
 
-    list(data.vect = data.vect,
-         data.matched = data.matched,
-         map.matched = map.matched,
-         matches = matches,
-         multiple.obs = isTRUE(any(data.n.obs > 1)))
+    list(
+        data.vect = data.vect,
+        data.matched = data.matched,
+        map.matched = map.matched,
+        matches = matches,
+        multiple.obs = isTRUE(any(data.n.obs > 1))
+    )
 }
 
 ##' @title Get available map projections
@@ -82,18 +84,22 @@ iNZightMapCountryISO <- function() {
 ##' @export
 read.mapmetadata <- function(shapefileDir) {
     if (!file.exists(file.path(shapefileDir, "metadata.gz"))) {
-        tryCatch({
-            utils::download.file("https://www.stat.auckland.ac.nz/~wild/data/shapefiles/metadata",
-                          file.path(shapefileDir, "metadata.gz"), mode = "wb")
+        tryCatch(
+            {
+                utils::download.file("https://www.stat.auckland.ac.nz/~wild/data/shapefiles/metadata",
+                    file.path(shapefileDir, "metadata.gz"),
+                    mode = "wb"
+                )
             },
-                 error = function(e) stop("Cannot download metadata file.")
-                 )
+            error = function(e) stop("Cannot download metadata file.")
+        )
     }
 
     metadata <- scan(file.path(shapefileDir, "metadata.gz"),
-                     what = rep("character", 3), fill = TRUE,
-                     comment.char = ";", sep = "\t",
-                     fileEncoding = "UTF-8")
+        what = rep("character", 3), fill = TRUE,
+        comment.char = ";", sep = "\t",
+        fileEncoding = "UTF-8"
+    )
 
 
     metadata <- matrix(metadata, ncol = 3, byrow = TRUE)
@@ -110,13 +116,15 @@ download.shapefiles <- function(dirURL, currPath) {
     curr.links <- XML::getHTMLLinks(rawToChar(curl::curl_fetch_memory(dirURL)$content))
     curr.dirs <- curr.links[grep("/$", curr.links)]
     curr.files <- curr.links[grep("\\.(rds|shp)", curr.links)]
-    if (!dir.exists(currPath) && !dir.create(currPath))
+    if (!dir.exists(currPath) && !dir.create(currPath)) {
         stop("Failed to create directory")
+    }
     for (filename in curr.files) {
         if (!file.exists(file.path(currPath, filename))) {
             utils::download.file(paste0(dirURL, filename),
-                          file.path(currPath, filename),
-                          mode = "wb")
+                file.path(currPath, filename),
+                mode = "wb"
+            )
         }
     }
 
@@ -134,9 +142,11 @@ decodeMapDir <- function(mapdir.mat) {
     dir.vect <- as.character(mapdir.mat[, "x"])
 
     for (i in which(have.tidy)) {
-        dir.vect[i] <- sub("/[-_\\df.A-z0-9]+\\.[A-z]+$",
-                           paste0("/",mapdir.mat[i, "tidy_filename"]),
-                           dir.vect[i])
+        dir.vect[i] <- sub(
+            "/[-_\\df.A-z0-9]+\\.[A-z]+$",
+            paste0("/", mapdir.mat[i, "tidy_filename"]),
+            dir.vect[i]
+        )
     }
 
     for (i in which(!have.tidy)) {

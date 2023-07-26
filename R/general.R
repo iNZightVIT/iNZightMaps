@@ -38,7 +38,9 @@ lon.rescale <- function(lon) {
 ##' @details if ratio < 1 then zoom in, if ratio > 1 then zoom out, if ratio = 1 then shift the plot.
 ##' @author Jason
 ##' @export
-ClickOnZoom <- function(...) { NULL }
+ClickOnZoom <- function(...) {
+    NULL
+}
 # ClickOnZoom <- function(ratio = 1, resize = FALSE, p.center = global.objects$maps$pf$click.points) {
 #     global.objects$maps$map.detail$num <<- global.objects$maps$map.detail$num + 1
 #     xlim <- global.objects$maps$map.detail$bbox[1:2]
@@ -116,7 +118,8 @@ ClickOnZoom <- function(...) { NULL }
 ##' @author Jason
 ##' @export
 rezoom <- function(zoom) {
-    if(zoom > 2| zoom < 0.1)
-        stop('invalid zoom')
+    if (zoom > 2 | zoom < 0.1) {
+        stop("invalid zoom")
+    }
     ClickOnZoom(ratio = zoom, resize = TRUE)
 }

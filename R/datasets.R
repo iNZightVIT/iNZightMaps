@@ -21,8 +21,8 @@
 "nzquakes"
 
 #' Cardiac-related mortality in New Zealand DHBs
-#' 
-#' Number of cardiac-related deaths in each DHB for a single year. 
+#'
+#' Number of cardiac-related deaths in each DHB for a single year.
 #' @format A data frame with 21 rows and 5 variables:
 #' \describe{
 #'   \item{NAME}{DHB name}
@@ -34,10 +34,10 @@
 "heart"
 
 #' National Survey of Substance Abuse Treatment Services
-#' 
-#' A dataset containing the proportion of substance abuse treatment facilities in 
-#' a given state that meet a criteria given by the variable name. 
-#' 
+#'
+#' A dataset containing the proportion of substance abuse treatment facilities in
+#' a given state that meet a criteria given by the variable name.
+#'
 #' @format A data frame with 57 rows and 25 variables:
 #' \describe{
 #'   \item{STATE}{Two character state code}
@@ -66,6 +66,6 @@
 #'   \item{OfferSignLanguage}{Proportion of facilities offering treatment in sign language}
 #'   \item{AnyPublicFunding}{Proportion of facilities that receive any federal, state, county, or local funds}
 #' }
-#' 
+#'
 #' @source \href{https://wwwdasis.samhsa.gov/dasis2/nssats.htm}{National Survey of Substance Abuse Treatment Services (N-SSATS)}
 "NSSATS"

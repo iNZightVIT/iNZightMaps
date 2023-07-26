@@ -13,8 +13,9 @@
 ##'
 ##' @export
 iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
-    if (missing(data) || is.null(data))
+    if (missing(data) || is.null(data)) {
         stop("iNZightMaps required you to use a data.frame.")
+    }
 
     attr(data, "name") <- name
 
@@ -55,9 +56,11 @@ plot.inzightmap <- function(x,
                             opacity,
                             map.zoom = -1,
                             type =
-                                c("terrain", "terrain-background", "terrain-labels", "terrain-lines",
-                                  "toner", "toner-2010", "toner-2011", "toner-background", "toner-hybrid",
-                                  "toner-labels", "toner-lines", "toner-lite", "watercolor"),
+                                c(
+                                    "terrain", "terrain-background", "terrain-labels", "terrain-lines",
+                                    "toner", "toner-2010", "toner-2011", "toner-background", "toner-hybrid",
+                                    "toner-labels", "toner-lines", "toner-lite", "watercolor"
+                                ),
                             ..., env = parent.frame()) {
     mc <- match.call()
 
@@ -78,16 +81,20 @@ plot.inzightmap <- function(x,
             function(x, r = 0.2) {
                 ## value between min and max -> 0 and 1 -> 0.1 and 1 (* overall opacity)
                 (x - min(x, na.rm = TRUE)) / diff(range(x, na.rm = TRUE)) * (1 - r) + r
-            }), .Names = opacity)
+            }
+        ), .Names = opacity)
     }
 
     ## set the plot labels:
-    if (is.null(mc$main))
+    if (is.null(mc$main)) {
         mc$main <- sprintf("Map of %s%%subset%%%%sizeby%%", attr(x, "name"))
-    if (is.null(mc$xlab))
+    }
+    if (is.null(mc$xlab)) {
         mc$xlab <- ""
-    if (is.null(mc$ylab))
+    }
+    if (is.null(mc$ylab)) {
         mc$ylab <- ""
+    }
 
 
 

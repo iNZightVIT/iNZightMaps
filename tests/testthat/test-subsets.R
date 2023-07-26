@@ -17,7 +17,7 @@ test_that("Subsetting by two variables includes necessary labels", {
         "Map of nzquakes subset by Felt and NorMidSth"
     )
 
-    plot(m, g1 = Felt, g1.level="N", g2 = NorMidSth, g2.level = "South")
+    plot(m, g1 = Felt, g1.level = "N", g2 = NorMidSth, g2.level = "South")
     expect_equal(
         grid.get("inz-main-title")$label,
         "Map of nzquakes subset by Felt, for NorMidSth = South"

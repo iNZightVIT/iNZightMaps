@@ -9,40 +9,39 @@
 ##' @import maptools
 ##' @importFrom methods slot
 ##' @export
-shape.extract = function(shp,column.index = 2)
-{
-
-    polygon.data = list()
-    j = 0
-    col.index = 0
-    poly.out = length(shp@polygons)
-    index = 0
-    for(i in 1:poly.out)
+shape.extract <- function(shp, column.index = 2) {
+    polygon.data <- list()
+    j <- 0
+    col.index <- 0
+    poly.out <- length(shp@polygons)
+    index <- 0
+    for (i in 1:poly.out)
     {
-        poly.in = length(shp@polygons[[i]]@Polygons)
-        col.index[i] = poly.in
-        for(ii in 1:poly.in)
+        poly.in <- length(shp@polygons[[i]]@Polygons)
+        col.index[i] <- poly.in
+        for (ii in 1:poly.in)
         {
-            j = j + 1
-            polygon.data[j] = list(shp@polygons[[i]]@Polygons[[ii]]@coords)
-            index[j] = dim(polygon.data[[j]])[1]
+            j <- j + 1
+            polygon.data[j] <- list(shp@polygons[[i]]@Polygons[[ii]]@coords)
+            index[j] <- dim(polygon.data[[j]])[1]
         }
-
     }
-    latlon = do.call(rbind,polygon.data)
-    latlon.data = data.frame(latlon = latlon)
-	colnames(latlon.data) = c('lon.x','lat.y')
-	region = shp[[column.index]]
-    cents = coordinates(shp)
-    area = sapply(slot(shp, "polygons"), slot, "area")
-    max.area = tapply(area,region,max)
-    i.region = region[area %in% max.area]
-    center = cents[area %in% max.area,]
-    center.region = data.frame(lon.x = center[,1], lat.y = center[,2], i.region = i.region)
-    obj = list(latlon = latlon.data,center.region = center.region,  ## data frame
-                each = index,region = region,col.index = col.index) ## list
+    latlon <- do.call(rbind, polygon.data)
+    latlon.data <- data.frame(latlon = latlon)
+    colnames(latlon.data) <- c("lon.x", "lat.y")
+    region <- shp[[column.index]]
+    cents <- coordinates(shp)
+    area <- sapply(slot(shp, "polygons"), slot, "area")
+    max.area <- tapply(area, region, max)
+    i.region <- region[area %in% max.area]
+    center <- cents[area %in% max.area, ]
+    center.region <- data.frame(lon.x = center[, 1], lat.y = center[, 2], i.region = i.region)
+    obj <- list(
+        latlon = latlon.data, center.region = center.region, ## data frame
+        each = index, region = region, col.index = col.index
+    ) ## list
     class(obj) <- c("shape.object")
-	obj
+    obj
 }
 
 ##' @title Transform the data into the range of [0,1].
@@ -51,67 +50,57 @@ shape.extract = function(shp,column.index = 2)
 ##' @param data.range ??? range of \code{x}
 ##' @param mean ??? mean of \code{x}
 ##' @param sd ??? standard deviation of \code{x}
-##' @param max.prob ??? 
+##' @param max.prob ???
 ##' @return a transformed numeric vector.
 ##' @author Jason Wen
 ##' @importFrom stats dnorm
 ##' @export
-data.trans = function(x,transform = 'linear',data.range,mean,sd,max.prob)
-{
-
-    a = x
-    b = a - min(data.range,na.rm = TRUE)
-    transform.option = c('linear','log','sqrt','exp','power','normal')
-    impossible.number = 0.091823021983
-    bio.color = c('bi.polar')
-    if(!(transform %in% transform.option))
-    {
+data.trans <- function(x, transform = "linear", data.range, mean, sd, max.prob) {
+    a <- x
+    b <- a - min(data.range, na.rm = TRUE)
+    transform.option <- c("linear", "log", "sqrt", "exp", "power", "normal")
+    impossible.number <- 0.091823021983
+    bio.color <- c("bi.polar")
+    if (!(transform %in% transform.option)) {
         stop("Invaild transform method,please select one method from:
             'linear','log','sqrt','exp','power','normal'")
     }
 
 
     switch(transform,
-        linear =
-		{
-			b = b
-			data.length = diff(data.range)
-		},
-        log =
-		{
-			b = log(b + 1)
-			data.length = log(max(data.range))
-		},
-        sqrt =
-		{
-			b = sqrt(b)
-			data.length = sqrt(max(data.range))
-		},
-        exp =
-		{
-			b = exp(b)
-			data.length = exp(max(data.range))
-
-			},
-        power =
-		{
-			b = b^2
-			data.length = max(data.range)^2
-		},
-        normal =
-        {
-            x = (a - mean)/sd
-            b = dnorm(x,0,1)
-			data.length = max.prob
+        linear = {
+            b <- b
+            data.length <- diff(data.range)
+        },
+        log = {
+            b <- log(b + 1)
+            data.length <- log(max(data.range))
+        },
+        sqrt = {
+            b <- sqrt(b)
+            data.length <- sqrt(max(data.range))
+        },
+        exp = {
+            b <- exp(b)
+            data.length <- exp(max(data.range))
+        },
+        power = {
+            b <- b^2
+            data.length <- max(data.range)^2
+        },
+        normal = {
+            x <- (a - mean) / sd
+            b <- dnorm(x, 0, 1)
+            data.length <- max.prob
         },
     )
 
-    percent.data = b/data.length
-    if(length(a) > 1)
+    percent.data <- b / data.length
+    if (length(a) > 1) {
         percent.data
-        else
-            1
-
+    } else {
+        1
+    }
 }
 
 ##' re-order the region name in shape file
@@ -121,11 +110,10 @@ data.trans = function(x,transform = 'linear',data.range,mean,sd,max.prob)
 ##' @param data.region a character vector.
 ##' @return an integer vector.
 ##' @author Jason Wen
-order.match = function(shp.region,data.region)
-{
-    order = match(shp.region,data.region)
-    orderd.data = order
-    na.data = shp.region[is.na(orderd.data)]
+order.match <- function(shp.region, data.region) {
+    order <- match(shp.region, data.region)
+    orderd.data <- order
+    na.data <- shp.region[is.na(orderd.data)]
     orderd.data
 }
 
@@ -143,126 +131,98 @@ order.match = function(shp.region,data.region)
 ##' @importFrom grDevices cm.colors col2rgb gray hcl heat.colors rainbow rgb terrain.colors topo.colors
 ##' @importFrom stats runif
 ##' @details hcl,HCL Color Specification, whith c = 35 and l = 85 see \link{hcl}. hue, when display = 'hue', then the 'col' arg need to be specified. The alpha will depend on the data, see \link{rgb}. rainbow,terrain,topo,cm are the method from \link{RColorBrewer}. r,n , the color filled randomly expect n will fill the entire map even the region is unmatch. e, equal color for all matched region.
-col.fun = function(data,color.index,
-                    display = 'hue',na.fill = '#F4A460',offset = 0,col = 'red')
-{
-    display.option = c('hcl','hue','heat','cm','rainbow','terrain','topo','cm','bi.polar','r','n','gray','e')
-    impossible.number = 0.091823021983
-    bio.color = c('bi.polar')
-    if(!(display %in% display.option))
-    {
+col.fun <- function(data, color.index,
+                    display = "hue", na.fill = "#F4A460", offset = 0, col = "red") {
+    display.option <- c("hcl", "hue", "heat", "cm", "rainbow", "terrain", "topo", "cm", "bi.polar", "r", "n", "gray", "e")
+    impossible.number <- 0.091823021983
+    bio.color <- c("bi.polar")
+    if (!(display %in% display.option)) {
         stop("display method not found,please select one method from:
             'hcl','hue','heat','cm','rainbow','terrain','topo','cm','bi.polar','r','n','grat','e' ")
     }
 
-    data = round(data,2)
-    if(display %in% bio.color)
-    {
-        fill.float = ifelse(is.na(data) == TRUE, impossible.number,data)
-    }else
-    {
-        fill.float = ifelse(is.na(data) == TRUE, impossible.number,data * (1 - offset) + (offset))
+    data <- round(data, 2)
+    if (display %in% bio.color) {
+        fill.float <- ifelse(is.na(data) == TRUE, impossible.number, data)
+    } else {
+        fill.float <- ifelse(is.na(data) == TRUE, impossible.number, data * (1 - offset) + (offset))
     }
-    ###the color can not be offset if it is bio-color
-    ###display transform
+    ### the color can not be offset if it is bio-color
+    ### display transform
     switch(display,
-
-        hcl =
-		{
-			fill.col = hcl(as.numeric(fill.float)*100,l = 85)
-		},
-
-        hue =
-        {
-            char.col.trans = col2rgb(col)/255
-            fill.col =rgb(char.col.trans[1],char.col.trans[2],char.col.trans[3],fill.float)
+        hcl = {
+            fill.col <- hcl(as.numeric(fill.float) * 100, l = 85)
         },
-
-        heat =
-        {
-            over.col = heat.colors(length(color.index) * 100 + 1)
-            orderd.col = over.col[length(over.col):1]
-            id = fill.float * length(color.index) * 100 + 1
-            fill.col = orderd.col[id]
+        hue = {
+            char.col.trans <- col2rgb(col) / 255
+            fill.col <- rgb(char.col.trans[1], char.col.trans[2], char.col.trans[3], fill.float)
         },
-
-        rainbow =
-        {
-            over.col = rainbow(length(color.index) * 100 + 1)
-            orderd.col = over.col
-            id = fill.float * length(color.index) * 100 + 1
-            fill.col = orderd.col[id]
+        heat = {
+            over.col <- heat.colors(length(color.index) * 100 + 1)
+            orderd.col <- over.col[length(over.col):1]
+            id <- fill.float * length(color.index) * 100 + 1
+            fill.col <- orderd.col[id]
         },
-
-        terrain =
-        {
-            over.col = terrain.colors(length(color.index) * 100 + 1)
-            orderd.col = over.col
-            id = fill.float * length(color.index) * 100 + 1
-            fill.col = orderd.col[id]
+        rainbow = {
+            over.col <- rainbow(length(color.index) * 100 + 1)
+            orderd.col <- over.col
+            id <- fill.float * length(color.index) * 100 + 1
+            fill.col <- orderd.col[id]
         },
-
-        topo =
-        {
-            over.col = topo.colors(length(color.index) * 100 + 1)
-            orderd.col = over.col
-            id = fill.float * length(color.index) * 100 + 1
-            fill.col = orderd.col[id]
+        terrain = {
+            over.col <- terrain.colors(length(color.index) * 100 + 1)
+            orderd.col <- over.col
+            id <- fill.float * length(color.index) * 100 + 1
+            fill.col <- orderd.col[id]
         },
-
-        cm =
-        {
-            over.col = cm.colors(length(color.index) * 100 + 1)
-            orderd.col = over.col
-            id = fill.float * length(color.index) * 100 + 1
-            fill.col = orderd.col[id]
+        topo = {
+            over.col <- topo.colors(length(color.index) * 100 + 1)
+            orderd.col <- over.col
+            id <- fill.float * length(color.index) * 100 + 1
+            fill.col <- orderd.col[id]
         },
-
-        bi.polar =
-        {
-            col.center = mean(fill.float)
-            fill = ''
-            re.scale= 1 / max(abs(fill.float - col.center))
-            alpha = ifelse(fill.float >= col.center,
-                            (fill.float- col.center) * re.scale,
-                            (col.center - fill.float) * re.scale
-                           )
-            fill.col = ifelse(fill.float >= col.center,
-                             rgb(1,0,0,alpha = alpha),
-                             rgb(0,0,1,alpha = alpha)
-                          )
+        cm = {
+            over.col <- cm.colors(length(color.index) * 100 + 1)
+            orderd.col <- over.col
+            id <- fill.float * length(color.index) * 100 + 1
+            fill.col <- orderd.col[id]
         },
-
-        gray =
-        {
-            fill.col = gray(round(1 - as.numeric(fill.float),5))
+        bi.polar = {
+            col.center <- mean(fill.float)
+            fill <- ""
+            re.scale <- 1 / max(abs(fill.float - col.center))
+            alpha <- ifelse(fill.float >= col.center,
+                (fill.float - col.center) * re.scale,
+                (col.center - fill.float) * re.scale
+            )
+            fill.col <- ifelse(fill.float >= col.center,
+                rgb(1, 0, 0, alpha = alpha),
+                rgb(0, 0, 1, alpha = alpha)
+            )
         },
-
-        r =
-        {
-            r = ifelse(fill.float == impossible.number, impossible.number,runif(fill.float))
-            g = ifelse(fill.float == impossible.number, impossible.number,runif(fill.float))
-            b = ifelse(fill.float == impossible.number, impossible.number,runif(fill.float))
-            fill.col = rgb(r,g,b)
+        gray = {
+            fill.col <- gray(round(1 - as.numeric(fill.float), 5))
         },
-
-        n =
-        {
-            r = runif(length(fill.float))
-            g = runif(length(fill.float))
-            b = runif(length(fill.float))
-            na.fill = rgb(r,g,b)
-            fill.col = rgb(r,g,b)
+        r = {
+            r <- ifelse(fill.float == impossible.number, impossible.number, runif(fill.float))
+            g <- ifelse(fill.float == impossible.number, impossible.number, runif(fill.float))
+            b <- ifelse(fill.float == impossible.number, impossible.number, runif(fill.float))
+            fill.col <- rgb(r, g, b)
         },
-        e =
-        {
-            char.col.trans = col2rgb(col)/255
-            fill.col =rgb(char.col.trans[1],char.col.trans[2],char.col.trans[3],1)
+        n = {
+            r <- runif(length(fill.float))
+            g <- runif(length(fill.float))
+            b <- runif(length(fill.float))
+            na.fill <- rgb(r, g, b)
+            fill.col <- rgb(r, g, b)
+        },
+        e = {
+            char.col.trans <- col2rgb(col) / 255
+            fill.col <- rgb(char.col.trans[1], char.col.trans[2], char.col.trans[3], 1)
         }
-
     )
-    color.each = ifelse(fill.float== impossible.number, na.fill, fill.col)
-    color.out = rep(color.each,color.index)
+    color.each <- ifelse(fill.float == impossible.number, na.fill, fill.col)
+    color.out <- rep(color.each, color.index)
     color.out
 }
 
@@ -275,13 +235,11 @@ col.fun = function(data,color.index,
 ##' @return a vector of length of 2, re-sized by the ratio.
 ##' @author Jason Wen
 ##' @export
-re.scale = function(x,ratio)
-{
-  mid = mean(x)
-  l = diff(x)/2
-  l.r = l * ratio
-  c(mid - l.r, mid + l.r)
-
+re.scale <- function(x, ratio) {
+    mid <- mean(x)
+    l <- diff(x) / 2
+    l.r <- l * ratio
+    c(mid - l.r, mid + l.r)
 }
 
 ##' is the latitude and longitude within the limit?
@@ -291,10 +249,9 @@ re.scale = function(x,ratio)
 ##' @return a logical vector of length of n, indicates which row in x is within in the limit.
 ##' @author Jason Wen
 ##' @export
-lim.inside = function(x,lim)
-{
-    (x[,1] > lim[1] & x[,1] < lim[2]) &
-    (x[,2] > lim[3] & x[,2] < lim[4])
+lim.inside <- function(x, lim) {
+    (x[, 1] > lim[1] & x[, 1] < lim[2]) &
+        (x[, 2] > lim[3] & x[, 2] < lim[4])
 }
 
 ##' Calculate the inner limit.
@@ -305,25 +262,24 @@ lim.inside = function(x,lim)
 ##' @return a numeric vector with length 4, the inner limit/bbox of the map.
 ##' @author Jason Wen
 ##' @export
-innerLim = function(obj,d.region)
-{
-    latlon = obj$latlon
-    each = obj$each
-    col.index = obj$col.index
-    region = obj$region
-    bbox = obj$bbox
+innerLim <- function(obj, d.region) {
+    latlon <- obj$latlon
+    each <- obj$each
+    col.index <- obj$col.index
+    region <- obj$region
+    bbox <- obj$bbox
 
-    logic = region %in% d.region
-    if(all(logic == FALSE))
-        lim.sub = bbox
-    else
-    {
-        polygon.index.fill = rep(logic,col.index)
-        each.sub = each[rep(logic,col.index)]
-        latlon.sub = latlon[rep(rep(logic,col.index),each),]
-        lim.sub = c(range(latlon.sub[,1],na.rm = TRUE),
-                    range(latlon.sub[,2],na.rm = TRUE)
-                    )
+    logic <- region %in% d.region
+    if (all(logic == FALSE)) {
+        lim.sub <- bbox
+    } else {
+        polygon.index.fill <- rep(logic, col.index)
+        each.sub <- each[rep(logic, col.index)]
+        latlon.sub <- latlon[rep(rep(logic, col.index), each), ]
+        lim.sub <- c(
+            range(latlon.sub[, 1], na.rm = TRUE),
+            range(latlon.sub[, 2], na.rm = TRUE)
+        )
     }
     lim.sub
 }
@@ -337,21 +293,20 @@ innerLim = function(obj,d.region)
 ##' @return a numeric vector with length 4, the outer limit/bbox of the map.
 ##' @author Jason Wen
 ##' @export
-outerLim = function(obj,lim,ignore.region = c('Russia','Antarctica'))
-{
-    latlon = obj$latlon
-    each = obj$each
-    col.index = obj$col.index
-    region = obj$region
+outerLim <- function(obj, lim, ignore.region = c("Russia", "Antarctica")) {
+    latlon <- obj$latlon
+    each <- obj$each
+    col.index <- obj$col.index
+    region <- obj$region
 
-    with = lim.inside(latlon,lim)
-    id = rep(1:length(each),each)
-    each.index = unique(id[with])
-    log.pre = id %in% each.index
-    log.pre[rep(rep((region %in% ignore.region),col.index),each)] = FALSE
-    latlon.sub = latlon[log.pre,]
+    with <- lim.inside(latlon, lim)
+    id <- rep(1:length(each), each)
+    each.index <- unique(id[with])
+    log.pre <- id %in% each.index
+    log.pre[rep(rep((region %in% ignore.region), col.index), each)] <- FALSE
+    latlon.sub <- latlon[log.pre, ]
 
-    lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
+    lim.sub <- c(range(latlon.sub[, 1]), range(latlon.sub[, 2]))
     lim.sub
 }
 
@@ -363,40 +318,41 @@ outerLim = function(obj,lim,ignore.region = c('Russia','Antarctica'))
 ##' @return an inzshapemap object.
 ##' @author Jason Wen
 ##' @export
-subByLim = function(obj,lim)
-{
-    latlon = obj$latlon
-    each = obj$each
-    col.index = obj$col.index
-    col = obj$col
-    region = obj$region
+subByLim <- function(obj, lim) {
+    latlon <- obj$latlon
+    each <- obj$each
+    col.index <- obj$col.index
+    col <- obj$col
+    region <- obj$region
 
-    with = lim.inside(latlon,lim)
-    id.index = 1:length(each)
-    id = rep(id.index,each)
-    each.index = unique(id[with])
-    each.sub = each[each.index]
-    latlon.sub = latlon[id %in% each.index,]
-    lim.sub = c(range(latlon.sub[,1]),range(latlon.sub[,2]))
-    region.id = rep(rep(region,col.index),each)
-    with.sub = lim.inside(latlon,lim.sub)
+    with <- lim.inside(latlon, lim)
+    id.index <- 1:length(each)
+    id <- rep(id.index, each)
+    each.index <- unique(id[with])
+    each.sub <- each[each.index]
+    latlon.sub <- latlon[id %in% each.index, ]
+    lim.sub <- c(range(latlon.sub[, 1]), range(latlon.sub[, 2]))
+    region.id <- rep(rep(region, col.index), each)
+    with.sub <- lim.inside(latlon, lim.sub)
 
-    latlon.out = latlon[id %in% id[with.sub],]
-    each.sub.index = unique(id[with.sub])
-    each.out = each[each.sub.index]
+    latlon.out <- latlon[id %in% id[with.sub], ]
+    each.sub.index <- unique(id[with.sub])
+    each.out <- each[each.sub.index]
 
     ## some regions have multiple length
-    e = rep(rep(1:length(region),col.index),each)
-    e.index = unique(e[with.sub])
+    e <- rep(rep(1:length(region), col.index), each)
+    e.index <- unique(e[with.sub])
 
     ## out
-    region.out = region[e.index]
-    col.index.out = col.index[e.index]
-    col.out = col[each.sub.index]
-    lim.out = lim.sub
-    obj = list(latlon = latlon.out,each = each.out,
-             col.index = col.index.out, region = region.out,
-             xylim = lim.out,col = col.out,center.region = obj$center.region)
+    region.out <- region[e.index]
+    col.index.out <- col.index[e.index]
+    col.out <- col[each.sub.index]
+    lim.out <- lim.sub
+    obj <- list(
+        latlon = latlon.out, each = each.out,
+        col.index = col.index.out, region = region.out,
+        xylim = lim.out, col = col.out, center.region = obj$center.region
+    )
     obj
 }
 
@@ -407,21 +363,18 @@ subByLim = function(obj,lim)
 ##' @author Jason
 ##' @import countrycode
 ##' @export
-name.match = function(shp.region,data.region)
-{
-    s = countrycode(shp.region, "country.name", "iso3c")
-    d = countrycode(data.region, "country.name", "iso3c")
+name.match <- function(shp.region, data.region) {
+    s <- countrycode(shp.region, "country.name", "iso3c")
+    d <- countrycode(data.region, "country.name", "iso3c")
     is.na(s)
     is.na(d)
-    if(all(is.na(s)))
-    {
-        d = data.region
-        s = shp.region
+    if (all(is.na(s))) {
+        d <- data.region
+        s <- shp.region
     }
-    n = nchar(as.character(data.region))
-    if(all(length(n) == 2))
-    {
-        d = countrycode(data.region, "iso2c", "iso3c")
+    n <- nchar(as.character(data.region))
+    if (all(length(n) == 2)) {
+        d <- countrycode(data.region, "iso2c", "iso3c")
     }
     list(d = d, s = s)
 }
@@ -435,29 +388,24 @@ name.match = function(shp.region,data.region)
 ##' @author Jason
 ##' @import countrycode
 ##' @export
-win.ratio = function(xlim,ylim)
-{
-    x = diff(xlim)
-    y = diff(ylim)
+win.ratio <- function(xlim, ylim) {
+    x <- diff(xlim)
+    y <- diff(ylim)
 
-    w = convertWidth(current.viewport()$width, "mm", TRUE)
-    h = convertHeight(current.viewport()$height, "mm", TRUE)
+    w <- convertWidth(current.viewport()$width, "mm", TRUE)
+    h <- convertHeight(current.viewport()$height, "mm", TRUE)
 
 
-    if(h/w < y/x)
-    {
-        x.tmp = y/(h/w)
-        x.r = x.tmp/x
-        xlim = re.scale(xlim,x.r)
-
-    }else
-    {
-        y.tmp = (h/w) * x
-        y.r = y.tmp/y
-        ylim = re.scale(ylim,y.r)
-
+    if (h / w < y / x) {
+        x.tmp <- y / (h / w)
+        x.r <- x.tmp / x
+        xlim <- re.scale(xlim, x.r)
+    } else {
+        y.tmp <- (h / w) * x
+        y.r <- y.tmp / y
+        ylim <- re.scale(ylim, y.r)
     }
-    lim = c(xlim,ylim)
+    lim <- c(xlim, ylim)
     lim
 }
 
@@ -472,22 +420,20 @@ win.ratio = function(xlim,ylim)
 ##' @return a 2*2 numeric matrix or a vector of length 4
 ##' @author Jason
 ##' @export
-region.bbox = function(obj,name,vector = FALSE)
-{
-    latlon = obj$latlon
-    each =obj$each
-    region = obj$region
-    col.index = obj$col.index
+region.bbox <- function(obj, name, vector = FALSE) {
+    latlon <- obj$latlon
+    each <- obj$each
+    region <- obj$region
+    col.index <- obj$col.index
 
-    region.ind = rep(rep(region,col.index),each)
-    nn = region.ind %in% name
-    lat.lim = range(latlon[nn,1])
-    lon.lim = range(latlon[nn,2])
-    bbox = c(lat.lim, lon.lim)
-    if(vector == FALSE)
-    {
-        dim(bbox) = c(2,2)
-        colnames(bbox) = c('lat','lon')
+    region.ind <- rep(rep(region, col.index), each)
+    nn <- region.ind %in% name
+    lat.lim <- range(latlon[nn, 1])
+    lon.lim <- range(latlon[nn, 2])
+    bbox <- c(lat.lim, lon.lim)
+    if (vector == FALSE) {
+        dim(bbox) <- c(2, 2)
+        colnames(bbox) <- c("lat", "lon")
     }
     bbox
 }
@@ -505,69 +451,67 @@ region.bbox = function(obj,name,vector = FALSE)
 ##' @return NULL
 ##' @author Jason
 ##' @export
-bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,
-                    bar.col = c('#E0FFFF','#FAFAD2','#FFA07A','#C71585','#DC143C','#B8860B','#00BFFF','#ADFF2F'))
-{
-    region = obj$region
-    col.index = obj$col.index
-    each = obj$each
+bar.coor <- function(obj, var, data, xmax = 0.85, ymax = 2,
+                     bar.col = c("#E0FFFF", "#FAFAD2", "#FFA07A", "#C71585", "#DC143C", "#B8860B", "#00BFFF", "#ADFF2F")) {
+    region <- obj$region
+    col.index <- obj$col.index
+    each <- obj$each
 
-    a = rep(rep(1:length(region),col.index),each)
-    b = rep(rep(region %in% data$Country,col.index),each)
-    s.region = unique(region[unique(a[b])])
-    region.lim = do.call(rbind,lapply(s.region,region.bbox,obj = obj,vector = TRUE))
-    ind = match(s.region,obj$center.region$i.region)
-    x = obj$center.region$lon.x[ind]
-    y = obj$center.region$lat.y[ind]
+    a <- rep(rep(1:length(region), col.index), each)
+    b <- rep(rep(region %in% data$Country, col.index), each)
+    s.region <- unique(region[unique(a[b])])
+    region.lim <- do.call(rbind, lapply(s.region, region.bbox, obj = obj, vector = TRUE))
+    ind <- match(s.region, obj$center.region$i.region)
+    x <- obj$center.region$lon.x[ind]
+    y <- obj$center.region$lat.y[ind]
 
-    l = apply(region.lim,1,function(x)c(diff(x[1:2]),diff(x[3:4])))
-    plot.num = as.character(length(var))
-    bar.weight.tot = as.numeric(plot.num) * xmax
-    s.length.x = ifelse(l[1,] > bar.weight.tot,xmax,l[1,]/as.numeric(plot.num))/2
+    l <- apply(region.lim, 1, function(x) c(diff(x[1:2]), diff(x[3:4])))
+    plot.num <- as.character(length(var))
+    bar.weight.tot <- as.numeric(plot.num) * xmax
+    s.length.x <- ifelse(l[1, ] > bar.weight.tot, xmax, l[1, ] / as.numeric(plot.num)) / 2
 
-    n = as.numeric(plot.num)
-    if(n%%2 != 0)
-    {
-        if(n == 1)
-            a = 1
-        else
-            a = c(n,rep(seq(n-2,1)[c(TRUE,FALSE)],each = 2))
-    }else
-    {
-        if(n == 2)
-            a = c(2,0)
-        else
-            a = c(n,rep(((n-2):2)[c(T,F)],each = 2),0)
+    n <- as.numeric(plot.num)
+    if (n %% 2 != 0) {
+        if (n == 1) {
+            a <- 1
+        } else {
+            a <- c(n, rep(seq(n - 2, 1)[c(TRUE, FALSE)], each = 2))
+        }
+    } else {
+        if (n == 2) {
+            a <- c(2, 0)
+        } else {
+            a <- c(n, rep(((n - 2):2)[c(T, F)], each = 2), 0)
+        }
     }
-    out = c(-a,a[length(a):1])
-    xtot = rep(x,length(out)) + rep(s.length.x,length(out)) * rep(out,each = length(x))
+    out <- c(-a, a[length(a):1])
+    xtot <- rep(x, length(out)) + rep(s.length.x, length(out)) * rep(out, each = length(x))
 
-    xl.sub = (1:length(x)) + rep(seq(0,n*2 - 1,2),each = length(x)) * length(x)
-    xr.sub = (1:length(x)) + rep(seq(1,n*2,2),each = length(x)) * length(x)
+    xl.sub <- (1:length(x)) + rep(seq(0, n * 2 - 1, 2), each = length(x)) * length(x)
+    xr.sub <- (1:length(x)) + rep(seq(1, n * 2, 2), each = length(x)) * length(x)
 
-    rep(seq(0,(n - 1)*2,2),each = length(x)) * length(x)
+    rep(seq(0, (n - 1) * 2, 2), each = length(x)) * length(x)
 
-    xl = xtot[xl.sub]
-    xr = xtot[xr.sub]
+    xl <- xtot[xl.sub]
+    xr <- xtot[xr.sub]
 
-    data.sub = data[which(data$Country %in% s.region),]
-    data.in = data.sub[var]
-    data.in[is.na(data.in)] = 0
-    data.t = apply(data.in,2,data.trans)
-    data.matrix = as.matrix(data.t)
-    dim(data.matrix) = c(dim(data.matrix)[1] * dim(data.matrix)[2],1)
-    yt = rep(y,length(var)) + data.matrix * ymax
-    yb = y
-    sep.n = nrow(data.in)
-    a = cbind(xl,xr,yb,yt)
-    x.coor = a[rep(1:dim(a)[1],each = 5) + rep(c(0,dim(a)[1],dim(a)[1],0,0),dim(a)[1])]
-    y.coor = a[rep(1:dim(a)[1],each = 5) + rep(c(2*dim(a)[1],2*dim(a)[1],3*dim(a)[1],3*dim(a)[1],2*dim(a)[1]),dim(a)[1])]
+    data.sub <- data[which(data$Country %in% s.region), ]
+    data.in <- data.sub[var]
+    data.in[is.na(data.in)] <- 0
+    data.t <- apply(data.in, 2, data.trans)
+    data.matrix <- as.matrix(data.t)
+    dim(data.matrix) <- c(dim(data.matrix)[1] * dim(data.matrix)[2], 1)
+    yt <- rep(y, length(var)) + data.matrix * ymax
+    yb <- y
+    sep.n <- nrow(data.in)
+    a <- cbind(xl, xr, yb, yt)
+    x.coor <- a[rep(1:dim(a)[1], each = 5) + rep(c(0, dim(a)[1], dim(a)[1], 0, 0), dim(a)[1])]
+    y.coor <- a[rep(1:dim(a)[1], each = 5) + rep(c(2 * dim(a)[1], 2 * dim(a)[1], 3 * dim(a)[1], 3 * dim(a)[1], 2 * dim(a)[1]), dim(a)[1])]
 
-    d1 = cbind(x.coor,y.coor)
-    each.polygon = rep(5,dim(a)[1])
-    col = rep(bar.col,each = sep.n)
-    bar.obj = list(d1 = d1,col = col,each = each.polygon)
-
+    d1 <- cbind(x.coor, y.coor)
+    each.polygon <- rep(5, dim(a)[1])
+    col <- rep(bar.col, each = sep.n)
+    bar.obj <- list(d1 = d1, col = col, each = each.polygon)
 }
 
 
@@ -580,77 +524,80 @@ bar.coor = function(obj,var,data,xmax = 0.85,ymax = 2,
 ##' @details if ratio < 1 then zoom in, if ratio > 1 then zoom out, if ratio = 1 then shift the plot.
 ##' @author Jason
 ##' @export
-sClickOnZoom = function(ratio = 1/2,resize = FALSE)
-{
-    s.obj = inzshpobj$s.obj
-    bar.obj = inzshpobj$bar.obj
-    name = inzshpobj$name
-    latlon = s.obj$latlon
-    cols = s.obj$col
-    shade.each = s.obj$each
-    region.name = inzshpobj$region.name
-    value = inzshpobj$value
-    sbbox = inzshpobj$bbox
-    ylim = c(-10,10)
+sClickOnZoom <- function(ratio = 1 / 2, resize = FALSE) {
+    s.obj <- inzshpobj$s.obj
+    bar.obj <- inzshpobj$bar.obj
+    name <- inzshpobj$name
+    latlon <- s.obj$latlon
+    cols <- s.obj$col
+    shade.each <- s.obj$each
+    region.name <- inzshpobj$region.name
+    value <- inzshpobj$value
+    sbbox <- inzshpobj$bbox
+    ylim <- c(-10, 10)
 
 
-    ox.lim = inzshpobj$s.obj$xylim
-    center.x = s.obj$center.region$lon.x
-    center.y = s.obj$center.region$lat.y
-    region.name = s.obj$center.region$i.region
+    ox.lim <- inzshpobj$s.obj$xylim
+    center.x <- s.obj$center.region$lon.x
+    center.y <- s.obj$center.region$lat.y
+    region.name <- s.obj$center.region$i.region
 
-    if(inzshpobj$num == 1)
-        seekViewport('VP:MAPSHAPES')
+    if (inzshpobj$num == 1) {
+        seekViewport("VP:MAPSHAPES")
+    }
 
 
 
-    if(resize == FALSE)
-    {
+    if (resize == FALSE) {
         pushViewport(viewport(0.5, unit(1, "char"), 1, unit(2, "char")))
         grid::grid.rect(gp = gpar(fill = "red"))
-        grid::grid.text("Click a point on the map to zoom", x = 0.5, y = 0.5, default.units = "native",
-                        gp = gpar(col = "white"))
+        grid::grid.text("Click a point on the map to zoom",
+            x = 0.5, y = 0.5, default.units = "native",
+            gp = gpar(col = "white")
+        )
         popViewport()
-        p.center = as.numeric(grid.locator())
-        xylim = c(current.viewport()$xscale,current.viewport()$yscale)
-    }
-    else
-    {
-        p.center = inzshpobj$click.point
-        xylim = win.ratio(inzshpobj$bbox.record[1:2],inzshpobj$bbox.record[3:4])
+        p.center <- as.numeric(grid.locator())
+        xylim <- c(current.viewport()$xscale, current.viewport()$yscale)
+    } else {
+        p.center <- inzshpobj$click.point
+        xylim <- win.ratio(inzshpobj$bbox.record[1:2], inzshpobj$bbox.record[3:4])
     }
 
-    nx.lim = rep(p.center[1],2) + c(-1,1) * diff(xylim[1:2]) * ratio/2
-    ny.lim = rep(p.center[2],2) + c(-1,1) * diff(xylim[3:4]) * ratio/2
-    n.lim = c(nx.lim,ny.lim)
+    nx.lim <- rep(p.center[1], 2) + c(-1, 1) * diff(xylim[1:2]) * ratio / 2
+    ny.lim <- rep(p.center[2], 2) + c(-1, 1) * diff(xylim[3:4]) * ratio / 2
+    n.lim <- c(nx.lim, ny.lim)
 
-    if(resize == FALSE)
-        inzshpobj$bbox.record <<- c(nx.lim,ny.lim)
-
-    s.obj = subByLim(s.obj,c(nx.lim,ny.lim))
-    if(ratio > 1){
-        if(diff(range(nx.lim)) > diff(sbbox[1:2]) & diff(range(ny.lim)) > diff(sbbox[3:4]))
-            n.lim = win.ratio(sbbox[1:2],sbbox[3:4])
+    if (resize == FALSE) {
+        inzshpobj$bbox.record <<- c(nx.lim, ny.lim)
     }
 
-    vp = viewport(0.5,0.5,1,1,name = 'VP:map',xscale = n.lim[1:2],yscale = n.lim[3:4])
+    s.obj <- subByLim(s.obj, c(nx.lim, ny.lim))
+    if (ratio > 1) {
+        if (diff(range(nx.lim)) > diff(sbbox[1:2]) & diff(range(ny.lim)) > diff(sbbox[3:4])) {
+            n.lim <- win.ratio(sbbox[1:2], sbbox[3:4])
+        }
+    }
+
+    vp <- viewport(0.5, 0.5, 1, 1, name = "VP:map", xscale = n.lim[1:2], yscale = n.lim[3:4])
     pushViewport(vp)
 
-    grid.rect(gp = gpar(fill = '#F5F5F5'))
+    grid.rect(gp = gpar(fill = "#F5F5F5"))
 
-    grid.polygon(s.obj$latlon[,1], s.obj$latlon[,2],
-             default.units = "native", id.lengths = s.obj$each,
-             gp = gpar(col = '#B29980', fill  = s.obj$col))
-    drawing.features(bar.obj = bar.obj,
-                    latlon = latlon,cols = cols,
-                    shade.each = shade.each,region.name = region.name ,
-                    value = value ,name = name,
-                    center.x = center.x,center.y = center.y)
-    grid.rect(gp = gpar(fill = 'transparent'))
+    grid.polygon(s.obj$latlon[, 1], s.obj$latlon[, 2],
+        default.units = "native", id.lengths = s.obj$each,
+        gp = gpar(col = "#B29980", fill = s.obj$col)
+    )
+    drawing.features(
+        bar.obj = bar.obj,
+        latlon = latlon, cols = cols,
+        shade.each = shade.each, region.name = region.name,
+        value = value, name = name,
+        center.x = center.x, center.y = center.y
+    )
+    grid.rect(gp = gpar(fill = "transparent"))
 
     inzshpobj$num <<- inzshpobj$num + 1
     inzshpobj$click.point <<- p.center
-
 }
 
 
@@ -661,11 +608,11 @@ sClickOnZoom = function(ratio = 1/2,resize = FALSE)
 ##' @return NULL
 ##' @author Jason
 ##' @export
-srezoom = function(zoom)
-{
-    if(zoom > 2 | zoom < 0.1)
-        stop('invalid zoom')
-    sClickOnZoom(ratio = zoom,resize = TRUE)
+srezoom <- function(zoom) {
+    if (zoom > 2 | zoom < 0.1) {
+        stop("invalid zoom")
+    }
+    sClickOnZoom(ratio = zoom, resize = TRUE)
 }
 
 
@@ -686,44 +633,41 @@ srezoom = function(zoom)
 ##' @return NULL
 ##' @author Jason
 ##' @export
-drawing.features = function(bar.obj,latlon,cols,
-                            shade.each,region.name,
-                            data.region,value,name,
-                            center.x,center.y,
-                            y.shift = 0.5)
-{
-
-    full.option = c('bar','r','v','b')
+drawing.features <- function(bar.obj, latlon, cols,
+                             shade.each, region.name,
+                             data.region, value, name,
+                             center.x, center.y,
+                             y.shift = 0.5) {
+    full.option <- c("bar", "r", "v", "b")
     switch(name,
-        'bar' =
-        {
-            xmax = 0.004 * diff(range(latlon[,1]))
-            ymax = 0.1 * diff(range(latlon[,2]))
-            grid.polygon(bar.obj$d1[,1],bar.obj$d1[,2],
-                        default.units = "native", id.lengths = bar.obj$each,
-                        gp = gpar(col = NA, fill  = bar.obj$col))
-            out.str = countrycode(region.name, "country.name", "iso3c")
-            center.y = center.y - y.shift
+        "bar" = {
+            xmax <- 0.004 * diff(range(latlon[, 1]))
+            ymax <- 0.1 * diff(range(latlon[, 2]))
+            grid.polygon(bar.obj$d1[, 1], bar.obj$d1[, 2],
+                default.units = "native", id.lengths = bar.obj$each,
+                gp = gpar(col = NA, fill = bar.obj$col)
+            )
+            out.str <- countrycode(region.name, "country.name", "iso3c")
+            center.y <- center.y - y.shift
         },
-        'r' =
-        {
-            out.str = region.name
+        "r" = {
+            out.str <- region.name
         },
-        'v' =
-        {
-            center.x = center.x[!is.na(value)]
-            center.y = center.y[!is.na(value)]
-            out.str = value[!is.na(value)]
+        "v" = {
+            center.x <- center.x[!is.na(value)]
+            center.y <- center.y[!is.na(value)]
+            out.str <- value[!is.na(value)]
         },
-        'b' =
-        {
-            value[is.na(value)] = ''
-            out.str = ifelse(value == '',paste(region.name),paste(region.name,value,sep = '\n'))
+        "b" = {
+            value[is.na(value)] <- ""
+            out.str <- ifelse(value == "", paste(region.name), paste(region.name, value, sep = "\n"))
         }
     )
-    if(name %in% full.option){
-        grid.text(out.str, x = center.x, y =center.y,
-                just = "centre",default.units = "native",
-                gp=gpar(fontsize=9), check.overlap=TRUE)
+    if (name %in% full.option) {
+        grid.text(out.str,
+            x = center.x, y = center.y,
+            just = "centre", default.units = "native",
+            gp = gpar(fontsize = 9), check.overlap = TRUE
+        )
     }
 }
