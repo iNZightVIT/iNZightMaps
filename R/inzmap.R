@@ -283,11 +283,11 @@ getStamenMap <- function(bbox, zoom, type) {
         bbox.left[3] <- 179.99999
         bbox.right[1] <- -180
         bbox.right[3] <- bbox.right[3] - 360
-        map.left <- ggmap::get_stamenmap(bbox.left, zoom = zoom, maptype = type)
-        map.right <- ggmap::get_stamenmap(bbox.right, zoom = zoom, maptype = type)
+        map.left <- ggmap::get_stadiamap(bbox.left, zoom = zoom, maptype = type)
+        map.right <- ggmap::get_stadiamap(bbox.right, zoom = zoom, maptype = type)
         map <- grDevices::as.raster(cbind(as.matrix(map.left), as.matrix(map.right)))
     } else {
-        map <- ggmap::get_stamenmap(bbox, zoom = zoom, maptype = type)
+        map <- ggmap::get_stadiamap(bbox, zoom = zoom, maptype = type)
     }
     map
 }
