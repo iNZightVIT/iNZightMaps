@@ -1,3 +1,7 @@
+## iNZightMaps 2.3.2
+
+- switch to 'get_stadiamaps' and prompt user for API key
+
 ## iNZightMaps 2.3.1
 
 - remove ggsfextra from Imports
