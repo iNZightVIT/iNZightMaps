@@ -2,9 +2,8 @@
 github_deps <- c(
     "cran/maptools",
     "cran/rgeos",
-    "iNZightVIT/iNZightTools@1.13.0",
-    "iNZightVIT/iNZightMR@2.2.7",
-    "iNZightVIT/iNZightPlots@2.15.1"
+    "cran/rgdal",
+    "tmelliott/surveyspec"
 )
 
 OS <- Sys.getenv("OS_TYPE")
