@@ -1,8 +1,8 @@
 # R script
-github_deps <- c(
-    "cran/maptools",
-    "cran/rgeos",
-    "cran/rgdal",
+pkg_deps <- c(
+    "url::https://cran.r-project.org/src/contrib/Archive/rgeos/rgeos_0.6-4.tar.gz",
+    "url::https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.6-7.tar.gz",
+    "url::https://cran.r-project.org/src/contrib/Archive/maptools/maptools_1.1-8.tar.gz",
     "tmelliott/surveyspec"
 )
 
@@ -18,7 +18,7 @@ if (!requireNamespace("pak", quietly = TRUE)) {
     install.packages("pak")
 }
 
-pak::pkg_install(github_deps, dependencies = TRUE)
+pak::pkg_install(pkg_deps, dependencies = TRUE)
 pak::local_install_dev_deps(upgrade = FALSE, dependencies = TRUE)
 pak::pkg_install("rcmdcheck")
 
@@ -30,7 +30,7 @@ pak::pkg_install("rcmdcheck")
 #     install.packages("remotes")
 # }
 
-# remotes::install_github(github_deps,
+# remotes::install_github(pkg_deps,
 #     INSTALL_opts = c("--no-multiarch")
 # )
 # remotes::install_deps(
