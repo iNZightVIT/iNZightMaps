@@ -1,8 +1,6 @@
 # R script
 pkg_deps <- c(
-    "url::https://cran.r-project.org/src/contrib/Archive/rgeos/rgeos_0.6-4.tar.gz",
-    "url::https://cran.r-project.org/src/contrib/Archive/rgdal/rgdal_1.6-7.tar.gz",
-    "url::https://cran.r-project.org/src/contrib/Archive/maptools/maptools_1.1-8.tar.gz",
+    "iNZightVIT/iNZightPlots@release/2.16.0",
     "tmelliott/surveyspec"
 )
 
