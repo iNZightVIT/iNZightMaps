@@ -1,11 +1,12 @@
 #' @title title
 #' @param obj an object from within iNZightPlot
+#' @param ... additional arguments (ignored)
 #' @return Object
 #' @author Tom Elliott
 #' @import iNZightPlots
 #' @import grid
 #' @export
-create.inz.mapplot <- function(obj) {
+create.inz.mapplot <- function(obj, ...) {
     map.type <- obj$opts$plot.features$maptype
 
     features <- obj$opts$plot.features
