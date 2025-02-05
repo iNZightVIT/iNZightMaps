@@ -41,11 +41,11 @@ Language: en-GB
 LazyData: true
 RoxygenNote: 7.3.1
 Config/Needs/dependencies:
-    iNZightVIT/iNZightPlots@release/2.16,
+    iNZightVIT/iNZightPlots@release/2.16.0,
     tmelliott/surveyspec@develop,
     rcmdcheck,
     curl
 Config/Needs/coverage:
-    iNZightVIT/iNZightPlots@release/2.16,
+    iNZightVIT/iNZightPlots@release/2.16.0,
     tmelliott/surveyspec@develop,
     covr
