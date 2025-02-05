@@ -20,6 +20,7 @@ jobs:
       RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       _R_CHECK_DONTTEST_EXAMPLES_: false
+      STADIA_API_KEY: ${{ secrets.STADIA_API_KEY }}
 
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.os }}-${{ matrix.config.r }}
@@ -42,6 +43,6 @@ jobs:
           install-pandoc: true
 
       - name: Set stadia API key
-        run: Rscript -e "ggmap::register_stadiamaps('${{ secrets.STADIA_API_KEY }}', write = TRUE)"
+        run: Rscript -e "ggmap::register_stadiamaps(Sys.getenv('STADIA_API_KEY'), write = TRUE)"
 
       - uses: r-lib/actions/check-r-package@v2
