@@ -41,4 +41,7 @@ jobs:
             dependencies
           install-pandoc: true
 
+      - name: Set stadia API key
+        run: Rscript -e "ggmap::register_stadiamaps('${{ secrets.STADIA_API_KEY }}', write = TRUE)"
+
       - uses: r-lib/actions/check-r-package@v2
