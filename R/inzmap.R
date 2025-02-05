@@ -1,17 +1,12 @@
-##' @title title
-##' @param obj an object from within iNZightPlot
-##' @return Object
-##' @author Tom Elliott
-##' @import iNZightPlots
-##' @import grid maptools
-##' @export
+#' @title title
+#' @param obj an object from within iNZightPlot
+#' @return Object
+#' @author Tom Elliott
+#' @import iNZightPlots
+#' @import grid
+#' @export
 create.inz.mapplot <- function(obj) {
     map.type <- obj$opts$plot.features$maptype
-
-    ## Create the global object if it isn't already
-    if (!"global.objects" %in% ls(envir = .GlobalEnv)) {
-        assign("global.objects", list(), envir = .GlobalEnv)
-    }
 
     features <- obj$opts$plot.features
 
@@ -45,17 +40,17 @@ create.inz.mapplot <- function(obj) {
 }
 
 
-##' draw a map by passing an iNZightPlot object
-##'
-##' the function will also returns a global object which called global.objects
-##' @title Plot an iNZight Map
-##' @param x object passed from iNZightPlot
-##' @param gen other options passed from iNZightPlot
-##' @param ... additional arguments (ignored)
-##' @return NULL
-##' @author Jason Wen
-##' @import RgoogleMaps
-##' @export
+#' draw a map by passing an iNZightPlot object
+#'
+#' the function will also returns a global object which called global.objects
+#' @title Plot an iNZight Map
+#' @param x object passed from iNZightPlot
+#' @param gen other options passed from iNZightPlot
+#' @param ... additional arguments (ignored)
+#' @return NULL
+#' @author Jason Wen
+#' @import RgoogleMaps
+#' @export
 plot.inzmap <- function(x, gen, ...) {
     obj <- x
     opts <- gen$opts
@@ -93,35 +88,7 @@ plot.inzmap <- function(x, gen, ...) {
         type = opts$plot.features$maptype
     )
 
-    # get.newmap <- needNewMap(bbox = c(xlim, ylim), size = size, SCALE = SCALE,
-    #                          type = type, window = c(win.width, win.height))
-
-
-    ## need to come up with a better way of doing this!!
-    # if (get.newmap) {
-    #     getNewMap(lat.lim = ylim, lon.lim = xlim, SCALE = SCALE, type = type,
-    #               zoom = Get.map.size(ylim, xlim)$zoom)
-    #     ## updating
-    #     global.objects$maps$map.detail$window <<- c(win.width, win.height)
-    #     global.objects$maps$map.detail$bbox <<- c(xlim, ylim)
-    #     global.objects$maps$map.detail$size <<- global.objects$maps$map$size
-    #     global.objects$maps$map.detail$scale <<- global.objects$maps$map$SCALE
-    #     global.objects$maps$map.detail$type <<- type
-    #     global.objects$maps$map.detail$points <<- cbind(obj$y, obj$x)
-    # }
-
     ptCols <- iNZightPlots:::colourPoints(obj$colby, col.args, opts)
-    # ## passing the details inorder to redraw.
-    # global.objects$maps$pf$cex <<- obj$propsize
-    # global.objects$maps$pf$col <<- ptCols
-    # global.objects$maps$pf$lwd <<- opts$lwd.pt
-    # global.objects$maps$pf$alpha <<- opts$alpha * opacity
-    # global.objects$maps$pf$fill <<- obj$fill.pt
-    # global.objects$maps$pf$opacity <<- opacity
-    # global.objects$maps$pf$pch <<- obj$pch
-    # global.objects$maps$map.detail$num <<- 1
-    # global.objects$maps$pf$click.points <<- c(mean(xlim),mean(ylim))
-    # global.objects$maps$pf$bbox.record <<- c(xlim,ylim)
 
     ## drawing~~~~
     mapGrob <- rasterGrob(bgmap, name = "background.map")
@@ -271,13 +238,6 @@ getStamenMap <- function(bbox, zoom, type) {
         ## need to test this
         bbox[c(1, 3)] <- bbox[c(1, 3)] + 360
     }
-    # bbox.right <- bbox.left <- bbox
-    # bbox.left[3] <- 179.99999
-    # bbox.right[1] <- -180
-    # bbox.right[3] <- bbox.right[3] - 360
-    # map.left <- ggmap::get_stamenmap(bbox.left, zoom = zoom, maptype = type)
-    # map.right <- ggmap::get_stamenmap(bbox.right, zoom = zoom, maptype = type)
-    # map <- grDevices::as.raster(cbind(as.matrix(map.left), as.matrix(map.right)))
     if (bbox[3] > 180) {
         bbox.right <- bbox.left <- bbox
         bbox.left[3] <- 179.99999

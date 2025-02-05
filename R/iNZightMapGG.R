@@ -1,3 +1,5 @@
+utils::globalVariables(".")
+
 #' Generate dots randomly within regions
 #'
 #' @param data Map dataset

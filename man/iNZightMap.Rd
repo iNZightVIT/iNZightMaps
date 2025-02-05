@@ -11,9 +11,7 @@ iNZightMap(lat, lon, data, name = deparse(substitute(data)))
   x,
   opacity,
   map.zoom = -1,
-  type = c("terrain", "terrain-background", "terrain-labels", "terrain-lines", "toner",
-    "toner-2010", "toner-2011", "toner-background", "toner-hybrid", "toner-labels",
-    "toner-lines", "toner-lite", "watercolor"),
+  type = ggmap:::STADIA_VALID_MAP_TYPES,
   ...,
   env = parent.frame()
 )

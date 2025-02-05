@@ -1,60 +1,14 @@
-##' extract the information from a SpatialPolygonsDataFrame object.
-##'
-##' the function will also returns a global object which called global.objects.
-##' @title extract and create a shape object
-##' @param shp a SpatialPolygonsDataFrame object, see \link{readShapeSpatial}.
-##' @param column.index Index of the region column in \code{shp}
-##' @return a shape object.
-##' @author Jason Wen
-##' @import maptools
-##' @importFrom methods slot
-##' @export
-shape.extract <- function(shp, column.index = 2) {
-    polygon.data <- list()
-    j <- 0
-    col.index <- 0
-    poly.out <- length(shp@polygons)
-    index <- 0
-    for (i in 1:poly.out)
-    {
-        poly.in <- length(shp@polygons[[i]]@Polygons)
-        col.index[i] <- poly.in
-        for (ii in 1:poly.in)
-        {
-            j <- j + 1
-            polygon.data[j] <- list(shp@polygons[[i]]@Polygons[[ii]]@coords)
-            index[j] <- dim(polygon.data[[j]])[1]
-        }
-    }
-    latlon <- do.call(rbind, polygon.data)
-    latlon.data <- data.frame(latlon = latlon)
-    colnames(latlon.data) <- c("lon.x", "lat.y")
-    region <- shp[[column.index]]
-    cents <- coordinates(shp)
-    area <- sapply(slot(shp, "polygons"), slot, "area")
-    max.area <- tapply(area, region, max)
-    i.region <- region[area %in% max.area]
-    center <- cents[area %in% max.area, ]
-    center.region <- data.frame(lon.x = center[, 1], lat.y = center[, 2], i.region = i.region)
-    obj <- list(
-        latlon = latlon.data, center.region = center.region, ## data frame
-        each = index, region = region, col.index = col.index
-    ) ## list
-    class(obj) <- c("shape.object")
-    obj
-}
-
-##' @title Transform the data into the range of [0,1].
-##' @param x a numeric value or vector.
-##' @param transform the method for transformation, can be linear,log,sqrt,exp,power and normal.
-##' @param data.range ??? range of \code{x}
-##' @param mean ??? mean of \code{x}
-##' @param sd ??? standard deviation of \code{x}
-##' @param max.prob ???
-##' @return a transformed numeric vector.
-##' @author Jason Wen
-##' @importFrom stats dnorm
-##' @export
+#' @title Transform the data into the range of [0,1].
+#' @param x a numeric value or vector.
+#' @param transform the method for transformation, can be linear,log,sqrt,exp,power and normal.
+#' @param data.range ??? range of \code{x}
+#' @param mean ??? mean of \code{x}
+#' @param sd ??? standard deviation of \code{x}
+#' @param max.prob ???
+#' @return a transformed numeric vector.
+#' @author Jason Wen
+#' @importFrom stats dnorm
+#' @export
 data.trans <- function(x, transform = "linear", data.range, mean, sd, max.prob) {
     a <- x
     b <- a - min(data.range, na.rm = TRUE)
@@ -103,13 +57,13 @@ data.trans <- function(x, transform = "linear", data.range, mean, sd, max.prob) 
     }
 }
 
-##' re-order the region name in shape file
-##'
-##' @title re-order the region name in shape file
-##' @param shp.region a character vector.
-##' @param data.region a character vector.
-##' @return an integer vector.
-##' @author Jason Wen
+#' re-order the region name in shape file
+#'
+#' @title re-order the region name in shape file
+#' @param shp.region a character vector.
+#' @param data.region a character vector.
+#' @return an integer vector.
+#' @author Jason Wen
 order.match <- function(shp.region, data.region) {
     order <- match(shp.region, data.region)
     orderd.data <- order
@@ -117,20 +71,20 @@ order.match <- function(shp.region, data.region) {
     orderd.data
 }
 
-##' Choose a type of color that helps read the map nicely.
-##' @title Color Specification
-##' @param data a numeric vector that should lie on the range of [0,1].
-##' @param color.index an integer vector from inzshapemap object.
-##' @param display a character value, the method for display colors. It should be choosen by one of the following display method: "hcl","hue","heat","rainbow","terrain","topo","cm","gray","r","n","e".
-##' @param na.fill a character value that specify the color that use to fill the unmatch region/country.
-##' @param offset a numeric value within the range of [0,1] .
-##' @param col the color for fill the match region/country, it only needs to be specify if display = 'hue'.
-##' @return A color vector.
-##' @author Jason Wen
-##' @import RColorBrewer
-##' @importFrom grDevices cm.colors col2rgb gray hcl heat.colors rainbow rgb terrain.colors topo.colors
-##' @importFrom stats runif
-##' @details hcl,HCL Color Specification, whith c = 35 and l = 85 see \link{hcl}. hue, when display = 'hue', then the 'col' arg need to be specified. The alpha will depend on the data, see \link{rgb}. rainbow,terrain,topo,cm are the method from \link{RColorBrewer}. r,n , the color filled randomly expect n will fill the entire map even the region is unmatch. e, equal color for all matched region.
+#' Choose a type of color that helps read the map nicely.
+#' @title Color Specification
+#' @param data a numeric vector that should lie on the range of [0,1].
+#' @param color.index an integer vector from inzshapemap object.
+#' @param display a character value, the method for display colors. It should be choosen by one of the following display method: "hcl","hue","heat","rainbow","terrain","topo","cm","gray","r","n","e".
+#' @param na.fill a character value that specify the color that use to fill the unmatch region/country.
+#' @param offset a numeric value within the range of [0,1] .
+#' @param col the color for fill the match region/country, it only needs to be specify if display = 'hue'.
+#' @return A color vector.
+#' @author Jason Wen
+#' @import RColorBrewer
+#' @importFrom grDevices cm.colors col2rgb gray hcl heat.colors rainbow rgb terrain.colors topo.colors
+#' @importFrom stats runif
+#' @details hcl,HCL Color Specification, whith c = 35 and l = 85 see \link{hcl}. hue, when display = 'hue', then the 'col' arg need to be specified. The alpha will depend on the data, see \link{rgb}. rainbow,terrain,topo,cm are the method from \link{RColorBrewer}. r,n , the color filled randomly expect n will fill the entire map even the region is unmatch. e, equal color for all matched region.
 col.fun <- function(data, color.index,
                     display = "hue", na.fill = "#F4A460", offset = 0, col = "red") {
     display.option <- c("hcl", "hue", "heat", "cm", "rainbow", "terrain", "topo", "cm", "bi.polar", "r", "n", "gray", "e")
@@ -228,13 +182,13 @@ col.fun <- function(data, color.index,
 
 
 
-##' rearrange the limit by given a ratio.
-##' @title rearrange the limit
-##' @param x a vector of length 2.
-##' @param ratio a numeric value.
-##' @return a vector of length of 2, re-sized by the ratio.
-##' @author Jason Wen
-##' @export
+#' rearrange the limit by given a ratio.
+#' @title rearrange the limit
+#' @param x a vector of length 2.
+#' @param ratio a numeric value.
+#' @return a vector of length of 2, re-sized by the ratio.
+#' @author Jason Wen
+#' @export
 re.scale <- function(x, ratio) {
     mid <- mean(x)
     l <- diff(x) / 2
@@ -242,26 +196,26 @@ re.scale <- function(x, ratio) {
     c(mid - l.r, mid + l.r)
 }
 
-##' is the latitude and longitude within the limit?
-##' @title identify the which set of latitude and longitude are within the limit.
-##' @param x a numeric matrix of n*2 dimension.
-##' @param lim a numeric vector of length 4.
-##' @return a logical vector of length of n, indicates which row in x is within in the limit.
-##' @author Jason Wen
-##' @export
+#' is the latitude and longitude within the limit?
+#' @title identify the which set of latitude and longitude are within the limit.
+#' @param x a numeric matrix of n*2 dimension.
+#' @param lim a numeric vector of length 4.
+#' @return a logical vector of length of n, indicates which row in x is within in the limit.
+#' @author Jason Wen
+#' @export
 lim.inside <- function(x, lim) {
     (x[, 1] > lim[1] & x[, 1] < lim[2]) &
         (x[, 2] > lim[3] & x[, 2] < lim[4])
 }
 
-##' Calculate the inner limit.
-##' @title inner limit
-##' @details the limit is computed by calculate the limit of the given region.
-##' @param obj an inzshapemap object.
-##' @param d.region a character vector that specify the region or country.
-##' @return a numeric vector with length 4, the inner limit/bbox of the map.
-##' @author Jason Wen
-##' @export
+#' Calculate the inner limit.
+#' @title inner limit
+#' @details the limit is computed by calculate the limit of the given region.
+#' @param obj an inzshapemap object.
+#' @param d.region a character vector that specify the region or country.
+#' @return a numeric vector with length 4, the inner limit/bbox of the map.
+#' @author Jason Wen
+#' @export
 innerLim <- function(obj, d.region) {
     latlon <- obj$latlon
     each <- obj$each
@@ -284,15 +238,15 @@ innerLim <- function(obj, d.region) {
     lim.sub
 }
 
-##' Calculate the outer limit.
-##' @title outer limit
-##' @details the limit is computed by calculate the limit of the given inner limit. If there is a region been cut by the inner limit, then the outer limit will extend up to the limit of the region.
-##' @param obj an inzshapemap object.
-##' @param lim a numeric vector of length 4.
-##' @param ignore.region a character value or vector, specify which regions are been ignored when calculate the limit.
-##' @return a numeric vector with length 4, the outer limit/bbox of the map.
-##' @author Jason Wen
-##' @export
+#' Calculate the outer limit.
+#' @title outer limit
+#' @details the limit is computed by calculate the limit of the given inner limit. If there is a region been cut by the inner limit, then the outer limit will extend up to the limit of the region.
+#' @param obj an inzshapemap object.
+#' @param lim a numeric vector of length 4.
+#' @param ignore.region a character value or vector, specify which regions are been ignored when calculate the limit.
+#' @return a numeric vector with length 4, the outer limit/bbox of the map.
+#' @author Jason Wen
+#' @export
 outerLim <- function(obj, lim, ignore.region = c("Russia", "Antarctica")) {
     latlon <- obj$latlon
     each <- obj$each
@@ -311,13 +265,13 @@ outerLim <- function(obj, lim, ignore.region = c("Russia", "Antarctica")) {
 }
 
 
-##' Subset by limit.
-##' @title subset by limit
-##' @param obj an inzshapemap object.
-##' @param lim a numeric vector of length 4.
-##' @return an inzshapemap object.
-##' @author Jason Wen
-##' @export
+#' Subset by limit.
+#' @title subset by limit
+#' @param obj an inzshapemap object.
+#' @param lim a numeric vector of length 4.
+#' @return an inzshapemap object.
+#' @author Jason Wen
+#' @export
 subByLim <- function(obj, lim) {
     latlon <- obj$latlon
     each <- obj$each
@@ -356,13 +310,13 @@ subByLim <- function(obj, lim) {
     obj
 }
 
-##' @title Match names between map and data
-##' @param shp.region Map object
-##' @param data.region Data
-##' @return a 2*2 numeric matrix
-##' @author Jason
-##' @import countrycode
-##' @export
+#' @title Match names between map and data
+#' @param shp.region Map object
+#' @param data.region Data
+#' @return a 2*2 numeric matrix
+#' @author Jason
+#' @import countrycode
+#' @export
 name.match <- function(shp.region, data.region) {
     s <- countrycode(shp.region, "country.name", "iso3c")
     d <- countrycode(data.region, "country.name", "iso3c")
@@ -379,15 +333,15 @@ name.match <- function(shp.region, data.region) {
     list(d = d, s = s)
 }
 
-##' compute and return the xlim and ylim within aspect ratio
-##'
-##' @title win.ratio
-##' @param xlim a numeric vector of length 2
-##' @param ylim a numeric vector of length 2
-##' @return a numeric vector of length 4, the first two componets specified the new xlim and the last two componets specified the new ylim.
-##' @author Jason
-##' @import countrycode
-##' @export
+#' compute and return the xlim and ylim within aspect ratio
+#'
+#' @title win.ratio
+#' @param xlim a numeric vector of length 2
+#' @param ylim a numeric vector of length 2
+#' @return a numeric vector of length 4, the first two componets specified the new xlim and the last two componets specified the new ylim.
+#' @author Jason
+#' @import countrycode
+#' @export
 win.ratio <- function(xlim, ylim) {
     x <- diff(xlim)
     y <- diff(ylim)
@@ -411,15 +365,15 @@ win.ratio <- function(xlim, ylim) {
 
 
 
-##' Calaudate the bbox of a country
-##'
-##' @title Calaudate the bbox of a country
-##' @param obj the iNZight Shape Map Object
-##' @param name a character vector, the name of the country
-##' @param vector logical value, if it is TRUE then return a vector of length 4 otherwise return an 2*2 matrix
-##' @return a 2*2 numeric matrix or a vector of length 4
-##' @author Jason
-##' @export
+#' Calaudate the bbox of a country
+#'
+#' @title Calaudate the bbox of a country
+#' @param obj the iNZight Shape Map Object
+#' @param name a character vector, the name of the country
+#' @param vector logical value, if it is TRUE then return a vector of length 4 otherwise return an 2*2 matrix
+#' @return a 2*2 numeric matrix or a vector of length 4
+#' @author Jason
+#' @export
 region.bbox <- function(obj, name, vector = FALSE) {
     latlon <- obj$latlon
     each <- obj$each
@@ -439,18 +393,18 @@ region.bbox <- function(obj, name, vector = FALSE) {
 }
 
 
-##' a function for create a bar object
-##'
-##' @title create bar object
-##' @param obj a inzightshapemap object
-##' @param var a character vectror, the column name of data
-##' @param data the data set
-##' @param xmax the maximum weight of the bar
-##' @param ymax the maximum height of the bar
-##' @param bar.col the color of each bar
-##' @return NULL
-##' @author Jason
-##' @export
+#' a function for create a bar object
+#'
+#' @title create bar object
+#' @param obj a inzightshapemap object
+#' @param var a character vectror, the column name of data
+#' @param data the data set
+#' @param xmax the maximum weight of the bar
+#' @param ymax the maximum height of the bar
+#' @param bar.col the color of each bar
+#' @return NULL
+#' @author Jason
+#' @export
 bar.coor <- function(obj, var, data, xmax = 0.85, ymax = 2,
                      bar.col = c("#E0FFFF", "#FAFAD2", "#FFA07A", "#C71585", "#DC143C", "#B8860B", "#00BFFF", "#ADFF2F")) {
     region <- obj$region
@@ -514,125 +468,23 @@ bar.coor <- function(obj, var, data, xmax = 0.85, ymax = 2,
     bar.obj <- list(d1 = d1, col = col, each = each.polygon)
 }
 
-
-##' Zoom in/out when click the plot
-##'
-##' @title Zoom in/out
-##' @param ratio a numeric value, define the ratio of zomm in or out
-##' @param resize resize the map?
-##' @return NULL
-##' @details if ratio < 1 then zoom in, if ratio > 1 then zoom out, if ratio = 1 then shift the plot.
-##' @author Jason
-##' @export
-sClickOnZoom <- function(ratio = 1 / 2, resize = FALSE) {
-    s.obj <- inzshpobj$s.obj
-    bar.obj <- inzshpobj$bar.obj
-    name <- inzshpobj$name
-    latlon <- s.obj$latlon
-    cols <- s.obj$col
-    shade.each <- s.obj$each
-    region.name <- inzshpobj$region.name
-    value <- inzshpobj$value
-    sbbox <- inzshpobj$bbox
-    ylim <- c(-10, 10)
-
-
-    ox.lim <- inzshpobj$s.obj$xylim
-    center.x <- s.obj$center.region$lon.x
-    center.y <- s.obj$center.region$lat.y
-    region.name <- s.obj$center.region$i.region
-
-    if (inzshpobj$num == 1) {
-        seekViewport("VP:MAPSHAPES")
-    }
-
-
-
-    if (resize == FALSE) {
-        pushViewport(viewport(0.5, unit(1, "char"), 1, unit(2, "char")))
-        grid::grid.rect(gp = gpar(fill = "red"))
-        grid::grid.text("Click a point on the map to zoom",
-            x = 0.5, y = 0.5, default.units = "native",
-            gp = gpar(col = "white")
-        )
-        popViewport()
-        p.center <- as.numeric(grid.locator())
-        xylim <- c(current.viewport()$xscale, current.viewport()$yscale)
-    } else {
-        p.center <- inzshpobj$click.point
-        xylim <- win.ratio(inzshpobj$bbox.record[1:2], inzshpobj$bbox.record[3:4])
-    }
-
-    nx.lim <- rep(p.center[1], 2) + c(-1, 1) * diff(xylim[1:2]) * ratio / 2
-    ny.lim <- rep(p.center[2], 2) + c(-1, 1) * diff(xylim[3:4]) * ratio / 2
-    n.lim <- c(nx.lim, ny.lim)
-
-    if (resize == FALSE) {
-        inzshpobj$bbox.record <<- c(nx.lim, ny.lim)
-    }
-
-    s.obj <- subByLim(s.obj, c(nx.lim, ny.lim))
-    if (ratio > 1) {
-        if (diff(range(nx.lim)) > diff(sbbox[1:2]) & diff(range(ny.lim)) > diff(sbbox[3:4])) {
-            n.lim <- win.ratio(sbbox[1:2], sbbox[3:4])
-        }
-    }
-
-    vp <- viewport(0.5, 0.5, 1, 1, name = "VP:map", xscale = n.lim[1:2], yscale = n.lim[3:4])
-    pushViewport(vp)
-
-    grid.rect(gp = gpar(fill = "#F5F5F5"))
-
-    grid.polygon(s.obj$latlon[, 1], s.obj$latlon[, 2],
-        default.units = "native", id.lengths = s.obj$each,
-        gp = gpar(col = "#B29980", fill = s.obj$col)
-    )
-    drawing.features(
-        bar.obj = bar.obj,
-        latlon = latlon, cols = cols,
-        shade.each = shade.each, region.name = region.name,
-        value = value, name = name,
-        center.x = center.x, center.y = center.y
-    )
-    grid.rect(gp = gpar(fill = "transparent"))
-
-    inzshpobj$num <<- inzshpobj$num + 1
-    inzshpobj$click.point <<- p.center
-}
-
-
-##' change the zoom within the center point
-##'
-##' @title change the zoom within the center point
-##' @param zoom a numeric value between 0.1 to 0.9(minimum zoom to maximum zoom)
-##' @return NULL
-##' @author Jason
-##' @export
-srezoom <- function(zoom) {
-    if (zoom > 2 | zoom < 0.1) {
-        stop("invalid zoom")
-    }
-    sClickOnZoom(ratio = zoom, resize = TRUE)
-}
-
-
-##' a function for drawing bar char, display the value and/or region name
-##'
-##' @title drawing features
-##' @param bar.obj a bar object see \link{bar.coor}
-##' @param latlon a n*2 numeric matrix the first column specifies the latitudes and the second column specifies the longitudes
-##' @param cols a color character strings vector
-##' @param shade.each a numeric vector
-##' @param region.name a character vector
-##' @param data.region region data
-##' @param value a numeric vector
-##' @param name a character vector
-##' @param center.x a numeric value
-##' @param center.y a numeric value
-##' @param y.shift a numeric value
-##' @return NULL
-##' @author Jason
-##' @export
+#' a function for drawing bar char, display the value and/or region name
+#'
+#' @title drawing features
+#' @param bar.obj a bar object see \link{bar.coor}
+#' @param latlon a n*2 numeric matrix the first column specifies the latitudes and the second column specifies the longitudes
+#' @param cols a color character strings vector
+#' @param shade.each a numeric vector
+#' @param region.name a character vector
+#' @param data.region region data
+#' @param value a numeric vector
+#' @param name a character vector
+#' @param center.x a numeric value
+#' @param center.y a numeric value
+#' @param y.shift a numeric value
+#' @return NULL
+#' @author Jason
+#' @export
 drawing.features <- function(bar.obj, latlon, cols,
                              shade.each, region.name,
                              data.region, value, name,

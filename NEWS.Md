@@ -1,5 +1,6 @@
-## iNZightMaps 2.3.2
+## iNZightMaps 2.4
 
+- remove unused shape map functions (use iNZightMapPlot instead)
 - switch to 'get_stadiamaps' and prompt user for API key
 
 ## iNZightMaps 2.3.1

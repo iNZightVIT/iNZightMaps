@@ -1,17 +1,17 @@
-##' Create an iNZight Map Object and pass to the plot
-##'
-##' The plot will download a map that contains all of the points. The size is limited by
-##' the fixed zoom levels provided by Google's Static Maps API.
-##'
-##' @title Create an iNZight Map Object
-##' @param lat a formula specifying the name of the latitude variable in \code{data}
-##' @param lon a formula specifying the name of the longitude variable in \code{data}
-##' @param data a data frame
-##' @param name the name of the data set
-##' @return data frame object with class \code{inzightmap}
-##' @author Tom Elliott
-##'
-##' @export
+#' Create an iNZight Map Object and pass to the plot
+#'
+#' The plot will download a map that contains all of the points. The size is limited by
+#' the fixed zoom levels provided by Google's Static Maps API.
+#'
+#' @title Create an iNZight Map Object
+#' @param lat a formula specifying the name of the latitude variable in \code{data}
+#' @param lon a formula specifying the name of the longitude variable in \code{data}
+#' @param data a data frame
+#' @param name the name of the data set
+#' @return data frame object with class \code{inzightmap}
+#' @author Tom Elliott
+#'
+#' @export
 iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
     if (missing(data) || is.null(data)) {
         stop("iNZightMaps required you to use a data.frame.")
@@ -44,14 +44,14 @@ iNZightMap <- function(lat, lon, data, name = deparse(substitute(data))) {
 
 
 
-##' @param x an \code{inzightmap} object
-##' @param opacity character or expression of the variable name to code point opacity by
-##' @param map.zoom the level of zoom to use; this should depend on the scales unless specified
-##' @param type the type of map to download from Google
-##' @param ... additional arguments passed to \code{iNZightPlot}
-##' @param env Environment to evaluate \code{iNZightPlot} in
-##' @describeIn iNZightMap Plot an \code{inzightmap} object
-##' @export
+#' @param x an \code{inzightmap} object
+#' @param opacity character or expression of the variable name to code point opacity by
+#' @param map.zoom the level of zoom to use; this should depend on the scales unless specified
+#' @param type the type of map to download from Google
+#' @param ... additional arguments passed to \code{iNZightPlot}
+#' @param env Environment to evaluate \code{iNZightPlot} in
+#' @describeIn iNZightMap Plot an \code{inzightmap} object
+#' @export
 plot.inzightmap <- function(x,
                             opacity,
                             map.zoom = -1,
@@ -95,5 +95,6 @@ plot.inzightmap <- function(x,
 
 
     mc[1] <- expression(iNZightPlots::iNZightPlot)
+    print(mc)
     eval(mc, envir = env)
 }

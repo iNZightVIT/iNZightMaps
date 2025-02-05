@@ -1,7 +1,7 @@
-##' @title Retrieve a map for use in iNZightMapPlot
-##' @param filename Filename of the map
-##' @return An sf object containing the map
-##' @export
+#' @title Retrieve a map for use in iNZightMapPlot
+#' @param filename Filename of the map
+#' @return An sf object containing the map
+#' @export
 retrieveMap <- function(filename) {
     if (grepl(".rds$", filename)) {
         readRDS(filename)
@@ -10,11 +10,11 @@ retrieveMap <- function(filename) {
     }
 }
 
-##' @title Find 'best-matching' pair of variables from map and data
-##' @param data Data frame of the input data
-##' @param map.data sf object of the map data
-##' @return Two-element vector of form (data variable, map variable)
-##' @export
+#' @title Find 'best-matching' pair of variables from map and data
+#' @param data Data frame of the input data
+#' @param map.data sf object of the map data
+#' @return Two-element vector of form (data variable, map variable)
+#' @export
 findBestMatch <- function(data, map.data) {
     ## Eliminate variables that are associated with multiple regions
     ## in the map
@@ -39,11 +39,11 @@ findBestMatch <- function(data, map.data) {
     best.match.vars
 }
 
-##' @title Match two vectors
-##' @param data.vect Vector containing the dataset variable
-##' @param map.vect Vector containing the map object variable
-##' @return A list containing: the dataset variable vector with duplicates removed, which values in the dataset and map variable had a match, how many matches occured overall and if there was multiple observations for any region.
-##' @export
+#' @title Match two vectors
+#' @param data.vect Vector containing the dataset variable
+#' @param map.vect Vector containing the map object variable
+#' @return A list containing: the dataset variable vector with duplicates removed, which values in the dataset and map variable had a match, how many matches occured overall and if there was multiple observations for any region.
+#' @export
 matchVariables <- function(data.vect, map.vect) {
     data.is.na <- is.na(data.vect)
     data.n.obs <- table(data.vect)
@@ -64,24 +64,24 @@ matchVariables <- function(data.vect, map.vect) {
     )
 }
 
-##' @title Get available map projections
-##' @return Data frame of map projections
-##' @export
+#' @title Get available map projections
+#' @return Data frame of map projections
+#' @export
 iNZightMapProjections <- function() {
     return(proj.df)
 }
 
-##' @title Get list of country ISO codes
-##' @return Data frame with country names and ISO codes
-##' @export
+#' @title Get list of country ISO codes
+#' @return Data frame with country names and ISO codes
+#' @export
 iNZightMapCountryISO <- function() {
     return(country.isos)
 }
 
-##' @title Read shapefile metadata from file
-##' @param shapefileDir Directory containing the shapefiles for iNZight
-##' @return Matrix of filepaths, filenames and descriptions of each shapefile available in `shapefileDir`
-##' @export
+#' @title Read shapefile metadata from file
+#' @param shapefileDir Directory containing the shapefiles for iNZight
+#' @return Matrix of filepaths, filenames and descriptions of each shapefile available in `shapefileDir`
+#' @export
 read.mapmetadata <- function(shapefileDir) {
     if (!file.exists(file.path(shapefileDir, "metadata.gz"))) {
         tryCatch(
@@ -107,10 +107,10 @@ read.mapmetadata <- function(shapefileDir) {
     metadata
 }
 
-##' @title Download shapefiles from remote repository
-##' @param dirURL URL of the directory containing shapefiles
-##' @param currPath Current path to save to
-##' @export
+#' @title Download shapefiles from remote repository
+#' @param dirURL URL of the directory containing shapefiles
+#' @param currPath Current path to save to
+#' @export
 download.shapefiles <- function(dirURL, currPath) {
     message("Searching... ", dirURL)
     curr.links <- XML::getHTMLLinks(rawToChar(curl::curl_fetch_memory(dirURL)$content))
@@ -133,9 +133,9 @@ download.shapefiles <- function(dirURL, currPath) {
     }
 }
 
-##' @title Convert map filepaths to "tidy" filepaths
-##' @param mapdir.mat Matrix of metadata
-##' @export
+#' @title Convert map filepaths to "tidy" filepaths
+#' @param mapdir.mat Matrix of metadata
+#' @export
 decodeMapDir <- function(mapdir.mat) {
     have.tidy <- !is.na(mapdir.mat[, "tidy_filename"])
 
@@ -167,11 +167,11 @@ decodeMapDir <- function(mapdir.mat) {
     mapdir.mat
 }
 
-##' @title Get the range of a set of variables while ignoring categorical variables
-##' @param obj iNZightMapPlot object
-##' @param vars Vector of variables to calculate range of
-##' @return Vector of ranges for each variable
-##' @export
+#' @title Get the range of a set of variables while ignoring categorical variables
+#' @param obj iNZightMapPlot object
+#' @param vars Vector of variables to calculate range of
+#' @return Vector of ranges for each variable
+#' @export
 getMinMax <- function(obj, vars) {
     if (length(vars) == 0) {
         return()
@@ -181,10 +181,10 @@ getMinMax <- function(obj, vars) {
     range(selected.data[, sapply(selected.data, is.numeric)], na.rm = TRUE)
 }
 
-##' @title Get number of polygons for each region of a map
-##' @param obj iNZightMapPlot object
-##' @return Vector containing the number of polygons for each region of the map
-##' @export
+#' @title Get number of polygons for each region of a map
+#' @param obj iNZightMapPlot object
+#' @return Vector containing the number of polygons for each region of the map
+#' @export
 polygons_per_region <- function(obj) {
     data.to.use <- ifelse(obj$multiple.obs, "region.aggregate", "region.data")
 
